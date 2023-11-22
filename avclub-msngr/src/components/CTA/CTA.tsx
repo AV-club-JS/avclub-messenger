@@ -15,9 +15,9 @@ export const CTA = () => {
                     as={Box}
                     textAlign={'center'}
                     spacing={{ base: 8, md: 14 }}
-                    py={{ base: 20, md: 36 }}>
+                    py={{ base: 8, md: 16 }}>
                     <Heading
-                        fontWeight={600}
+                        fontWeight={1000}
                         fontSize={{ base: '2xl', sm: '4xl', md: '6xl' }}
                         lineHeight={'110%'}>
                         Instant, Intuitive, Irreplaceable<br />
@@ -42,7 +42,7 @@ export const CTA = () => {
                             rounded={'full'}
                             px={6}
                             _hover={{
-                                bg: 'blue.500',
+                                bg: '#001f3f',
                             }}>
                             Register
                         </Button>
@@ -53,7 +53,7 @@ export const CTA = () => {
                             rounded={'full'}
                             px={6}
                             _hover={{
-                                bg: 'blue.500',
+                                bg: '#001f3f',
                             }}>
                             Login
                         </Button>
