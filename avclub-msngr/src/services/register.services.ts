@@ -1,4 +1,5 @@
 import { DefaultUserData } from "../types/types";
+
 export const register = ({
     username, 
     email, 
