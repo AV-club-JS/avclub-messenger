@@ -38,11 +38,6 @@ export const createUser = async ({
 };
 
 export const getUserByUid = async (uid: string) => {
-    try {
-        const data = await get(ref(db, `users/${uid}`));
-        return data;
-    } catch (error) {
-        console.error((error as Error).message);
-        return null;
-    }
+    const data = await get(ref(db, `users/${uid}`));
+    return data;
 };
