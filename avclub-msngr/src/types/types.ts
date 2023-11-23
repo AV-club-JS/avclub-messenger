@@ -1,4 +1,4 @@
-import { ReactElement } from "react";
+import { Dispatch, ReactElement, SetStateAction } from "react";
 
 export interface FeatureProps {
     text: string
@@ -11,13 +11,19 @@ export type ChildrenProps = {
 export type DefaultUserData = {
     username: string,
     email: string,
-    password: string,
     firstName: string,
     lastName: string,
     phone: string,
+    uid?: string,
+    avatarUrl?: string
 };
 
-export type UserLoginData = {
-  email: string,
-  password: string
+export type Credentials = {
+    email: string,
+    password: string
 };
+
+export type AuthContextType = {
+    userData: DefaultUserData | null,
+    setAuth: Dispatch<SetStateAction<{ userData: null; }>>
+} | null;

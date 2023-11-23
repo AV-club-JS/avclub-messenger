@@ -15,12 +15,19 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { ChangeEvent, MouseEvent, useState } from "react";
+import { ChangeEvent, MouseEvent, useState, useContext } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { DefaultUserData } from "../../types/types";
 import { useNavigate } from "react-router-dom";
-import { register } from "../../services";
-const defaultUserData: DefaultUserData = {
+// types
+import { DefaultUserData, Credentials } from "../../types/types";
+// services
+import { registerUser } from "../../services";
+import { createUser, getUserByUid } from "../../services/users.services";
+// context
+import { AuthContext } from "../../context/AuthContext";
+import { UserCredential } from "firebase/auth";
+
+const defaultUserData: DefaultUserData & Credentials = {
   email: "",
   password: "",
   username: "",
@@ -28,18 +35,52 @@ const defaultUserData: DefaultUserData = {
   lastName: "",
   phone: "",
 };
+
 export const Register = () => {
+  const { setAuth, userData } = useContext(AuthContext);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [user, setUser] = useState(defaultUserData);
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     return setUser({ ...user, [e.target.id]: e.target.value });
   };
-  const submit = (e: MouseEvent<HTMLButtonElement>) => {
+
+  const submit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    register(user);
-    navigate("/");
+    let credential: null | UserCredential = null;
+    try {
+      credential = await registerUser(user) as UserCredential;
+    } catch (error) {
+      console.error(error);
+    }
+
+    const uid: string | null = credential?.user.uid || null;
+
+    try {
+      await createUser({ ...user, uid: (uid as string) });
+    } catch (error) {
+      console.error(error);
+    }
+
+    if (uid) {
+
+      const req = await getUserByUid(uid);
+      const userInfo: DefaultUserData | null = req?.val();
+      console.log(userInfo);
+      
+      if (userInfo !== null) {
+        setAuth({
+          userData: userInfo
+        });
+      }
+
+      console.log(userData);
+    }
+
+    // navigate("/");
   };
+
   return (
     <Flex
       minH={"100vh"}
@@ -52,9 +93,6 @@ export const Register = () => {
           <Heading fontSize={"4xl"} textAlign={"center"}>
             Sign up
           </Heading>
-          <Text fontSize={"lg"} color={"gray.600"}>
-            to enjoy all of our cool features ✌️
-          </Text>
         </Stack>
         <Box
           rounded={"lg"}
@@ -131,7 +169,7 @@ export const Register = () => {
             </Stack>
             <Stack pt={6}>
               <Text align={"center"}>
-                Already a user? <Link color={"blue.400"}>Login</Link>
+                Already a user? <Link onClick={() => navigate("/login")} color={"blue.400"}>Login</Link>
               </Text>
             </Stack>
           </Stack>

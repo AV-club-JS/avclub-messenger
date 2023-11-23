@@ -14,24 +14,31 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react'
 import { ChangeEvent, MouseEvent, useState } from 'react';
-import {login} from '../../services';
-import { UserLoginData } from '../../types/types';
+// types
+import { Credentials } from '../../types/types';
+// services 
+import { loginUser } from '../../services';
 
-const defaultUserLoginData: UserLoginData = {
+const defaultUserLoginData: Credentials = {
   email: '',
   password: ''
 };
 export const Login = ():JSX.Element => {
   const navigate = useNavigate();
   const [user, setUser] = useState(defaultUserLoginData);
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setUser({...user, [e.target.id]: e.target.value})
   }
+
   const submit = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    login(user);
+    loginUser(user);
+    console.log('YES!');
+    
     navigate('/');
   }
+
   return (
     <Flex
       minH={'100vh'}
@@ -41,9 +48,6 @@ export const Login = ():JSX.Element => {
       <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
         <Stack align={'center'}>
           <Heading fontSize={'4xl'}>Sign in to your account</Heading>
-          <Text fontSize={'lg'} color={'gray.600'}>
-            to enjoy all of our cool <Text color={'blue.400'}>features</Text> ✌️
-          </Text>
         </Stack>
         <Box
           rounded={'lg'}
