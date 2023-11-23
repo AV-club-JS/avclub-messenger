@@ -1,4 +1,5 @@
 import { Dispatch, ReactElement, SetStateAction } from "react";
+import { User } from "firebase/auth";
 
 export interface FeatureProps {
     text: string
@@ -23,7 +24,11 @@ export type Credentials = {
     password: string
 };
 
-export type AuthContextType = {
+export interface AppState {
+    user: null | User | undefined,
     userData: DefaultUserData | null,
-    setAuth: Dispatch<SetStateAction<{ userData: null; }>>
-} | null;
+}
+
+export interface AuthContext extends AppState {
+    setAuth: Dispatch<SetStateAction<AppState>>
+}
