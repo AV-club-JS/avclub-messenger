@@ -6,6 +6,7 @@ import { AppState } from '../../types/types';
 import { Navbar } from '../../components/Navbar';
 import customTheme from '../../theme/theme';
 
+import { Footer } from '../../components/Footer';
 export const Wrapper = () => {
   const [appState, setAppState] = useState<AppState>({
     user: null,
@@ -24,6 +25,7 @@ export const Wrapper = () => {
         >
           <Navbar />
           <Outlet />
+        <Footer/>
         </Box>
       </UserContext.Provider>
     </ChakraProvider>
