@@ -1,16 +1,18 @@
 import { Box, ChakraProvider } from '@chakra-ui/react';
 import { Outlet } from 'react-router-dom';
 import { useState } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import { UserContext } from '../../context/AuthContext';
+import { AppState } from '../../types/types';
 
 export const Wrapper = () => {
-  const [appState, setAppState] = useState({
+  const [appState, setAppState] = useState<AppState>({
+    user: null,
     userData: null,
   });
 
   return (
     <ChakraProvider>
-      <AuthContext.Provider value={{ ...appState, setAuth: setAppState }}>
+      <UserContext.Provider value={{ ...appState, setAuth: setAppState }}>
         <Box
           m={0}
           p={0}
@@ -19,7 +21,7 @@ export const Wrapper = () => {
         >
           <Outlet />
         </Box>
-      </AuthContext.Provider>
+      </UserContext.Provider>
     </ChakraProvider>
   )
 };

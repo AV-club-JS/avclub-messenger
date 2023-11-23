@@ -1,5 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { createContext } from "react";
-import { AuthContextType, DefaultUserData } from "../types/types";
+import { createContext, useContext } from "react";
+import { AuthContext } from "../types/types";
 
-export const AuthContext = createContext<AuthContextType>(null);
+export const UserContext = createContext<AuthContext>({
+    user: null,
+    userData: null,
+    setAuth: () => {}
+});
+

@@ -24,7 +24,7 @@ import { DefaultUserData, Credentials } from "../../types/types";
 import { registerUser } from "../../services";
 import { createUser, getUserByUid } from "../../services/users.services";
 // context
-import { AuthContext } from "../../context/AuthContext";
+import { UserContext } from "../../context/AuthContext";
 import { UserCredential } from "firebase/auth";
 
 const defaultUserData: DefaultUserData & Credentials = {
@@ -37,7 +37,7 @@ const defaultUserData: DefaultUserData & Credentials = {
 };
 
 export const Register = () => {
-  const { setAuth, userData } = useContext(AuthContext);
+  const { setAuth, userData } = useContext(UserContext);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [user, setUser] = useState(defaultUserData);
@@ -48,37 +48,27 @@ export const Register = () => {
 
   const submit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    let credential: null | UserCredential = null;
-    try {
-      credential = await registerUser(user) as UserCredential;
-    } catch (error) {
-      console.error(error);
-    }
-
-    const uid: string | null = credential?.user.uid || null;
 
     try {
-      await createUser({ ...user, uid: (uid as string) });
-    } catch (error) {
-      console.error(error);
-    }
+      const credential = await registerUser(user) as UserCredential;
+      const uid = credential.user.uid;
 
-    if (uid) {
+      await createUser({ ...user, uid });
 
       const req = await getUserByUid(uid);
-      const userInfo: DefaultUserData | null = req?.val();
-      console.log(userInfo);
-      
-      if (userInfo !== null) {
-        setAuth({
-          userData: userInfo
-        });
-      }
+      const userInfo: DefaultUserData = req?.val();
+
+      setAuth({
+        user: credential!.user,
+        userData: userInfo
+      });
 
       console.log(userData);
+    } catch (error) {
+      console.error(error);
     }
-
-    // navigate("/");
+    
+    navigate("/");
   };
 
   return (
@@ -87,7 +77,7 @@ export const Register = () => {
       align={"center"}
       justify={"center"}
       bg={useColorModeValue("gray.50", "gray.800")}
-    >
+    > 
       <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
         <Stack align={"center"}>
           <Heading fontSize={"4xl"} textAlign={"center"}>
