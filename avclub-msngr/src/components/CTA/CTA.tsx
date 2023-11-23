@@ -6,8 +6,9 @@ import {
     Button,
     Stack,
 } from '@chakra-ui/react'
-
+import { useNavigate } from "react-router-dom";
 export const CTA = () => {
+    const navigate = useNavigate();
     return (
         <>
             <Container maxW={'3xl'}>
@@ -22,7 +23,7 @@ export const CTA = () => {
                         lineHeight={'110%'}>
                         Instant, Intuitive, Irreplaceable<br />
                         <Text as={'span'} color={'blue.400'}>
-                        Unlock the Future of Team Collaboration with AV Messenger
+                            Unlock the Future of Team Collaboration with AV Messenger
                         </Text>
                     </Heading>
                     <Text color={'gray.500'}>
@@ -37,6 +38,7 @@ export const CTA = () => {
                         alignSelf={'center'}
                         position={'relative'}>
                         <Button
+                            onClick={() => navigate('/register')}
                             colorScheme={'green'}
                             bg={'blue.400'}
                             rounded={'full'}
@@ -48,6 +50,7 @@ export const CTA = () => {
                         </Button>
                         <Text color={'gray.500'} fontWeight={600} fontSize={'md'}>Already have an account?</Text>
                         <Button
+                            onClick={() => navigate('/login')}
                             colorScheme={'blue'}
                             bg={'blue.400'}
                             rounded={'full'}

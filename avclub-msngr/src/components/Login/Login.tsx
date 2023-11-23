@@ -1,5 +1,5 @@
 'use client'
-
+import { useNavigate} from 'react-router-dom';
 import {
   Flex,
   Box,
@@ -13,8 +13,25 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react'
+import { ChangeEvent, MouseEvent, useState } from 'react';
+import {login} from '../../services';
+import { UserLoginData } from '../../types/types';
 
+const defaultUserLoginData: UserLoginData = {
+  email: '',
+  password: ''
+};
 export const Login = ():JSX.Element => {
+  const navigate = useNavigate();
+  const [user, setUser] = useState(defaultUserLoginData);
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setUser({...user, [e.target.id]: e.target.value})
+  }
+  const submit = (e: MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    login(user);
+    navigate('/');
+  }
   return (
     <Flex
       minH={'100vh'}
@@ -36,11 +53,17 @@ export const Login = ():JSX.Element => {
           <Stack spacing={4}>
             <FormControl id="email">
               <FormLabel>Email address</FormLabel>
-              <Input type="email" />
+              <Input
+              onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)} 
+              type="email" 
+              />
             </FormControl>
             <FormControl id="password">
               <FormLabel>Password</FormLabel>
-              <Input type="password" />
+              <Input
+              onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)} 
+              type="password" 
+              />
             </FormControl>
             <Stack spacing={10}>
               <Stack
@@ -51,6 +74,7 @@ export const Login = ():JSX.Element => {
                 <Text color={'blue.400'}>Forgot password?</Text>
               </Stack>
               <Button
+               onClick={submit}
                 bg={'blue.400'}
                 color={'white'}
                 _hover={{

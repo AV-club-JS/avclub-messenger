@@ -1,14 +1,25 @@
 import { useState } from 'react';
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  RouterProvider,
+  Route
+} from 'react-router-dom';
+// routes
+import { Wrapper } from './containers/Wrapper';
 import { Home } from './containers/Home';
+import { Login } from './components/Login';
+import { Register } from './components/Register';
 
-function App() {
-
-
-  return (
-    <>
-      <Home />
-    </>
+//Browser router
+const appRoutes = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path='/' element={<Wrapper />}>
+      <Route index element={<Home />} />
+      <Route path='/login' element={<Login />} />
+      <Route path='/register' element={<Register />} />
+    </Route>
   )
-}
+);
 
-export default App
+export const App = () => <RouterProvider router={appRoutes} />
