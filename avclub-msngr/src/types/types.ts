@@ -32,3 +32,10 @@ export interface AppState {
 export interface AuthContext extends AppState {
     setAuth: Dispatch<SetStateAction<AppState>>
 }
+
+export type SetCount = Dispatch<SetStateAction<number>>;
+
+export interface ActivityBarProps {
+    users: number;
+    teams: number;
+}
