@@ -9,9 +9,10 @@ import {
     update,
     onValue
 } from "firebase/database";
+// d
 import { db } from "../config/firebase-config";
 // types
-import { DefaultUserData } from "../types/types";
+import { DefaultUserData, SetCount } from "../types/types";
 
 export const createUser = async ({
     username,
@@ -41,3 +42,13 @@ export const getUserByUid = async (uid: string) => {
     const data = await get(ref(db, `users/${uid}`));
     return data;
 };
+
+export const getUserCount = (setUserCount: SetCount) => {
+    const usersRef = ref(db, 'users/');
+    
+    return onValue(usersRef, (snapshot) => {
+        const data = snapshot.val();
+        const userCount = data ? Object.keys(data).length : 0; 
+        setUserCount(userCount);
+    })
+}
