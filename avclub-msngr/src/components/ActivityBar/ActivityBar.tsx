@@ -7,7 +7,7 @@ import { FC } from "react";
 
 export const ActivityBar: FC<ActivityBarProps> = ({ users, teams }) => {
     return (
-        <Center p={7} bgColor={'#001f3f'}>
+        <Center p={7} bgColor={'brand.primary'}>
             <Box maxW={"5xl"} >
                 <SimpleGrid columns={{ base: 1, md: 2 }} spacing={20}>
                     <Stack alignItems={'center'}>
@@ -20,7 +20,7 @@ export const ActivityBar: FC<ActivityBarProps> = ({ users, teams }) => {
                             rounded={"full"}
                             bg={"gray.100"}
                             mb={1}
-                            bgColor={'#77D4FC'}
+                            bgColor={'brand.accent'}
                         >
                             <Icon as={AiOutlineUser} boxSize={10} />
                         </Flex>
@@ -36,7 +36,7 @@ export const ActivityBar: FC<ActivityBarProps> = ({ users, teams }) => {
                             rounded={"full"}
                             bg={"gray.100"}
                             mb={1}
-                            bgColor={'#77D4FC'}
+                            bgColor={'brand.accent'}
                         >
                             <Icon as={AiOutlineTeam} boxSize={10} />
                         </Flex>
