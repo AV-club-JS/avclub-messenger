@@ -9,7 +9,7 @@ import {
     update,
     onValue
 } from "firebase/database";
-// d
+// database
 import { db } from "../config/firebase-config";
 // types
 import { DefaultUserData, SetCount } from "../types/types";
