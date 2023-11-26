@@ -16,11 +16,9 @@ import {
 } from '@chakra-ui/icons';
 import { DesktopNav } from './DesktopNav';
 import { MobileNav } from './MobileNav';
-import { useState } from 'react';
 
 export const Navbar = () => {
     const { isOpen, onToggle } = useDisclosure();
-    const [user, setUser] = useState(false);
 
     return (
         <Box>
@@ -49,6 +47,7 @@ export const Navbar = () => {
                     <Text
                         textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
                         fontFamily={'heading'}
+                        ml={'20px'}
                         color={useColorModeValue('gray.800', 'white')}>
                         AVM
                     </Text>
@@ -73,6 +72,7 @@ export const Navbar = () => {
                             color={'white'}
                             bg={'brand.accent'}
                             href={'register'}
+                            mr={'20px'}
                             _hover={{
                                 bg: 'brand.primary',
                             }}>
