@@ -8,3 +8,4 @@ export const UserContext = createContext<AuthContext>({
     setAuth: () => {}
 });
 
+

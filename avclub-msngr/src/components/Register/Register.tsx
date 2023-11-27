@@ -1,3 +1,4 @@
+import { FirebaseError } from "firebase/app";
 import {
   Box,
   Button,
@@ -14,18 +15,18 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { ChangeEvent, MouseEvent, useState, useContext } from "react";
+import { ChangeEvent, MouseEvent, useContext, useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 // types
-import { DefaultUserData, Credentials } from "../../types/types";
+import { Credentials, DefaultUserData } from "../../types/types";
 // services
 import { registerUser } from "../../services";
 import { createUser, getUserByUid } from "../../services/users.services";
 // context
 import { UserContext } from "../../context/AuthContext";
 import { UserCredential } from "firebase/auth";
-
+import { isValidUserData } from "../../utils/isValidUserData";
 const defaultUserData: DefaultUserData & Credentials = {
   email: "",
   password: "",
@@ -36,38 +37,76 @@ const defaultUserData: DefaultUserData & Credentials = {
 };
 
 export const Register = () => {
-  const { setAuth, userData } = useContext(UserContext);
+  const { setAuth } = useContext(UserContext);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [user, setUser] = useState(defaultUserData);
-
+  const [validation, setValidation] = useState({
+    error: true,
+    message: "",
+    field: "",
+  });
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     return setUser({ ...user, [e.target.id]: e.target.value });
   };
 
+  const resetValidationError = () => {
+    setValidation({ ...validation, message: "", field: "" });
+  };
+
+  const handleValidationErrorField = (field: string): {} | undefined => {
+    return validation.field === field ? { borderColor: "red" } : undefined;
+  };
   const submit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-
-    try {
-      const credential = await registerUser(user) as UserCredential;
-      const uid = credential.user.uid;
-
-      await createUser({ ...user, uid });
-
-      const req = await getUserByUid(uid);
-      const userInfo: DefaultUserData = req?.val();
-
-      setAuth({
-        user: credential!.user,
-        userData: userInfo
-      });
-
-      console.log(userData);
-    } catch (error) {
-      console.error(error);
-    }
-    
-    navigate("/");
+    setValidation(isValidUserData(user));
+    if (!validation.error) {
+      try {
+        const credential = await registerUser(user) as UserCredential;
+        const uid = credential.user.uid;
+        await createUser({ ...user, uid });
+        const req = await getUserByUid(uid);
+        const userInfo: DefaultUserData = req?.val();
+        setAuth({
+          user: credential!.user,
+          userData: userInfo,
+        });
+        navigate("/");
+      } catch (error) {
+        console.log((error as FirebaseError).code);
+        const code: string = (error as FirebaseError).code;
+        switch (code) {
+          case "auth/email-already-exists":
+            setValidation({
+              ...validation,
+              field: "email",
+              message: "The imail aready exists",
+            });
+            break;
+          case "auth/invalid-email":
+            setValidation({
+              ...validation,
+              field: "email",
+              message: "Invalid email inserted",
+            });
+            break;
+          case "auth/email-already-in-use":
+            setValidation({
+              ...validation,
+              field: "email",
+              message: "This email is already in use",
+            });
+            break;
+          default:
+            return setValidation({
+              ...validation,
+              message: "Incorrect data",
+              field: "email",
+            });
+        }
+      }
+    } 
+    return;
   };
 
   return (
@@ -76,7 +115,7 @@ export const Register = () => {
       align={"center"}
       justify={"center"}
       bg={useColorModeValue("gray.50", "gray.800")}
-    > 
+    >
       <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
         <Stack align={"center"}>
           <Heading fontSize={"4xl"} textAlign={"center"}>
@@ -95,24 +134,40 @@ export const Register = () => {
                 <FormControl id="firstName" isRequired>
                   <FormLabel>First Name</FormLabel>
                   <Input
+                    onClick={resetValidationError}
+                    sx={handleValidationErrorField("firstName")}
                     onChange={(e) => handleChange(e)}
                     type="text"
                   />
                 </FormControl>
               </Box>
               <Box>
-                <FormControl id="lastName">
+                <FormControl id="lastName" isRequired>
                   <FormLabel>Last Name</FormLabel>
                   <Input
+                    onClick={resetValidationError}
+                    sx={handleValidationErrorField("lastName")}
                     onChange={(e) => handleChange(e)}
                     type="text"
                   />
                 </FormControl>
               </Box>
             </HStack>
-            <FormControl id="phone">
+            <FormControl id="username" isRequired>
+              <FormLabel>Usernamer</FormLabel>
+              <Input
+                sx={handleValidationErrorField("username")}
+                onClick={resetValidationError}
+                onChange={(e) => handleChange(e)}
+                type="text"
+              />
+            </FormControl>
+
+            <FormControl id="phone" isRequired>
               <FormLabel>Phone number</FormLabel>
               <Input
+                sx={handleValidationErrorField("phone")}
+                onClick={resetValidationError}
                 onChange={(e) => handleChange(e)}
                 type="text"
               />
@@ -120,6 +175,8 @@ export const Register = () => {
             <FormControl id="email" isRequired>
               <FormLabel>Email address</FormLabel>
               <Input
+                sx={handleValidationErrorField("email")}
+                onClick={resetValidationError}
                 onChange={(e) => handleChange(e)}
                 type="email"
               />
@@ -128,6 +185,8 @@ export const Register = () => {
               <FormLabel>Password</FormLabel>
               <InputGroup>
                 <Input
+                  sx={handleValidationErrorField("password")}
+                  onClick={resetValidationError}
                   onChange={(e) => handleChange(e)}
                   type={showPassword ? "text" : "password"}
                 />
@@ -157,8 +216,12 @@ export const Register = () => {
               </Button>
             </Stack>
             <Stack pt={6}>
+              <Box color={"red"}>{validation.message}</Box>
               <Text align={"center"}>
-                Already a user? <Link onClick={() => navigate("/login")} color={"blue.400"}>Login</Link>
+                Already a user?{" "}
+                <Link onClick={() => navigate("/login")} color={"blue.400"}>
+                  Login
+                </Link>
               </Text>
             </Stack>
           </Stack>
