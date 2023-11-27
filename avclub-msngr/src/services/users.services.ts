@@ -32,6 +32,8 @@ export const createUser = async ({
             phone,
             createdOn: Date.now(),
             avatarUrl: '',
+            status: 'online',
+            bio: ''
         });
     } catch (error) {
         console.error((error as Error).message);
