@@ -12,13 +12,16 @@ export type ChildrenProps = {
 };
 
 export type DefaultUserData = {
-  username: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phone: string;
-  uid?: string;
-  avatarUrl?: string;
+  username: string,
+  email: string,
+  firstName: string,
+  lastName: string,
+  phone: string,
+  uid: string,
+  avatarUrl: string,
+  bio: string,
+  status: string,
+  createdOn: string
 };
 
 export type DefaultTeamData = {
