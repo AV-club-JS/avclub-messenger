@@ -8,7 +8,7 @@ import { auth } from "../config/firebase-config";
 // types
 import { Credentials } from "../types/types";
 
-export const registerUser = ({email, password}: Credentials) => {
+export const registerUser =  ({email, password}: Credentials) => {
     return createUserWithEmailAndPassword(auth, email, password);
 }
 
