@@ -3,7 +3,6 @@ import { Outlet } from 'react-router-dom';
 import { useState } from 'react';
 import { UserContext } from '../../context/AuthContext';
 import { AppState } from '../../types/types';
-import { Footer } from '../../components/Footer';
 import { Navbar } from '../../components/Navbar';
 import customTheme from '../../theme/theme';
 
