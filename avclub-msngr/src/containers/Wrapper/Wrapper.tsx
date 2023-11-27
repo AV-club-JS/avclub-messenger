@@ -25,7 +25,6 @@ export const Wrapper = () => {
         >
           <Navbar />
           <Outlet />
-        <Footer/>
         </Box>
       </UserContext.Provider>
     </ChakraProvider>
