@@ -20,11 +20,11 @@ export const Wrapper = () => {
           m={0}
           p={0}
           minH={'100vh'}
-          width={'100vw'}
+          w={'100vw'}
+          maxW={'100%'} 
         >
           <Navbar />
           <Outlet />
-        <Footer/>
         </Box>
       </UserContext.Provider>
     </ChakraProvider>
