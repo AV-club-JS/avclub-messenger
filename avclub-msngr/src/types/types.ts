@@ -19,6 +19,14 @@ export type DefaultUserData = {
     avatarUrl?: string
 };
 
+export type DefaultTeamData = {
+    name: string,
+    owner: string,
+    uid: string,
+    members: object,
+    info: string,
+};
+
 export type Credentials = {
     email: string,
     password: string
@@ -31,4 +39,18 @@ export interface AppState {
 
 export interface AuthContext extends AppState {
     setAuth: Dispatch<SetStateAction<AppState>>
+}
+
+export type SetCount = Dispatch<SetStateAction<number>>;
+
+export interface ActivityBarProps {
+    users: number;
+    teams: number;
+}
+
+export interface NavItem {
+    label: string
+    subLabel?: string
+    children?: Array<NavItem>
+    href?: string
 }

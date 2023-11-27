@@ -44,7 +44,7 @@ export const CTA = () => {
                             rounded={'full'}
                             px={6}
                             _hover={{
-                                bg: '#001f3f',
+                                bg: 'brand.primary',
                             }}>
                             Register
                         </Button>
@@ -56,7 +56,7 @@ export const CTA = () => {
                             rounded={'full'}
                             px={6}
                             _hover={{
-                                bg: '#001f3f',
+                                bg: 'brand.primary',
                             }}>
                             Login
                         </Button>

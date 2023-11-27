@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { UserContext } from '../../context/AuthContext';
 import { AppState } from '../../types/types';
 import { Footer } from '../../components/Footer';
+import { Navbar } from '../../components/Navbar';
+import customTheme from '../../theme/theme';
+
 export const Wrapper = () => {
   const [appState, setAppState] = useState<AppState>({
     user: null,
@@ -11,7 +14,7 @@ export const Wrapper = () => {
   });
 
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={customTheme}>
       <UserContext.Provider value={{ ...appState, setAuth: setAppState }}>
         <Box
           m={0}
@@ -19,6 +22,7 @@ export const Wrapper = () => {
           minH={'100vh'}
           width={'100vw'}
         >
+          <Navbar />
           <Outlet />
         <Footer/>
         </Box>

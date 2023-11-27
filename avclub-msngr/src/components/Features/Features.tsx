@@ -28,16 +28,16 @@ export const Features = () => {
                             <StackDivider borderColor={useColorModeValue('gray.100', 'gray.700')} />
                         }>
                         <SingleFeature
-                            icon={<Icon as={AiOutlineTeam} color={'#001f3f'} w={5} h={5} />}
+                            icon={<Icon as={AiOutlineTeam} color={'brand.primary'} w={5} h={5} />}
                             iconBg={useColorModeValue('blue.100', 'blue.900')}
                             text={'Team Up, Plan and Collaborate'}
                         />
                         <SingleFeature
-                            icon={<Icon as={AiOutlineMessage} color={'#001f3f'} w={5} h={5} />}
+                            icon={<Icon as={AiOutlineMessage} color={'brand.primary'} w={5} h={5} />}
                             iconBg={useColorModeValue('green.100', 'green.900')}
                             text={'Upgrade Your Chat Experience'} />
                         <SingleFeature
-                            icon={<Icon as={AiOutlineVideoCamera} color={'#001f3f'} w={5} h={5} />}
+                            icon={<Icon as={AiOutlineVideoCamera} color={'brand.primary'} w={5} h={5} />}
                             iconBg={useColorModeValue('purple.100', 'purple.900')}
                             text={'Elevate Team Communication with Video Conferencing'}
                         />
@@ -53,7 +53,7 @@ export const Features = () => {
                         objectFit={'cover'}
                         loading={'eager'}
                         border={'4px'}  // Add a 1px border
-                        borderColor={'#001f3f'}
+                        borderColor={'brand.primary'}
                     />
                 </Flex>
             </SimpleGrid>
