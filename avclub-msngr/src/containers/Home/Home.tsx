@@ -14,8 +14,8 @@ export const Home = () => {
 
     useEffect(() => {
         let disconnectUsersListener: Unsubscribe;
-        let disconnectTeamsListener: Unsubscribe;
-
+        let disconnectTeamsListener: Unsubscribe;     
+        
         try {
             disconnectUsersListener = getUserCount(setUserCount);
             disconnectTeamsListener = getTeamsCount(setTeamsCount);
