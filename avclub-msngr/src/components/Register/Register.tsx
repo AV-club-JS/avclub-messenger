@@ -14,7 +14,6 @@ import {
   Stack,
   Text,
   useColorModeValue,
-  useToast,
 } from "@chakra-ui/react";
 import { ChangeEvent, MouseEvent, useContext, useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
@@ -28,6 +27,7 @@ import { createUser, getUserByUid } from "../../services/users.services";
 import { UserContext } from "../../context/AuthContext";
 import { UserCredential } from "firebase/auth";
 import { isValidUserData } from "../../utils/isValidUserData";
+
 const defaultUserData: DefaultUserData & Credentials = {
   email: "",
   password: "",
@@ -47,6 +47,7 @@ export const Register = () => {
     message: "",
     field: "",
   });
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     return setUser({ ...user, [e.target.id]: e.target.value });
   };
@@ -58,9 +59,11 @@ export const Register = () => {
   const handleValidationErrorField = (field: string): {} | undefined => {
     return validation.field === field ? { borderColor: "red" } : undefined;
   };
+
   const submit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setValidation(isValidUserData(user));
+
     if (!validation.error) {
       try {
         const credential = await registerUser(user) as UserCredential;
@@ -76,6 +79,7 @@ export const Register = () => {
       } catch (error) {
         console.log((error as FirebaseError).code);
         const code: string = (error as FirebaseError).code;
+
         switch (code) {
           case "auth/email-already-exists":
             setValidation({
@@ -155,7 +159,7 @@ export const Register = () => {
               </Box>
             </HStack>
             <FormControl id="username" isRequired>
-              <FormLabel>Usernamer</FormLabel>
+              <FormLabel>Username</FormLabel>
               <Input
                 sx={handleValidationErrorField("username")}
                 onClick={resetValidationError}
