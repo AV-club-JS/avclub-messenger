@@ -4,30 +4,34 @@ import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
-  Checkbox,
   Flex,
   FormControl,
   FormLabel,
   Heading,
   Input,
   Stack,
-  Text,
   useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
-import { ChangeEvent, MouseEvent, useState } from "react";
+import { ChangeEvent, MouseEvent, useState, useContext } from "react";
+import { UserCredential, User } from "firebase/auth";
 // types
 import { Credentials } from "../../types/types";
 // services
 import { loginUser } from "../../services";
+import { getUserByUid } from "../../services";
+// context
+import { UserContext } from "../../context/AuthContext";
 
 const defaultUserLoginData: Credentials = {
   email: "",
   password: "",
 };
+
 export const Login = (): JSX.Element => {
   const navigate = useNavigate();
   const [user, setUser] = useState(defaultUserLoginData);
+  const { setAuth } = useContext(UserContext);
 
   const toast = useToast();
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -37,8 +41,14 @@ export const Login = (): JSX.Element => {
   const submit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
-      const userLogged = await loginUser(user);
-      console.log(userLogged);
+      const credential = await loginUser(user) as UserCredential;
+      const req = await getUserByUid(credential.user.uid);
+      const userInfo = req.val();
+      
+      setAuth({
+        user: credential!.user as User,
+        userData: userInfo
+      })
       navigate("/");
     } catch (error) {
       switch ((error as FirebaseError).code) {
@@ -111,8 +121,6 @@ export const Login = (): JSX.Element => {
                 align={"start"}
                 justify={"space-between"}
               >
-                <Checkbox>Remember me</Checkbox>
-                <Text color={"blue.400"}>Forgot password?</Text>
               </Stack>
               <Button
                 onClick={submit}

@@ -9,6 +9,7 @@ import { Wrapper } from './containers/Wrapper';
 import { Home } from './containers/Home';
 import { Login } from './components/Login';
 import { Register } from './components/Register';
+import { Profile } from './containers/Profile';
 
 //Browser router
 const appRoutes = createBrowserRouter(
@@ -17,6 +18,7 @@ const appRoutes = createBrowserRouter(
       <Route index element={<Home />} />
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
+      <Route path='/profile' element={<Profile />} />
     </Route>
   )
 );

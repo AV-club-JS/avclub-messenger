@@ -16,9 +16,13 @@ import {
 } from '@chakra-ui/icons';
 import { DesktopNav } from './DesktopNav';
 import { MobileNav } from './MobileNav';
+import { useContext } from 'react';
+import { UserContext } from '../../context/AuthContext';
+import { logoutUser } from '../../services';
 
 export const Navbar = () => {
     const { isOpen, onToggle } = useDisclosure();
+    const { user } = useContext(UserContext);
 
     return (
         <Box>
@@ -32,7 +36,7 @@ export const Navbar = () => {
                 borderStyle={'solid'}
                 borderColor={useColorModeValue('gray.200', 'gray.900')}
                 align={'center'}>
-                <Flex
+                {user && <Flex
                     flex={{ base: 1, md: 'auto' }}
                     ml={{ base: -2 }}
                     display={{ base: 'flex', md: 'none' }}>
@@ -42,7 +46,7 @@ export const Navbar = () => {
                         variant={'ghost'}
                         aria-label={'Toggle Navigation'}
                     />
-                </Flex>
+                </Flex>}
                 <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
                     <Text
                         textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
@@ -53,32 +57,52 @@ export const Navbar = () => {
                     </Text>
 
                     <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
-                        <DesktopNav />
+                        {user && <DesktopNav /> }
                     </Flex>
                 </Flex>
-                    <Stack
-                        flex={{ base: 1, md: 0 }}
-                        justify={'flex-end'}
-                        direction={'row'}
-                        spacing={6}>
-                        <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'login'}>
-                            Login
-                        </Button>
+                <Stack
+                    flex={{ base: 1, md: 0 }}
+                    justify={'flex-end'}
+                    direction={'row'}
+                    spacing={6}>
+
+                    {!user ?
+                        <>
+                            <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'login'}>
+                                Login
+                            </Button>
+                            <Button
+                                as={'a'}
+                                display={{ base: 'none', md: 'inline-flex' }}
+                                fontSize={'sm'}
+                                fontWeight={600}
+                                color={'white'}
+                                bg={'brand.accent'}
+                                href={'register'}
+                                mr={'20px'}
+                                _hover={{
+                                    bg: 'brand.primary',
+                                }}>
+                                Register
+                            </Button>
+                        </> :
                         <Button
                             as={'a'}
-                            display={{ base: 'none', md: 'inline-flex' }}
                             fontSize={'sm'}
                             fontWeight={600}
                             color={'white'}
                             bg={'brand.accent'}
-                            href={'register'}
+                            href={'/'}
+                            onClick={logoutUser}
                             mr={'20px'}
                             _hover={{
                                 bg: 'brand.primary',
                             }}>
-                            Register
+                            Logout
                         </Button>
-                    </Stack>
+
+                    }
+                </Stack>
             </Flex>
 
             <Collapse in={isOpen} animateOpacity>

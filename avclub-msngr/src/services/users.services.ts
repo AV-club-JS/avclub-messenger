@@ -9,8 +9,9 @@ import {
     update,
     onValue
 } from "firebase/database";
-// database
-import { db } from "../config/firebase-config";
+import { getDownloadURL, uploadBytes, ref as storageRef } from "firebase/storage";
+// database, storage
+import { db, storage } from "../config/firebase-config";
 // types
 import { DefaultUserData, SetCount } from "../types/types";
 
@@ -32,6 +33,8 @@ export const createUser = async ({
             phone,
             createdOn: Date.now(),
             avatarUrl: '',
+            status: 'online',
+            bio: ''
         });
     } catch (error) {
         console.error((error as Error).message);
@@ -45,10 +48,36 @@ export const getUserByUid = async (uid: string) => {
 
 export const getUserCount = (setUserCount: SetCount) => {
     const usersRef = ref(db, 'users/');
-    
+
     return onValue(usersRef, (snapshot) => {
         const data = snapshot.val();
-        const userCount = data ? Object.keys(data).length : 0; 
+        const userCount = data ? Object.keys(data).length : 0;
         setUserCount(userCount);
     })
 }
+
+export const getUserRef = (uid: string) => {
+    return ref(db, `users/${uid}`);
+};
+
+export const updateUserData = async (uid: string, data: object) => {
+    const userRef = getUserRef(uid);
+    await update(userRef, data);
+    return true;
+
+};
+
+export const changeUserAvatar = async (userUid: string, avatar: File) => {
+    try {
+        const storageUserRef = storageRef(storage, `/avatars/${userUid}`);
+        await uploadBytes(storageUserRef, avatar);
+
+        const url = await getDownloadURL(storageUserRef);
+
+        await updateUserData(userUid, { avatarUrl: url });
+        return url;
+    } catch (error) {
+        console.error(error);
+    }
+};
+
