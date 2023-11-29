@@ -1,3 +1,5 @@
+import validator from 'validator';
+
 export const getStatusBadgeColor = (status: string) => {
     switch (status) {
         case "online":
@@ -14,3 +16,13 @@ export const getStatusBadgeColor = (status: string) => {
             return "gray.500";
     }
 };
+
+export const validatePhoneNumber = (number: string) => {
+    const isValidPhoneNumber = validator.isMobilePhone(number);
+    return isValidPhoneNumber;
+};
+
+export const froalaBioConfig = {
+    charCounterCount: true,
+    charCounterMax: 1200,
+}
