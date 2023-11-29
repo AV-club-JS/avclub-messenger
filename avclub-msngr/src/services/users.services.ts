@@ -47,10 +47,22 @@ export const getUserByUid = async (uid: string) => {
 
 export const getUserCount = (setUserCount: SetCount) => {
     const usersRef = ref(db, 'users/');
-    
+
     return onValue(usersRef, (snapshot) => {
         const data = snapshot.val();
-        const userCount = data ? Object.keys(data).length : 0; 
+        const userCount = data ? Object.keys(data).length : 0;
         setUserCount(userCount);
     })
 }
+
+export const getUserRef = (uid: string) => {
+    return ref(db, `users/${uid}`);
+};
+
+export const updateUserData = async (uid: string, data: object) => {
+    const userRef = getUserRef(uid);
+    await update(userRef, data);
+    return true;
+
+};
+
