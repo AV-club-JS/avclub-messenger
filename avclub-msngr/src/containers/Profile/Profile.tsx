@@ -36,11 +36,17 @@ export const Profile = () => {
             setIsEditingUsername(false);
             return;
         }
-        await updateUserData(userData!.uid, { username: username });
-        setAuth({
-            user,
-            userData: { ...userData!, username: username },
-        });
+        try {
+            await updateUserData(userData!.uid, { username: username });
+            setAuth({
+                user,
+                userData: { ...userData!, username: username },
+            });
+        } catch (error) {
+            console.error(error);
+            alert('Failed to update');
+            setUsername(userData!.username);
+        }
         setIsEditingUsername(false);
     }
 
@@ -51,11 +57,17 @@ export const Profile = () => {
             setIsEditingFirstName(false);
             return;
         }
-        await updateUserData(userData!.uid, { firstName: firstName });
-        setAuth({
-            user,
-            userData: { ...userData!, firstName: firstName },
-        });
+        try {
+            await updateUserData(userData!.uid, { firstName: firstName });
+            setAuth({
+                user,
+                userData: { ...userData!, firstName: firstName },
+            });
+        } catch (error) {
+            console.error(error);
+            alert('Failed to update');
+            setFirstName(userData!.firstName);
+        }
         setIsEditingFirstName(false);
     }
 
@@ -66,11 +78,17 @@ export const Profile = () => {
             setIsEditingLastName(false);
             return;
         }
-        await updateUserData(userData!.uid, { lastName: lastName });
-        setAuth({
-            user,
-            userData: { ...userData!, lastName: lastName },
-        });
+        try {
+            await updateUserData(userData!.uid, { lastName: lastName });
+            setAuth({
+                user,
+                userData: { ...userData!, lastName: lastName },
+            });
+        } catch (error) {
+            console.error(error);
+            alert('Failed to update');
+            setLastName(userData!.lastName);
+        }
         setIsEditingLastName(false);
     }
 
@@ -81,31 +99,49 @@ export const Profile = () => {
             setIsEditingPhone(false);
             return;
         }
-        await updateUserData(userData!.uid, { phone: phone });
-        setAuth({
-            user,
-            userData: { ...userData!, phone: phone },
-        });
+        try {
+            await updateUserData(userData!.uid, { phone: phone });
+            setAuth({
+                user,
+                userData: { ...userData!, phone: phone },
+            });
+        } catch (error) {
+            console.error(error);
+            alert('Failed to update');
+            setPhone(userData!.phone);
+        }
         setIsEditingPhone(false);
     }
 
     const handleBioEdit = async () => {
-        await updateUserData(userData!.uid, { bio: bio });
-        setAuth({
-            user,
-            userData: { ...userData!, bio: bio },
-        });
+        try {
+            await updateUserData(userData!.uid, { bio: bio });
+            setAuth({
+                user,
+                userData: { ...userData!, bio: bio },
+            });
+        } catch (error) {
+            console.error(error);
+            alert('Update failed');
+            setBio(userData!.bio);
+        }
         setIsEditingBio(false);
     }
 
     const handleStatusChange = async (newStatus: string) => {
         setCurrentStatus(newStatus);
         if (userData) {
-            await updateUserData(userData.uid, { status: newStatus });
-            setAuth({
-                user,
-                userData: { ...userData, status: newStatus },
-            });
+            try {
+                await updateUserData(userData.uid, { status: newStatus });
+                setAuth({
+                    user,
+                    userData: { ...userData, status: newStatus },
+                });
+            } catch (error) {
+                console.error(error);
+                alert('Update failed');
+                setCurrentStatus(userData!.status);
+            }
         }
     };
 
@@ -138,6 +174,7 @@ export const Profile = () => {
                             <option value="in meeting">In Meeting</option>
                             <option value="offline">Offline</option>
                         </Select>
+                        <Button mt="10px" size="xs">Change Avatar</Button>
                     </FormControl>
                 </Stack>
                 <Stack direction="row" spacing={4} mt={4}>
