@@ -12,6 +12,7 @@ export const Home = () => {
   const [userCount, setUserCount] = useState(-1);
   const [teamsCount, setTeamsCount] = useState(-1);
 
+<<<<<<< HEAD
   const context = useContext(UserContext);
   useEffect(() => {
     console.log(context, 123);
@@ -24,6 +25,18 @@ export const Home = () => {
     } catch (error) {
       console.error(error);
     }
+=======
+    useEffect(() => {
+        let disconnectUsersListener: Unsubscribe;
+        let disconnectTeamsListener: Unsubscribe;     
+        
+        try {
+            disconnectUsersListener = getUserCount(setUserCount);
+            disconnectTeamsListener = getTeamsCount(setTeamsCount);
+        } catch (error) {
+            console.error(error);
+        }
+>>>>>>> develop
 
     return () => {
       disconnectTeamsListener();

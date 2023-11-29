@@ -10,8 +10,8 @@ import { DesktopSubNav } from './DesktopSubNav';
 import { NAV_ITEMS } from '../../../constants/navItems';
 
 export const DesktopNav = () => {
-    const linkColor = useColorModeValue('gray.600', 'gray.200')
-    const linkHoverColor = useColorModeValue('gray.800', 'white')
+    const linkColor = useColorModeValue('brand.primary', 'gray.200')
+    const linkHoverColor = useColorModeValue('brand.accent', 'white')
     const popoverContentBgColor = useColorModeValue('white', 'gray.800')
 
     return (
@@ -25,7 +25,7 @@ export const DesktopNav = () => {
                                 p={2}
                                 href={navItem.href ?? '#'}
                                 fontSize={'sm'}
-                                fontWeight={500}
+                                fontWeight={600}
                                 color={linkColor}
                                 _hover={{
                                     textDecoration: 'none',

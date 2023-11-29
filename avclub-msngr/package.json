@@ -17,15 +17,19 @@
     "@euriklis/validator": "^4.2.1",
     "firebase": "^10.6.0",
     "framer-motion": "^10.16.5",
+    "froala-editor": "^4.1.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-firebase-hooks": "^5.1.1",
+    "react-froala-wysiwyg": "^4.1.3",
     "react-icons": "^4.12.0",
-    "react-router-dom": "^6.20.0"
+    "react-router-dom": "^6.20.0",
+    "validator": "^13.11.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
+    "@types/validator": "^13.11.7",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
