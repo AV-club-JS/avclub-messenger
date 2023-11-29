@@ -26,11 +26,6 @@ export const CTA = () => {
                             Unlock the Future of Team Collaboration with AV Messenger
                         </Text>
                     </Heading>
-                    <Text color={'gray.500'}>
-                        Monetize your content by charging your most loyal readers and reward them
-                        loyalty points. Give back to your loyal readers by granting them access to
-                        your pre-releases and sneak-peaks.
-                    </Text>
                     <Stack
                         direction={'column'}
                         spacing={3}
@@ -47,18 +42,6 @@ export const CTA = () => {
                                 bg: 'brand.primary',
                             }}>
                             Register
-                        </Button>
-                        <Text color={'gray.500'} fontWeight={600} fontSize={'md'}>Already have an account?</Text>
-                        <Button
-                            onClick={() => navigate('/login')}
-                            colorScheme={'blue'}
-                            bg={'blue.400'}
-                            rounded={'full'}
-                            px={6}
-                            _hover={{
-                                bg: 'brand.primary',
-                            }}>
-                            Login
                         </Button>
                     </Stack>
                 </Stack>
