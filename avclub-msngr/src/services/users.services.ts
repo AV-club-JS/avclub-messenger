@@ -9,8 +9,9 @@ import {
     update,
     onValue
 } from "firebase/database";
-// database
-import { db } from "../config/firebase-config";
+import { getDownloadURL, uploadBytes, ref as storageRef } from "firebase/storage";
+// database, storage
+import { db, storage } from "../config/firebase-config";
 // types
 import { DefaultUserData, SetCount } from "../types/types";
 
@@ -64,5 +65,19 @@ export const updateUserData = async (uid: string, data: object) => {
     await update(userRef, data);
     return true;
 
+};
+
+export const changeUserAvatar = async (userUid: string, avatar: File) => {
+    try {
+        const storageUserRef = storageRef(storage, `/avatars/${userUid}`);
+        await uploadBytes(storageUserRef, avatar);
+
+        const url = await getDownloadURL(storageUserRef);
+
+        await updateUserData(userUid, { avatarUrl: url });
+        return url;
+    } catch (error) {
+        console.error(error);
+    }
 };
 
