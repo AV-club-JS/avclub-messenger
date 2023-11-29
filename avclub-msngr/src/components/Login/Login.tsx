@@ -49,7 +49,7 @@ export const Login = (): JSX.Element => {
         user: credential!.user as User,
         userData: userInfo
       })
-      navigate("/");
+      navigate("/profile");
     } catch (error) {
       switch ((error as FirebaseError).code) {
         case "auth/invalid-login-credentials":
@@ -75,7 +75,7 @@ export const Login = (): JSX.Element => {
             position: "top",
             status: "error",
             title: "Login error:",
-            description: "There was a problem loggin in.",
+            description: "There was a problem logging in.",
           });
           break;
       }

@@ -15,7 +15,6 @@ export const Wrapper = () => {
     userData: null,
   });
   const [user, loading] = useAuthState(auth);
-
   const [userDataLoading, setUserDataLoading] = useState(false);
 
   if (appState.user !== user) {
@@ -29,7 +28,7 @@ export const Wrapper = () => {
       }
       try {
         setUserDataLoading(true);
-        const req = await getUserByUid(user.uid);
+        const req = await getUserByUid(user!.uid);
         const data = req.val();
         setAppState({
           ...appState,
