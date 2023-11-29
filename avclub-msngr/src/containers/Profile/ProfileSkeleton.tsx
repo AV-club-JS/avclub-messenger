@@ -1,10 +1,20 @@
 "use strict";
 
 import { DefaultUserData } from "../../types/types";
-import { Skeleton } from "@chakra-ui/react";
+import {Box, Skeleton, Avatar } from "@chakra-ui/react";
 
-export const ProfileSkeleton = (props: {user: DefaultUserData}) => (
-  <Skeleton isLoaded={false}>
-    hello
-  </Skeleton>
-);
+export const ProfileSkeleton = (props: { user: DefaultUserData }) => {
+  // destructure the user data from the firebase.
+  const { user } = props;
+  // get the chats ids
+  return (
+    <>
+      <Box>
+         
+        <Skeleton isLoaded={false}>
+          hello
+        </Skeleton>
+      </Box>
+    </>
+  );
+};

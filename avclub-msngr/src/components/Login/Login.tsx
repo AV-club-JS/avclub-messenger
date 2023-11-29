@@ -15,20 +15,25 @@ import {
   useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
-import { ChangeEvent, MouseEvent, useState } from "react";
+import { ChangeEvent, MouseEvent, useContext, useState } from "react";
 // types
 import { Credentials } from "../../types/types";
 // services
 import { loginUser } from "../../services";
 
+import { UserContext } from "../../context/AuthContext";
+
+
+
 const defaultUserLoginData: Credentials = {
   email: "",
   password: "",
 };
+import { auth } from "../../config/firebase-config";
 export const Login = (): JSX.Element => {
   const navigate = useNavigate();
   const [user, setUser] = useState(defaultUserLoginData);
-
+  const context = useContext(UserContext);
   const toast = useToast();
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setUser({ ...user, [e.target.id]: e.target.value });
@@ -37,8 +42,7 @@ export const Login = (): JSX.Element => {
   const submit = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
-      const userLogged = await loginUser(user);
-      console.log(userLogged);
+      const loginData = await loginUser(user);
       navigate("/profile");
     } catch (error) {
       switch ((error as FirebaseError).code) {
