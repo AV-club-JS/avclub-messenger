@@ -39,7 +39,7 @@ export const Login = (): JSX.Element => {
     try {
       const userLogged = await loginUser(user);
       console.log(userLogged);
-      navigate("/");
+      navigate("/profile");
     } catch (error) {
       switch ((error as FirebaseError).code) {
         case "auth/invalid-login-credentials":
