@@ -1,7 +1,7 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext, useRef } from "react";
 import { formatTimestamp } from "../../utils/formatTimestamp";
 // chakra
-import { Avatar, AvatarBadge, Box, Button, Flex, FormControl, FormLabel, Select, Stack, Link, Text, Input } from "@chakra-ui/react";
+import { Avatar, AvatarBadge, Box, Button, Flex, FormControl, FormLabel, Select, Stack, Text, Input } from "@chakra-ui/react";
 // utils
 import { getStatusBadgeColor, validatePhoneNumber, froalaBioConfig } from "../../utils/profileUtils";
 // froala editor
@@ -13,7 +13,7 @@ import FroalaEditorView from "react-froala-wysiwyg/FroalaEditorView";
 // context
 import { UserContext } from "../../context/AuthContext";
 // services
-import { updateUserData } from "../../services";
+import { updateUserData, changeUserAvatar } from "../../services";
 
 export const Profile = () => {
     const [isEditingUsername, setIsEditingUsername] = useState(false);
@@ -28,6 +28,12 @@ export const Profile = () => {
     const [lastName, setLastName] = useState('');
     const [phone, setPhone] = useState('');
     const [bio, setBio] = useState('');
+    const [avatar, setAvatar] = useState('');
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    const handleButtonClick = () => {
+        inputRef.current?.click();
+    };
 
     const handleUsernameEdit = async () => {
         if (username.length < 5) {
@@ -130,20 +136,32 @@ export const Profile = () => {
 
     const handleStatusChange = async (newStatus: string) => {
         setCurrentStatus(newStatus);
-        if (userData) {
             try {
-                await updateUserData(userData.uid, { status: newStatus });
+                await updateUserData(userData!.uid, { status: newStatus });
                 setAuth({
                     user,
-                    userData: { ...userData, status: newStatus },
+                    userData: { ...userData!, status: newStatus },
                 });
             } catch (error) {
                 console.error(error);
                 alert('Update failed');
                 setCurrentStatus(userData!.status);
             }
-        }
     };
+
+    const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        try {
+            const newUrl = await changeUserAvatar(userData!.uid, file!);
+            setAuth({
+                user,
+                userData: { ...userData!, avatarUrl: newUrl! },
+            })
+        } catch (error) {
+            console.error(error);
+            alert('Update failed');
+        }
+    }
 
     useEffect(() => {
         if (userData) {
@@ -152,6 +170,7 @@ export const Profile = () => {
             setLastName(userData.lastName);
             setPhone(userData.phone);
             setBio(userData.bio);
+            setAvatar(userData.avatarUrl);
         }
 
     }, [userData])
@@ -162,8 +181,8 @@ export const Profile = () => {
             <Flex direction="column" alignItems="center" px={4}>
 
                 <Stack direction="row" p={6}>
-                    <Avatar size="2xl" src={''}>
-                        <AvatarBadge boxSize="1.25em" bg={getStatusBadgeColor(userData.status)} />
+                    <Avatar size="2xl" src={userData.avatarUrl}>
+                        <AvatarBadge boxSize="1em" bg={getStatusBadgeColor(userData.status)} />
                     </Avatar>
                     <FormControl>
                         <FormLabel>Status</FormLabel>
@@ -174,7 +193,14 @@ export const Profile = () => {
                             <option value="in meeting">In Meeting</option>
                             <option value="offline">Offline</option>
                         </Select>
-                        <Button mt="10px" size="xs">Change Avatar</Button>
+                        <Button onClick={handleButtonClick} size="xs" m="3">Change Avatar</Button>
+                        <Input
+                            ref={inputRef}
+                            type="file"
+                            accept=".jpeg,.jpg,.png"
+                            onChange={handleAvatarChange}
+                            display="none"
+                        />
                     </FormControl>
                 </Stack>
                 <Stack direction="row" spacing={4} mt={4}>
@@ -187,7 +213,7 @@ export const Profile = () => {
                             <Stack direction="row">
                                 <FormLabel fontWeight={600}>Username</FormLabel>
                                 {isEditingUsername ?
-                                    <Button size={'xs'} onClick={() => handleUsernameEdit()}>Save</Button>
+                                    <Button size={'xs'} onClick={handleUsernameEdit}>Save</Button>
                                     : <Button size={'xs'} onClick={() => setIsEditingUsername(true)}>Edit</Button>
                                 }
                             </Stack>
@@ -203,7 +229,7 @@ export const Profile = () => {
                             <Stack direction="row">
                                 <FormLabel fontWeight={600}>First Name</FormLabel>
                                 {isEditingFirstName ?
-                                    <Button size={'xs'} onClick={() => handleFirstNameEdit()}>Save</Button>
+                                    <Button size={'xs'} onClick={handleFirstNameEdit}>Save</Button>
                                     : <Button size={'xs'} onClick={() => setIsEditingFirstName(true)}>Edit</Button>
                                 }
                             </Stack>
@@ -217,7 +243,7 @@ export const Profile = () => {
                             <Stack direction='row'>
                                 <FormLabel fontWeight={600}>Last Name</FormLabel>
                                 {isEditingLastName ?
-                                    <Button size={'xs'} onClick={() => handleLastNameEdit()}>Save</Button>
+                                    <Button size={'xs'} onClick={handleLastNameEdit}>Save</Button>
                                     : <Button size={'xs'} onClick={() => setIsEditingLastName(true)}>Edit</Button>
                                 }
                             </Stack>
@@ -232,7 +258,7 @@ export const Profile = () => {
                         <Stack direction='row'>
                             <FormLabel fontWeight={600}>Phone Number</FormLabel>
                             {isEditingPhone ?
-                                <Button size={'xs'} onClick={() => handlePhoneEdit()}>Save</Button>
+                                <Button size={'xs'} onClick={handlePhoneEdit}>Save</Button>
                                 : <Button size={'xs'} onClick={() => setIsEditingPhone(true)}>Edit</Button>
                             }
                         </Stack>
@@ -246,7 +272,7 @@ export const Profile = () => {
                         <Stack direction='row'>
                             <FormLabel fontWeight={600}>Bio</FormLabel>
                             {isEditingBio ?
-                                <Button size={'xs'} onClick={() => handleBioEdit()}>Save</Button>
+                                <Button size={'xs'} onClick={handleBioEdit}>Save</Button>
                                 : <Button size={'xs'} onClick={() => setIsEditingBio(true)}>Edit</Button>
                             }
                         </Stack>
@@ -259,8 +285,6 @@ export const Profile = () => {
                             : <FroalaEditorView model={userData.bio} />
                         }
                     </FormControl>
-                    <Button onClick={() => console.log(userData)
-                    }></Button>
                 </Box>
             </Flex>
         );
