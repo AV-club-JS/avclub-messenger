@@ -9,20 +9,37 @@ import {
     useColorModeValue,
     useBreakpointValue,
     useDisclosure,
+    Avatar,
+    AvatarBadge
 } from '@chakra-ui/react';
 import {
     HamburgerIcon,
     CloseIcon,
 } from '@chakra-ui/icons';
+import { useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+// components
 import { DesktopNav } from './DesktopNav';
 import { MobileNav } from './MobileNav';
-import { useContext } from 'react';
 import { UserContext } from '../../context/AuthContext';
+// services
 import { logoutUser } from '../../services';
+// utils
+import { getStatusBadgeColor } from '../../utils/profileUtils';
 
 export const Navbar = () => {
     const { isOpen, onToggle } = useDisclosure();
-    const { user } = useContext(UserContext);
+    const { user, userData } = useContext(UserContext);
+    const [downloadURL, setDownloadURL] = useState<string | null>(null);
+    const [userStatus, setUserStatus] = useState<string | null>(null);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (userData) {
+            setDownloadURL(userData.avatarUrl);
+            setUserStatus(userData.status);
+        }
+    }, [userData])
 
     return (
         <Box>
@@ -57,7 +74,7 @@ export const Navbar = () => {
                     </Text>
 
                     <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
-                        {user && <DesktopNav /> }
+                        {user && <DesktopNav />}
                     </Flex>
                 </Flex>
                 <Stack
@@ -85,22 +102,31 @@ export const Navbar = () => {
                                 }}>
                                 Register
                             </Button>
-                        </> :
-                        <Button
-                            as={'a'}
-                            fontSize={'sm'}
-                            fontWeight={600}
-                            color={'white'}
-                            bg={'brand.accent'}
-                            href={'/'}
-                            onClick={logoutUser}
-                            mr={'20px'}
+                        </> : <>
+                            <Button
+                                as={'a'}
+                                fontSize={'sm'}
+                                fontWeight={600}
+                                color={'white'}
+                                bg={'brand.accent'}
+                                href={'/'}
+                                onClick={logoutUser}
+                                mr={'20px'}
+                                size='sm'
+                                _hover={{
+                                    bg: 'brand.primary',
+                                }}>
+                                Logout
+                            </Button>
+                            <Avatar size="sm"
+                            src={downloadURL!}
+                            onClick={() => navigate('/profile')}
                             _hover={{
-                                bg: 'brand.primary',
+                                cursor:"pointer"
                             }}>
-                            Logout
-                        </Button>
-
+                                <AvatarBadge boxSize="1em" bg={getStatusBadgeColor(userStatus!)} />
+                            </Avatar>
+                        </>
                     }
                 </Stack>
             </Flex>
@@ -111,3 +137,4 @@ export const Navbar = () => {
         </Box>
     )
 }
+
