@@ -55,7 +55,9 @@ export interface ActivityBarProps {
 
 export interface NavItem {
     label: string
-    subLabel?: string
-    children?: Array<NavItem>
-    href?: string
+    nav: string
+}
+
+export interface SearchResultsProps {
+    users: DefaultUserData[];
 }
