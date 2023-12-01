@@ -7,7 +7,9 @@ import {
     remove,
     set,
     update,
-    onValue
+    onValue,
+    startAt,
+    endAt
 } from "firebase/database";
 import { getDownloadURL, uploadBytes, ref as storageRef } from "firebase/storage";
 // database, storage
@@ -16,6 +18,8 @@ import { db, storage } from "../config/firebase-config";
 import { DefaultUserData, SetCount } from "../types/types";
 // constants
 import { AVATARS, USERS } from "../constants/servicesConstants";
+
+const usersRef = ref(db, `${USERS}/`);
 
 export const createUser = async ({
     username,
@@ -49,7 +53,6 @@ export const getUserByUid = async (uid: string) => {
 };
 
 export const getUserCount = (setUserCount: SetCount) => {
-    const usersRef = ref(db, `${USERS}/`);
 
     return onValue(usersRef, (snapshot) => {
         const data = snapshot.val();
@@ -79,4 +82,11 @@ export const changeUserAvatar = async (userUid: string, avatar: File) => {
         return url;
 };
 
+export const getUsersByKey = async (key: string, val: string) => {
+    const req = await get(query(usersRef, orderByChild(key)));
+    const data = req.val();
+    const filteredData = Object.values(data).filter((el) => {
+        return (el as DefaultUserData).username.toLowerCase().includes(val.toLowerCase())});
+    return filteredData;
+}
 
