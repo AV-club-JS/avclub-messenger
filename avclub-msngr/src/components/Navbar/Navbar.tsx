@@ -10,29 +10,47 @@ import {
     useBreakpointValue,
     useDisclosure,
     Avatar,
-    AvatarBadge
+    AvatarBadge,
 } from '@chakra-ui/react';
 import {
     HamburgerIcon,
     CloseIcon,
 } from '@chakra-ui/icons';
+import { Search2Icon } from '@chakra-ui/icons';
 import { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 // components
 import { DesktopNav } from './DesktopNav';
 import { MobileNav } from './MobileNav';
 import { UserContext } from '../../context/AuthContext';
+import { NavSearchModal } from './NavSearchModal';
 // services
-import { logoutUser } from '../../services';
+import { logoutUser, updateUserData } from '../../services';
 // utils
 import { getStatusBadgeColor } from '../../utils/profileUtils';
 
 export const Navbar = () => {
-    const { isOpen, onToggle } = useDisclosure();
+    const { isOpen: isHamburgerOpen, onToggle: onHamburgerToggle } = useDisclosure();
+    const { isOpen: isSearchOpen, onOpen: onSearchOpen, onClose: onSearchClose } = useDisclosure();
     const { user, userData } = useContext(UserContext);
     const [downloadURL, setDownloadURL] = useState<string | null>(null);
     const [userStatus, setUserStatus] = useState<string | null>(null);
     const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        try {
+            await logoutUser();
+            await updateUserData(userData!.uid, { status: 'offline' });
+            navigate('/');
+        } catch (error) {
+            console.error(error);
+        }
+
+    }
+
+    const handleSearchOpen = () => {
+        onSearchOpen();
+    };
 
     useEffect(() => {
         if (userData) {
@@ -58,17 +76,18 @@ export const Navbar = () => {
                     ml={{ base: -2 }}
                     display={{ base: 'flex', md: 'none' }}>
                     <IconButton
-                        onClick={onToggle}
-                        icon={isOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />}
+                        onClick={onHamburgerToggle}
+                        icon={isHamburgerOpen ? <CloseIcon w={3} h={3} /> : <HamburgerIcon w={5} h={5} />}
                         variant={'ghost'}
                         aria-label={'Toggle Navigation'}
                     />
                 </Flex>}
-                <Flex flex={{ base: 1 }} justify={{ base: 'center', md: 'start' }}>
+                <Flex flex={{ base: 1 }} justify={{ base: 'left', md: 'start' }}>
                     <Text
-                        textAlign={useBreakpointValue({ base: 'center', md: 'left' })}
+                        display={{ base: 'none', md: 'flex' }}
+                        textAlign={useBreakpointValue({ base: 'left', md: 'left' })}
                         fontFamily={'heading'}
-                        ml={'20px'}
+                        ml={4}
                         color={useColorModeValue('gray.800', 'white')}>
                         AVM
                     </Text>
@@ -77,6 +96,7 @@ export const Navbar = () => {
                         {user && <DesktopNav />}
                     </Flex>
                 </Flex>
+
                 <Stack
                     flex={{ base: 1, md: 0 }}
                     justify={'flex-end'}
@@ -85,7 +105,7 @@ export const Navbar = () => {
 
                     {!user ?
                         <>
-                            <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} href={'login'}>
+                            <Button as={'a'} fontSize={'sm'} fontWeight={400} variant={'link'} onClick={() => navigate('login')}>
                                 Login
                             </Button>
                             <Button
@@ -95,7 +115,7 @@ export const Navbar = () => {
                                 fontWeight={600}
                                 color={'white'}
                                 bg={'brand.accent'}
-                                href={'register'}
+                                onClick={() => navigate('register')}
                                 mr={'20px'}
                                 _hover={{
                                     bg: 'brand.primary',
@@ -103,27 +123,40 @@ export const Navbar = () => {
                                 Register
                             </Button>
                         </> : <>
+                            <Flex display={{ base: 'sm', md: 'flex' }} mr={2} w={'40%'}>
+                                <Button size='sm'
+                                    onClick={handleSearchOpen}
+                                    color={'brand.primary'}
+                                    variant={'ghost'}
+                                    _hover={{
+                                        bg: 'brand.primary',
+                                        color: 'brand.accent',
+                                    }}>
+                                    <Search2Icon mr={1} />Search
+                                </Button>
+                            </Flex>
+                            <NavSearchModal isOpen={isSearchOpen} onClose={onSearchClose} />
                             <Button
                                 as={'a'}
                                 fontSize={'sm'}
                                 fontWeight={600}
-                                color={'white'}
-                                bg={'brand.accent'}
-                                href={'/'}
-                                onClick={logoutUser}
+                                onClick={() => handleLogout()}
                                 mr={'20px'}
                                 size='sm'
+                                color={'brand.primary'}
+                                variant={'ghost'}
                                 _hover={{
                                     bg: 'brand.primary',
+                                    color: 'brand.accent',
                                 }}>
                                 Logout
                             </Button>
                             <Avatar size="sm"
-                            src={downloadURL!}
-                            onClick={() => navigate('/profile')}
-                            _hover={{
-                                cursor:"pointer"
-                            }}>
+                                src={downloadURL!}
+                                onClick={() => navigate('profile')}
+                                _hover={{
+                                    cursor: "pointer"
+                                }}>
                                 <AvatarBadge boxSize="1em" bg={getStatusBadgeColor(userStatus!)} />
                             </Avatar>
                         </>
@@ -131,7 +164,7 @@ export const Navbar = () => {
                 </Stack>
             </Flex>
 
-            <Collapse in={isOpen} animateOpacity>
+            <Collapse in={isHamburgerOpen} animateOpacity>
                 <MobileNav />
             </Collapse>
         </Box>
