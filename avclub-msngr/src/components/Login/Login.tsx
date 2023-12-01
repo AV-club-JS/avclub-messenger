@@ -18,7 +18,7 @@ import { UserCredential, User } from "firebase/auth";
 // types
 import { Credentials } from "../../types/types";
 // services
-import { loginUser } from "../../services";
+import { loginUser, updateUserData } from "../../services";
 import { getUserByUid } from "../../services";
 // context
 import { UserContext } from "../../context/AuthContext";
@@ -42,13 +42,15 @@ export const Login = (): JSX.Element => {
     e.preventDefault();
     try {
       const credential = await loginUser(user) as UserCredential;
+      await updateUserData(credential.user.uid, {status: 'online'});
       const req = await getUserByUid(credential.user.uid);
       const userInfo = req.val();
       
       setAuth({
         user: credential!.user as User,
         userData: userInfo
-      })
+      });
+      
       navigate("/profile");
     } catch (error) {
       switch ((error as FirebaseError).code) {
