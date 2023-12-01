@@ -33,12 +33,16 @@ export const NavSearchModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: 
         } catch (error) {
             console.error(error);
         }
+    }
 
+    const handleClose = () => {
+        setResults([]);
+        onClose();
     }
 
     return (
         <>
-            <Modal isOpen={isOpen} onClose={onClose} size={'lg'}>
+            <Modal isOpen={isOpen} onClose={handleClose} size={'lg'}>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Search</ModalHeader>
