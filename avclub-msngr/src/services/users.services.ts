@@ -1,5 +1,6 @@
 import {
   DataSnapshot,
+  endAt,
   equalTo,
   get,
   onValue,
@@ -8,6 +9,7 @@ import {
   ref,
   remove,
   set,
+  startAt,
   update,
 } from "firebase/database";
 import {
@@ -18,7 +20,11 @@ import {
 // database, storage
 import { db, storage } from "../config/firebase-config";
 // types
-import { DefaultUserData, SetCount } from "../types/types";
+import { DefaultUserData, SetCount, SetUserData } from "../types/types";
+// constants
+import { AVATARS, USERS } from "../constants/servicesConstants";
+
+const usersRef = ref(db, `${USERS}/`);
 
 export const createUser = async ({
   username,
@@ -73,7 +79,7 @@ export const getUserCount = (setUserCount: SetCount) => {
 };
 
 export const getUserRef = (uid: string) => {
-  return ref(db, `users/${uid}`);
+  return ref(db, `${USERS}/${uid}`);
 };
 
 export const updateUserData = async (uid: string, data: object) => {
@@ -111,4 +117,29 @@ export const getUsers = async (): Promise<
   const req = await get(ref(db, `users`));
   const users = req.val();
   return users;
+};
+export const getUsersByKey = async (key: string, val: string) => {
+  const req = await get(query(usersRef, orderByChild(key)));
+  const data = req.val();
+  const filteredData = Object.values(data).filter((el) => {
+    return (el as DefaultUserData).username.toLowerCase().includes(
+      val.toLowerCase(),
+    );
+  });
+  return filteredData;
+};
+
+export const setUserDataListen = (
+  userUid: string,
+  setUserData: SetUserData,
+) => {
+  const userRef = ref(db, `${USERS}/${userUid}`);
+  return onValue(userRef, (snapshot) => {
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      if (data !== null) {
+        setUserData(data);
+      }
+    }
+  });
 };

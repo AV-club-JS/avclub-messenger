@@ -17,11 +17,11 @@ export type DefaultUserData = {
   firstName: string;
   lastName: string;
   phone: string;
-  uid?: string;
-  avatarUrl?: string;
-  bio?: string;
-  status?: string;
-  createdOn?: string;
+  uid: string;
+  avatarUrl: string;
+  bio: string;
+  status: string;
+  createdOn: string;
 };
 
 export type DefaultTeamData = {
@@ -55,9 +55,7 @@ export interface ActivityBarProps {
 
 export interface NavItem {
   label: string;
-  subLabel?: string;
-  children?: Array<NavItem>;
-  href?: string;
+  nav: string;
 }
 
 export type Chat = {
@@ -83,3 +81,8 @@ export type ChatInfo = {
 };
 
 export type ChatsCollection = ChatInfo[];
+export interface SearchResultsProps {
+  users: DefaultUserData[];
+}
+
+export type SetUserData = Dispatch<SetStateAction<DefaultUserData | null>>;

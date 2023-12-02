@@ -11,6 +11,7 @@ import { Login } from './components/Login';
 import { Register } from './components/Register';
 import { Profile } from './containers/Profile';
 import { Chats } from './containers/Chats';
+import { NotFound } from './containers/NotFound';
 
 //Browser router
 const appRoutes = createBrowserRouter(
@@ -21,6 +22,7 @@ const appRoutes = createBrowserRouter(
       <Route path='/register' element={<Register />} />
       <Route path='/profile' element={<Profile />} />
       <Route path='/chats' element={<Chats />}/>
+      <Route path='*' element={<NotFound />} />
     </Route>
   )
 );
