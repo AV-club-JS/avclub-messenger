@@ -17,11 +17,11 @@ export type DefaultUserData = {
   firstName: string,
   lastName: string,
   phone: string,
-  uid: string,
-  avatarUrl: string,
-  bio: string,
-  status: string,
-  createdOn: string
+  uid?: string,
+  avatarUrl?: string,
+  bio?: string,
+  status?: string,
+  createdOn?: string
 };
 
 export type DefaultTeamData = {
@@ -59,3 +59,27 @@ export interface NavItem {
     children?: Array<NavItem>
     href?: string
 }
+
+export type Chat = {
+  [messageId: string]: {
+    messageId: string,
+    author: string,
+    messageId: string,
+    avatarURL: string,
+    content: string
+  }
+}
+
+export type ChatInfo = {
+  chatId?: string,
+  uid: string, // the creator (owner) of the chanel
+  name: string,
+  participants: {[uid: string]: number},
+  personal: boolean,
+  type: 'chat' | 'chanel',
+  messages: Chat,
+  createdOn: number,
+}
+
+export type ChatsCollection = ChatInfo[];
+

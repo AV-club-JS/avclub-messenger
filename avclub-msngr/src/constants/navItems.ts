@@ -18,18 +18,19 @@ export const NAV_ITEMS: Array<NavItem> = [
     },
     {
         label: 'Chats',
-        children: [
-            {
-                label: 'View Chats',
-                subLabel: 'View Chats You Participate in',
-                href: '#',
-            },
-            {
-                label: 'Start a New Chat',
-                subLabel: 'Search for Users and Start a Chat With Them',
-                href: '#',
-            },
-        ],
+        href: 'chats',
+        // children: [
+        //     {
+        //         label: 'View Chats',
+        //         subLabel: 'View Chats You Participate in',
+        //         href: '#',
+        //     },
+        //     {
+        //         label: 'Start a New Chat',
+        //         subLabel: 'Search for Users and Start a Chat With Them',
+        //         href: '#',
+        //     },
+        // ],
     },
     {
         label: 'Profile',
