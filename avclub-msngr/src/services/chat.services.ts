@@ -1,21 +1,13 @@
-import {
-  get,
-  ref,
-  set,
-  update,
-} from "firebase/database";
+import { get, ref, set, update } from "firebase/database";
 
 import { db } from "../config/firebase-config";
 import { ChatInfo } from "../types/types";
-import crypto from "crypto";
 import { getUserDataByUid, updateUserData } from "./index.ts";
 
-
-
 /**
- * Creates the needed records to 
- * the database when a chat is created. 
- * 
+ * Creates the needed records to
+ * the database when a chat is created.
+ *
  * @param name - the name of the chat.
  * By default this property will be set
  * to the name of the participants.
@@ -31,26 +23,32 @@ import { getUserDataByUid, updateUserData } from "./index.ts";
 export const createChat = async ({
   name,
   uid,
-  participants,
   personal = false,
   type,
 }: ChatInfo): Promise<{ success: boolean; error?: string }> => {
   try {
     const chatId: string = crypto.randomUUID();
-    // record the data of the chat in the 
+    // record the data of the chat in the
     // chanels field of the database.
     const createdOn = Date.now();
-    const userIsUpdated = await updateUserData(uid, {chatids: {chatId: createdOn}});
-    if (!userIsUpdated) return {success: false, error: 'Incorrect uid for this user.'};
+    const userIsUpdated = await updateUserData(uid, {
+      chatids: { chatId: createdOn },
+    });
+    if (!userIsUpdated) {
+      return { success: false, error: "Incorrect uid for this user." };
+    }
     await set(ref(db, `chanels/${chatId}`), {
       chatId,
       uid,
       name,
-      participants,
+      owner: uid,
+      participants: {
+        [uid]: createdOn,
+      },
       personal,
       messages: {},
       type,
-      createdOn ,
+      createdOn,
     });
     console.log("new chat created...");
     return { success: true };
@@ -62,7 +60,7 @@ export const createChat = async ({
 
 /**
  * @param chatId - the id of the chat
- * @returns {Promise<{chatInfo: ChatInfo, error?: string}>} 
+ * @returns {Promise<{chatInfo: ChatInfo, error?: string}>}
  * The information parameters of the chat
  */
 export const getChatInfo = async (
@@ -91,7 +89,7 @@ export const getChatInfo = async (
 export const addMessageToChat = async ({
   chatId,
   uid,
-  content = ""
+  content = "",
 }: { chatId: string; uid: string; content: string }): Promise<
   { success: boolean; error?: string }
 > => {
@@ -131,6 +129,28 @@ export const addMessageToChat = async ({
     }
   } catch (error) {
     console.log(error);
+    return { success: false, error: (error as Error).message };
+  }
+};
+
+const addChatPatricipants = async ({ chatId, participants }: {
+  chatId: string;
+  participants: string[];
+}): Promise<{
+  success: boolean;
+  error?: string;
+}> => {
+  const participantsObject = {};
+  const createdOn = Date.now();
+
+  for (participant of participants) participantsObject[participant] = createdOn;
+  try {
+    await update(ref(db, `chanels/${chatId}/participants`), {
+      participantsObject,
+    });
+    await updateUserData(uid, {})
+    return { success: true };
+  } catch (error) {
     return { success: false, error: (error as Error).message };
   }
 };

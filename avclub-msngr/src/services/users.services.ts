@@ -99,3 +99,16 @@ export const changeUserAvatar = async (userUid: string, avatar: File) => {
     console.error(error);
   }
 };
+
+/**
+ * Obtains the data for all users
+ *
+ * @returns {Promise<{[uid: string]: DefaultUserData}>}
+ */
+export const getUsers = async (): Promise<
+  { [uid: string]: DefaultUserData }
+> => {
+  const req = await get(ref(db, `users`));
+  const users = req.val();
+  return users;
+};
