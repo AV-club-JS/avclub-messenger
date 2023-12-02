@@ -7,13 +7,19 @@ import {
     remove,
     set,
     update,
-    onValue
+    onValue,
+    startAt,
+    endAt
 } from "firebase/database";
 import { getDownloadURL, uploadBytes, ref as storageRef } from "firebase/storage";
 // database, storage
 import { db, storage } from "../config/firebase-config";
 // types
-import { DefaultUserData, SetCount } from "../types/types";
+import { DefaultUserData, SetCount, SetUserData } from "../types/types";
+// constants
+import { AVATARS, USERS } from "../constants/servicesConstants";
+
+const usersRef = ref(db, `${USERS}/`);
 
 export const createUser = async ({
     username,
@@ -24,7 +30,7 @@ export const createUser = async ({
     uid
 }: DefaultUserData) => {
     try {
-        await set(ref(db, `users/${uid}`), {
+        await set(ref(db, `${USERS}/${uid}`), {
             uid,
             username,
             email,
@@ -42,12 +48,11 @@ export const createUser = async ({
 };
 
 export const getUserByUid = async (uid: string) => {
-    const data = await get(ref(db, `users/${uid}`));
+    const data = await get(ref(db, `${USERS}/${uid}`));
     return data;
 };
 
 export const getUserCount = (setUserCount: SetCount) => {
-    const usersRef = ref(db, 'users/');
 
     return onValue(usersRef, (snapshot) => {
         const data = snapshot.val();
@@ -57,7 +62,7 @@ export const getUserCount = (setUserCount: SetCount) => {
 }
 
 export const getUserRef = (uid: string) => {
-    return ref(db, `users/${uid}`);
+    return ref(db, `${USERS}/${uid}`);
 };
 
 export const updateUserData = async (uid: string, data: object) => {
@@ -68,16 +73,32 @@ export const updateUserData = async (uid: string, data: object) => {
 };
 
 export const changeUserAvatar = async (userUid: string, avatar: File) => {
-    try {
-        const storageUserRef = storageRef(storage, `/avatars/${userUid}`);
+        const storageUserRef = storageRef(storage, `/${AVATARS}/${userUid}`);
         await uploadBytes(storageUserRef, avatar);
 
         const url = await getDownloadURL(storageUserRef);
 
         await updateUserData(userUid, { avatarUrl: url });
         return url;
-    } catch (error) {
-        console.error(error);
-    }
 };
+
+export const getUsersByKey = async (key: string, val: string) => {
+    const req = await get(query(usersRef, orderByChild(key)));
+    const data = req.val();
+    const filteredData = Object.values(data).filter((el) => {
+        return (el as DefaultUserData).username.toLowerCase().includes(val.toLowerCase())});
+    return filteredData;
+}
+
+export const setUserDataListen = (userUid: string, setUserData: SetUserData) => {
+    const userRef = ref(db, `${USERS}/${userUid}`);
+    return onValue(userRef, (snapshot) => {
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            if (data !== null) {
+                setUserData(data);
+            }
+        }
+    })
+}
 

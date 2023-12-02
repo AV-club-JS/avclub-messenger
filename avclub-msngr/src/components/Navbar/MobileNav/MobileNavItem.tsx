@@ -2,23 +2,20 @@ import {
     Box,
     Text,
     Stack,
-    Collapse,
-    Icon,
     useColorModeValue,
-    useDisclosure
 } from '@chakra-ui/react';
-import { ChevronDownIcon } from '@chakra-ui/icons';
 import { NavItem } from '../../../types/types';
+import { useNavigate } from 'react-router-dom';
 
-export const MobileNavItem = ({ label, children, href }: NavItem) => {
-    const { isOpen, onToggle } = useDisclosure()
+export const MobileNavItem = ({ label, nav }: NavItem) => {
+    const navigate = useNavigate();
 
     return (
-        <Stack spacing={4} onClick={children && onToggle}>
+        <Stack spacing={4}>
             <Box
                 py={2}
                 as="a"
-                href={href ?? '#'}
+                onClick={() => navigate(nav)}
                 justifyContent="space-between"
                 alignItems="center"
                 _hover={{
@@ -27,33 +24,7 @@ export const MobileNavItem = ({ label, children, href }: NavItem) => {
                 <Text fontWeight={600} color={useColorModeValue('gray.600', 'gray.200')}>
                     {label}
                 </Text>
-                {children && (
-                    <Icon
-                        as={ChevronDownIcon}
-                        transition={'all .25s ease-in-out'}
-                        transform={isOpen ? 'rotate(180deg)' : ''}
-                        w={6}
-                        h={6}
-                    />
-                )}
             </Box>
-
-            <Collapse in={isOpen} animateOpacity style={{ marginTop: '0!important' }}>
-                <Stack
-                    mt={2}
-                    pl={4}
-                    borderLeft={1}
-                    borderStyle={'solid'}
-                    borderColor={useColorModeValue('gray.200', 'gray.700')}
-                    align={'start'}>
-                    {children &&
-                        children.map((child) => (
-                            <Box as="a" key={child.label} py={2} href={child.href}>
-                                {child.label}
-                            </Box>
-                        ))}
-                </Stack>
-            </Collapse>
         </Stack>
     )
 }
