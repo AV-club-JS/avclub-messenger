@@ -12,16 +12,16 @@ export type ChildrenProps = {
 };
 
 export type DefaultUserData = {
-  username: string,
-  email: string,
-  firstName: string,
-  lastName: string,
-  phone: string,
-  uid: string,
-  avatarUrl: string,
-  bio: string,
-  status: string,
-  createdOn: string
+    username: string,
+    email: string,
+    firstName: string,
+    lastName: string,
+    phone: string,
+    uid: string,
+    avatarUrl: string,
+    bio: string,
+    status: string,
+    createdOn: string
 };
 
 export type DefaultTeamData = {
@@ -43,7 +43,7 @@ export interface AppState {
 }
 
 export interface AuthContext extends AppState {
-  setAuth: Dispatch<SetStateAction<AppState>>;
+    setAuth: Dispatch<SetStateAction<AppState>>;
 }
 
 export type SetCount = Dispatch<SetStateAction<number>>;
@@ -61,3 +61,5 @@ export interface NavItem {
 export interface SearchResultsProps {
     users: DefaultUserData[];
 }
+
+export type SetUserData = Dispatch<SetStateAction<DefaultUserData | null>>;
