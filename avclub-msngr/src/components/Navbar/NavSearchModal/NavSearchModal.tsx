@@ -70,7 +70,7 @@ export const NavSearchModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: 
 
                     <ModalFooter>
                         <Button mr={3}
-                            onClick={onClose}
+                            onClick={handleClose}
                             color={'brand.primary'}
                             variant={'ghost'}
                             _hover={{
