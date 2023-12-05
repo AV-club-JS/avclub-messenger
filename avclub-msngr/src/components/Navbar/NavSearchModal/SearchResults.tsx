@@ -1,9 +1,9 @@
-import { SearchResultsProps } from "../../../types/types";
+import { UserDataProps } from "../../../types/types";
 import { VStack, HStack, Avatar, AvatarBadge, Text, Divider } from "@chakra-ui/react";
 import { getStatusBadgeColor } from "../../../utils/profileUtils";
 
 
-export const SearchResults = ({ users }: SearchResultsProps) => {
+export const SearchResults = ({ users }: UserDataProps) => {
 
     if (users.length > 0) {
         return (
