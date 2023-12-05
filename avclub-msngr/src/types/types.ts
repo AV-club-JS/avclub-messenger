@@ -21,15 +21,18 @@ export type DefaultUserData = {
     avatarUrl: string,
     bio: string,
     status: string,
-    createdOn: string
+    createdOn: string,
+    teamIds?: object
 };
 
 export type DefaultTeamData = {
     name: string,
     owner: string,
-    uid: string,
+    ownerId: string,
+    teamId: string,
     members: object,
     info: string,
+    createdOn: string
 };
 
 export type Credentials = {
@@ -58,8 +61,19 @@ export interface NavItem {
     nav: string
 }
 
-export interface SearchResultsProps {
+export interface UserDataProps {
     users: DefaultUserData[];
 }
 
-export type SetUserData = Dispatch<SetStateAction<DefaultUserData | null>>;
+export type SetUserData = Dispatch<SetStateAction<AppState>>;
+
+export type UserTeams = {
+    name: string
+    teamId: string
+}
+
+export type SetTeamData = Dispatch<SetStateAction<DefaultTeamData>>;
+
+export interface TeamsDisplayProps {
+    teams: DefaultTeamData[];
+}
