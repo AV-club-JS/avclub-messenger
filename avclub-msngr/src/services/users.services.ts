@@ -94,11 +94,30 @@ export const setUserDataListen = (userUid: string, setUserData: SetUserData) => 
     const userRef = ref(db, `${USERS}/${userUid}`);
     return onValue(userRef, (snapshot) => {
         if (snapshot.exists()) {
-            const data = snapshot.val();
+            const data = snapshot.val() as DefaultUserData;
             if (data !== null) {
-                setUserData(data);
+                setUserData((prevState) => ({
+                    ...prevState,
+                    userData: data
+                }));
             }
         }
     })
+}
+
+export const getUsersByTeam = async (teamid: string) => {
+    const req = await get(usersRef);
+    const data = req.val();
+    const users = Object.values(data) as DefaultUserData[];
+    const teamUsers = users.filter((user) => {
+        const typedUser = user as DefaultUserData;
+        if (typedUser.teamIds && 
+            typeof typedUser.teamIds === "object" && 
+            teamid in typedUser.teamIds) {
+            return true;
+        }
+        return false;
+    })
+    return teamUsers;
 }
 
