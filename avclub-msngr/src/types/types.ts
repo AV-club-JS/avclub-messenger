@@ -77,3 +77,17 @@ export type SetTeamData = Dispatch<SetStateAction<DefaultTeamData>>;
 export interface TeamsDisplayProps {
     teams: DefaultTeamData[];
 }
+
+export interface CreateTeamValues {
+    teamName: string;
+    info: string;
+}
+
+export type HandleDeleteFunction = () => Promise<void>;
+
+export type HandleSearchOpenFunction = () => void;
+
+export interface TeamButtonsProps {
+    handleDelete: HandleDeleteFunction;
+    handleSearchOpen: HandleSearchOpenFunction;
+}
