@@ -42,15 +42,15 @@ export const Login = (): JSX.Element => {
     e.preventDefault();
     try {
       const credential = await loginUser(user) as UserCredential;
-      await updateUserData(credential.user.uid, {status: 'online'});
+      await updateUserData(credential.user.uid, { status: 'online' });
       const req = await getUserByUid(credential.user.uid);
       const userInfo = req.val();
-      
+
       setAuth({
         user: credential!.user as User,
         userData: userInfo
       });
-      
+
       navigate("/profile");
     } catch (error) {
       switch ((error as FirebaseError).code) {
@@ -91,53 +91,55 @@ export const Login = (): JSX.Element => {
       align={"center"}
       justify={"center"}
       bg={useColorModeValue("gray.50", "gray.800")}
-    >
-      <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
-        <Stack align={"center"}>
-          <Heading fontSize={"4xl"}>Sign in to your account</Heading>
-        </Stack>
-        <Box
-          rounded={"lg"}
-          bg={useColorModeValue("white", "gray.700")}
-          boxShadow={"lg"}
-          p={8}
-        >
-          <Stack spacing={4}>
-            <FormControl id="email">
-              <FormLabel>Email address</FormLabel>
-              <Input
-                onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
-                type="email"
-              />
-            </FormControl>
-            <FormControl id="password">
-              <FormLabel>Password</FormLabel>
-              <Input
-                onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
-                type="password"
-              />
-            </FormControl>
-            <Stack spacing={10}>
-              <Stack
-                direction={{ base: "column", sm: "row" }}
-                align={"start"}
-                justify={"space-between"}
-              >
-              </Stack>
-              <Button
-                onClick={submit}
-                bg={"blue.400"}
-                color={"white"}
-                _hover={{
-                  bg: "blue.500",
-                }}
-              >
-                Sign in
-              </Button>
-            </Stack>
+    ><form>
+        <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
+          <Stack align={"center"}>
+            <Heading fontSize={"4xl"}>Sign in to your account</Heading>
           </Stack>
-        </Box>
-      </Stack>
+          <Box
+            rounded={"lg"}
+            bg={useColorModeValue("white", "gray.700")}
+            boxShadow={"lg"}
+            p={8}
+          >
+            <Stack spacing={4}>
+              <FormControl id="email">
+                <FormLabel>Email address</FormLabel>
+                <Input
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
+                  type="email"
+                />
+              </FormControl>
+              <FormControl id="password">
+                <FormLabel>Password</FormLabel>
+                <Input
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(e)}
+                  type="password"
+                  autoComplete='true'
+                />
+              </FormControl>
+              <Stack spacing={10}>
+                <Stack
+                  direction={{ base: "column", sm: "row" }}
+                  align={"start"}
+                  justify={"space-between"}
+                >
+                </Stack>
+                <Button
+                  onClick={submit}
+                  bg={"blue.400"}
+                  color={"white"}
+                  _hover={{
+                    bg: "blue.500",
+                  }}
+                >
+                  Sign in
+                </Button>
+              </Stack>
+            </Stack>
+          </Box>
+        </Stack>
+      </form>
     </Flex>
   );
 };

@@ -110,7 +110,7 @@ export const Register = () => {
             });
         }
       }
-    } 
+    }
     return;
   };
 
@@ -120,118 +120,120 @@ export const Register = () => {
       align={"center"}
       justify={"center"}
       bg={useColorModeValue("gray.50", "gray.800")}
-    >
-      <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
-        <Stack align={"center"}>
-          <Heading fontSize={"4xl"} textAlign={"center"}>
-            Sign up
-          </Heading>
-        </Stack>
-        <Box
-          rounded={"lg"}
-          bg={useColorModeValue("white", "gray.700")}
-          boxShadow={"lg"}
-          p={8}
-        >
-          <Stack spacing={4}>
-            <HStack>
-              <Box>
-                <FormControl id="firstName" isRequired>
-                  <FormLabel>First Name</FormLabel>
-                  <Input
-                    onClick={resetValidationError}
-                    sx={handleValidationErrorField("firstName")}
-                    onChange={(e) => handleChange(e)}
-                    type="text"
-                  />
-                </FormControl>
-              </Box>
-              <Box>
-                <FormControl id="lastName" isRequired>
-                  <FormLabel>Last Name</FormLabel>
-                  <Input
-                    onClick={resetValidationError}
-                    sx={handleValidationErrorField("lastName")}
-                    onChange={(e) => handleChange(e)}
-                    type="text"
-                  />
-                </FormControl>
-              </Box>
-            </HStack>
-            <FormControl id="username" isRequired>
-              <FormLabel>Username</FormLabel>
-              <Input
-                sx={handleValidationErrorField("username")}
-                onClick={resetValidationError}
-                onChange={(e) => handleChange(e)}
-                type="text"
-              />
-            </FormControl>
-
-            <FormControl id="phone" isRequired>
-              <FormLabel>Phone number</FormLabel>
-              <Input
-                sx={handleValidationErrorField("phone")}
-                onClick={resetValidationError}
-                onChange={(e) => handleChange(e)}
-                type="text"
-              />
-            </FormControl>
-            <FormControl id="email" isRequired>
-              <FormLabel>Email address</FormLabel>
-              <Input
-                sx={handleValidationErrorField("email")}
-                onClick={resetValidationError}
-                onChange={(e) => handleChange(e)}
-                type="email"
-              />
-            </FormControl>
-            <FormControl id="password" isRequired>
-              <FormLabel>Password</FormLabel>
-              <InputGroup>
+    ><form>
+        <Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6}>
+          <Stack align={"center"}>
+            <Heading fontSize={"4xl"} textAlign={"center"}>
+              Sign up
+            </Heading>
+          </Stack>
+          <Box
+            rounded={"lg"}
+            bg={useColorModeValue("white", "gray.700")}
+            boxShadow={"lg"}
+            p={8}
+          >
+            <Stack spacing={4}>
+              <HStack>
+                <Box>
+                  <FormControl id="firstName" isRequired>
+                    <FormLabel>First Name</FormLabel>
+                    <Input
+                      onClick={resetValidationError}
+                      sx={handleValidationErrorField("firstName")}
+                      onChange={(e) => handleChange(e)}
+                      type="text"
+                    />
+                  </FormControl>
+                </Box>
+                <Box>
+                  <FormControl id="lastName" isRequired>
+                    <FormLabel>Last Name</FormLabel>
+                    <Input
+                      onClick={resetValidationError}
+                      sx={handleValidationErrorField("lastName")}
+                      onChange={(e) => handleChange(e)}
+                      type="text"
+                    />
+                  </FormControl>
+                </Box>
+              </HStack>
+              <FormControl id="username" isRequired>
+                <FormLabel>Username</FormLabel>
                 <Input
-                  sx={handleValidationErrorField("password")}
+                  sx={handleValidationErrorField("username")}
                   onClick={resetValidationError}
                   onChange={(e) => handleChange(e)}
-                  type={showPassword ? "text" : "password"}
+                  type="text"
                 />
-                <InputRightElement h={"full"}>
-                  <Button
-                    variant={"ghost"}
-                    onClick={() =>
-                      setShowPassword((showPassword) => !showPassword)}
-                  >
-                    {showPassword ? <ViewIcon /> : <ViewOffIcon />}
-                  </Button>
-                </InputRightElement>
-              </InputGroup>
-            </FormControl>
-            <Stack spacing={10} pt={2}>
-              <Button
-                onClick={submit}
-                loadingText="Submitting"
-                size="lg"
-                bg={"blue.400"}
-                color={"white"}
-                _hover={{
-                  bg: "blue.500",
-                }}
-              >
-                Sign up
-              </Button>
+              </FormControl>
+
+              <FormControl id="phone" isRequired>
+                <FormLabel>Phone number</FormLabel>
+                <Input
+                  sx={handleValidationErrorField("phone")}
+                  onClick={resetValidationError}
+                  onChange={(e) => handleChange(e)}
+                  type="text"
+                />
+              </FormControl>
+              <FormControl id="email" isRequired>
+                <FormLabel>Email address</FormLabel>
+                <Input
+                  sx={handleValidationErrorField("email")}
+                  onClick={resetValidationError}
+                  onChange={(e) => handleChange(e)}
+                  type="email"
+                />
+              </FormControl>
+              <FormControl id="password" isRequired>
+                <FormLabel>Password</FormLabel>
+                <InputGroup>
+                  <Input
+                    sx={handleValidationErrorField("password")}
+                    onClick={resetValidationError}
+                    onChange={(e) => handleChange(e)}
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="true"
+                  />
+                  <InputRightElement h={"full"}>
+                    <Button
+                      variant={"ghost"}
+                      onClick={() =>
+                        setShowPassword((showPassword) => !showPassword)}
+                    >
+                      {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+              </FormControl>
+              <Stack spacing={10} pt={2}>
+                <Button
+                  onClick={submit}
+                  loadingText="Submitting"
+                  size="lg"
+                  bg={"blue.400"}
+                  color={"white"}
+                  _hover={{
+                    bg: "blue.500",
+                  }}
+                >
+                  Sign up
+                </Button>
+              </Stack>
+              <Stack pt={6}>
+                <Box color={"red"}>{validation.message}</Box>
+                <Text align={"center"}>
+                  Already a user?{" "}
+                  <Link onClick={() => navigate("/login")} color={"blue.400"}>
+                    Login
+                  </Link>
+                </Text>
+              </Stack>
             </Stack>
-            <Stack pt={6}>
-              <Box color={"red"}>{validation.message}</Box>
-              <Text align={"center"}>
-                Already a user?{" "}
-                <Link onClick={() => navigate("/login")} color={"blue.400"}>
-                  Login
-                </Link>
-              </Text>
-            </Stack>
-          </Stack>
-        </Box>
-      </Stack>
+          </Box>
+        </Stack>
+      </form>
     </Flex>
   );
 };
