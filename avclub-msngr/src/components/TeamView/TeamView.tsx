@@ -1,12 +1,13 @@
 import { Text, Flex, Stack, Heading, Divider, Button, FormControl, Center, Input, useDisclosure, FormErrorMessage } from "@chakra-ui/react";
 import { useEffect, useContext, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../context/AuthContext";
 import { DefaultTeamData, DefaultUserData } from "../../types/types";
-import { listenTeamData, getUserByUid, getUsersByTeam, updateTeamData, doesTeamNameExist } from "../../services";
+import { listenTeamData, getUserByUid, getUsersByTeam, updateTeamData, doesTeamNameExist, deleteTeam, removeUserTeam } from "../../services";
 import { Unsubscribe } from "firebase/database";
 import { formatTimestamp } from "../../utils/formatTimestamp";
 import { TeamMembers } from "../TeamMembers";
+import { TeamOwnerMenu } from "../TeamOnwerMenu";
 import 'froala-editor/css/froala_style.min.css';
 import 'froala-editor/css/froala_editor.pkgd.min.css';
 import 'froala-editor/js/plugins.pkgd.min.js';
@@ -29,6 +30,7 @@ export const TeamView = () => {
     const [teamNameInvalid, setTeamNameInvalid] = useState(false);
     const [teamNameError, setTeamNameError] = useState('');
     const { isOpen: isSearchOpen, onOpen: onSearchOpen, onClose: onSearchClose } = useDisclosure();
+    const navigate = useNavigate();
 
     const handleSearchOpen = () => {
         onSearchOpen();
@@ -39,14 +41,14 @@ export const TeamView = () => {
 
         if (teamName.length < 5) {
             setTeamNameInvalid(true);
-            setTeamNameError('Team name must be at least five symbols.');
-            console.log(teamNameInvalid);
-            console.log(teamNameError);
+            setTeamNameError('Team name must be at least five characters.');
             return;
         }
         try {
             const check = await doesTeamNameExist(teamName);
             if (teamName == teamData.name) {
+                setTeamNameInvalid(false);
+                setIsEditingTeamName(false);
                 return;
             }
             if (check == true) {
@@ -73,12 +75,25 @@ export const TeamView = () => {
         }
     }
 
+    const handleDelete = async () => {
+        try {
+            await deleteTeam(teamData.teamId);
+            await removeUserTeam(userData!.uid, teamData.teamId);
+            navigate('/teams');
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     useEffect(() => {
         if (teamData) {
             (async () => {
                 try {
                     const req = await getUserByUid(teamData.owner);
                     const ownerData = req.val();
+                    console.log(ownerData);
+                    console.log(teamData);
+
                     setOwner(ownerData.username);
                     const membersData = await getUsersByTeam(teamData.teamId);
 
@@ -110,7 +125,7 @@ export const TeamView = () => {
 
     if (teamData && owner) {
         return (
-            <Stack direction="column" px={4} mt={4}>
+            <Stack direction="column" px={4} mt={4} mb={4} overflowY="auto" maxHeight="100vh">
                 <Stack direction='column' align='center'>
                     <Stack alignItems='center'>
                         <FormControl isInvalid={teamNameInvalid}>
@@ -127,11 +142,24 @@ export const TeamView = () => {
                             )}
                             <Center>
                                 {userData!.uid === teamData.owner && (isEditingTeamName ? (
-                                    <Button size="sm" onClick={handleTeamNameEdit}>
+                                    <Button size="sm" color={'brand.primary'}
+                                        variant={'ghost'}
+                                        _hover={{
+                                            bg: 'brand.primary',
+                                            color: 'brand.accent',
+                                        }}
+                                        onClick={handleTeamNameEdit}>
                                         Save
                                     </Button>
                                 ) : (
-                                    <Button size="sm" onClick={() => setIsEditingTeamName(true)}>
+                                    <Button size="sm"
+                                        color={'brand.primary'}
+                                        variant={'ghost'}
+                                        _hover={{
+                                            bg: 'brand.primary',
+                                            color: 'brand.accent',
+                                        }}
+                                        onClick={() => setIsEditingTeamName(true)}>
                                         Edit
                                     </Button>
                                 ))}
@@ -143,32 +171,42 @@ export const TeamView = () => {
                     <Text fontSize='sm' color='gray.400'>ID:{teamData.teamId}</Text>
                     <Divider />
                 </Stack>
-                <Stack direction='row' alignItems='left' m={6}>
-                    <Stack direction='column'>
+                {(userData!.uid === teamData.owner) && <TeamOwnerMenu handleSearchOpen={handleSearchOpen} handleDelete={handleDelete}/>}
+                <Stack direction={{ base: 'column', md: 'row' }} alignItems="left" m={6} spacing={4}>
+                    <Stack direction="column">
                         <Text fontWeight={600}>Members:</Text>
                         <TeamMembers users={members} />
                     </Stack>
-                    <Stack direction='column' ml={3}>
-                        <Stack direction='row'>
+                    <Stack direction="column" ml={{ base: 0, md: 3 }}>
+                        <Stack direction="row" mb={2} align='center'>
                             <Text fontWeight={600}>Team Info:</Text>
                             {(userData!.uid === teamData.owner) && (isEditingInfo ?
                                 <Button size='sm'
+                                    color={'brand.primary'}
+                                    variant={'ghost'}
+                                    _hover={{
+                                        bg: 'brand.primary',
+                                        color: 'brand.accent',
+                                    }}
                                     onClick={handleInfoEdit}>Save</Button>
                                 : <Button size='sm'
-                                    onClick={() => setIsEditingInfo(true)}>
-                                    Edit</Button>)}
+                                    color={'brand.primary'}
+                                    variant={'ghost'}
+                                    _hover={{
+                                        bg: 'brand.primary',
+                                        color: 'brand.accent',
+                                    }}
+                                    onClick={() => setIsEditingInfo(true)}>Edit</Button>)}
                         </Stack>
                         {isEditingInfo ?
                             <FroalaEditorComponent
                                 model={teamInfo}
                                 onModelChange={(e: string) => setTeamInfo(e)}
-                                config={froalaBioConfig} />
+                                config={froalaBioConfig}
+                            />
                             : <FroalaEditorView model={teamInfo} />}
                     </Stack>
                 </Stack>
-                {(userData!.uid === teamData.owner) && <Button w={'10%'} fontSize='sm' onClick={handleSearchOpen}>
-                    Add Member
-                </Button>}
                 <AddMemberModal isOpen={isSearchOpen} onClose={onSearchClose} teamId={urlTeamId!} />
             </Stack>
         )
