@@ -92,3 +92,10 @@ export const deleteTeam = async (teamId: string) => {
     const teamRef = ref(db, `${TEAMS}/${teamId}`);
     await remove(teamRef);
 }
+
+export const removeUserFromTeam = async (teamId: string, userId: string) => {
+        const teamRef = ref(db, `${TEAMS}/${teamId}/members/${userId}`);
+        const userRef = ref(db, `${USERS}/${userId}/teamIds/${teamId}`);
+        await remove(teamRef);
+        await remove(userRef);
+}
