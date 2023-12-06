@@ -3,7 +3,10 @@ import { useEffect, useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../context/AuthContext";
 import { DefaultTeamData, DefaultUserData } from "../../types/types";
-import { listenTeamData, getUserByUid, getUsersByTeam, updateTeamData, doesTeamNameExist, deleteTeam, removeUserTeam } from "../../services";
+import {
+    listenTeamData, getUserByUid, getUsersByTeam, updateTeamData,
+    doesTeamNameExist, deleteTeam, removeUserTeam, removeUserFromTeam
+} from "../../services";
 import { Unsubscribe } from "firebase/database";
 import { formatTimestamp } from "../../utils/formatTimestamp";
 import { TeamMembers } from "../TeamMembers";
@@ -57,7 +60,6 @@ export const TeamView = () => {
                 return;
             }
             await updateTeamData(teamData.teamId, { name: teamName });
-            console.log(check);
             setTeamNameInvalid(false);
             setIsEditingTeamName(false);
         } catch (error) {
@@ -85,14 +87,21 @@ export const TeamView = () => {
         }
     }
 
+    const handleLeave = async () => {
+        try {
+            await removeUserFromTeam(teamData.teamId, userData!.uid);
+            navigate('/teams');
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     useEffect(() => {
         if (teamData) {
             (async () => {
                 try {
                     const req = await getUserByUid(teamData.owner);
                     const ownerData = req.val();
-                    console.log(ownerData);
-                    console.log(teamData);
 
                     setOwner(ownerData.username);
                     const membersData = await getUsersByTeam(teamData.teamId);
@@ -166,12 +175,26 @@ export const TeamView = () => {
                             </Center>
                         </FormControl>
                     </Stack>
+                    {userData!.uid !== teamData.owner &&
+                        <Stack direction="row" spacing={4} position="absolute" top={'180px'} right={4}>
+                            <Button
+                                size="sm"
+                                color={'brand.primary'}
+                                variant={'ghost'}
+                                _hover={{
+                                    bg: 'brand.primary',
+                                    color: 'brand.accent',
+                                }}
+                                onClick={handleLeave}>
+                                Leave Team
+                            </Button>
+                        </Stack>}
                     <Text fontWeight={600}>Owner: {owner}</Text>
                     <Text fontSize='sm' color='gray.400'>Created on: {formatTimestamp(teamData.createdOn)}</Text>
-                    <Text fontSize='sm' color='gray.400'>ID:{teamData.teamId}</Text>
+                    <Text fontSize='sm' color='gray.400'>ID: {teamData.teamId}</Text>
                     <Divider />
                 </Stack>
-                {(userData!.uid === teamData.owner) && <TeamOwnerMenu handleSearchOpen={handleSearchOpen} handleDelete={handleDelete}/>}
+                {(userData!.uid === teamData.owner) && <TeamOwnerMenu handleSearchOpen={handleSearchOpen} handleDelete={handleDelete} />}
                 <Stack direction={{ base: 'column', md: 'row' }} alignItems="left" m={6} spacing={4}>
                     <Stack direction="column">
                         <Text fontWeight={600}>Members:</Text>
@@ -208,7 +231,7 @@ export const TeamView = () => {
                     </Stack>
                 </Stack>
                 <AddMemberModal isOpen={isSearchOpen} onClose={onSearchClose} teamId={urlTeamId!} />
-            </Stack>
+            </Stack >
         )
     }
 }
