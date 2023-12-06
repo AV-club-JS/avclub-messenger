@@ -178,7 +178,7 @@ export const Profile = () => {
 
     if (userData) {
         return (
-            <Flex direction="column" alignItems="center" px={4}>
+            <Flex direction="column" alignItems="center" px={4} mb={12}>
 
                 <Stack direction="row" p={6}>
                     <Avatar size="2xl" src={userData.avatarUrl}>
