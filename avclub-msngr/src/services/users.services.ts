@@ -17,7 +17,7 @@ import { db, storage } from "../config/firebase-config";
 // types
 import { DefaultUserData, SetCount, SetUserData } from "../types/types";
 // constants
-import { AVATARS, USERS } from "../constants/servicesConstants";
+import { AVATARS, USERS, TEAMIDS } from "../constants/servicesConstants";
 
 const usersRef = ref(db, `${USERS}/`);
 
@@ -115,7 +115,6 @@ export const getUsersByTeam = async (teamid: string) => {
         if (typedUser.teamIds &&
             typeof typedUser.teamIds === "object" &&
             teamid in typedUser.teamIds) {
-            console.log(typedUser);
             
             return true;
         }
@@ -145,4 +144,9 @@ export const getUsersNotInTeam = async (val: string, teamId: string) => {
     });
 
     return filteredData;
+}
+
+export const removeUserTeam = async (userId: string, teamId: string) => {
+    const userTeamRef = ref(db, `${USERS}/${userId}/${TEAMIDS}/${teamId}`);
+    await remove(userTeamRef);
 }
