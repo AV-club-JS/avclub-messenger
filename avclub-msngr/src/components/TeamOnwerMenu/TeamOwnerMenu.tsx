@@ -1,6 +1,7 @@
 import { Button, Stack } from "@chakra-ui/react";
 import { TeamButtonsProps } from "../../types/types";
 import { FC, useState } from "react";
+import { DeleteIcon, CheckIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 
 
 export const TeamOwnerMenu: FC<TeamButtonsProps> = ({ handleDelete, handleSearchOpen }) => {
@@ -9,7 +10,7 @@ export const TeamOwnerMenu: FC<TeamButtonsProps> = ({ handleDelete, handleSearch
     return (
         <Stack direction="row" spacing={4} justify="center" p={4} borderBottom="1px solid" borderColor="gray.200">
             <Button
-                w={{ base: 'auto', md: '10%' }}
+                w={{ base: 'auto', md: '15%' }}
                 fontSize='sm'
                 color={'brand.primary'}
                 variant={'ghost'}
@@ -18,22 +19,23 @@ export const TeamOwnerMenu: FC<TeamButtonsProps> = ({ handleDelete, handleSearch
                     color: 'brand.accent',
                 }}
                 onClick={() => handleSearchOpen()}>
-                Add Member
+                <AddIcon mr={1} />
+                Add User
             </Button>
             {confirmDelete ?
                 <>
                     <Button
-                        w={{ base: 'auto', md: '10%' }}
+                        w={{ base: 'auto', md: '15%' }}
                         fontSize='sm'
-                        color={'red'}
+                        color={'green'}
                         variant={'ghost'}
                         _hover={{
-                            bg: 'red',
+                            bg: 'green.400',
                             color: 'brand.primary',
                         }}
-                        onClick={() => handleDelete()}>Confirm</Button>
+                        onClick={() => handleDelete()}><CheckIcon mr={1} />Confirm</Button>
                     <Button
-                        w={{ base: 'auto', md: '10%' }}
+                        w={{ base: 'auto', md: '15%' }}
                         fontSize='sm'
                         color={'brand.primary'}
                         variant={'ghost'}
@@ -41,18 +43,18 @@ export const TeamOwnerMenu: FC<TeamButtonsProps> = ({ handleDelete, handleSearch
                             bg: 'brand.primary',
                             color: 'brand.accent',
                         }}
-                        onClick={() => setConfirmDelete(false)}>Cancel</Button>
+                        onClick={() => setConfirmDelete(false)}><CloseIcon mr={1} />Cancel</Button>
                 </>
                 : <Button
-                    w={{ base: 'auto', md: '10%' }}
+                    w={{ base: 'auto', md: '15%' }}
                     fontSize='sm'
-                    color={'red'}
+                    color={'red.500'}
                     variant={'ghost'}
                     _hover={{
-                        bg: 'red',
+                        bg: 'red.400',
                         color: 'brand.primary',
                     }}
-                    onClick={() => setConfirmDelete(true)}>Delete Team</Button>
+                    onClick={() => setConfirmDelete(true)}><DeleteIcon mr={1} />Delete Team</Button>
             }
 
         </Stack>
