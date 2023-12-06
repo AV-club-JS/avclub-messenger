@@ -29,17 +29,18 @@ export const getTeamsCount = (setTeamsCount: SetCount) => {
     })
 }
 
-export const createTeam = async ({ name, owner, ownerId }: DefaultTeamData) => {
+export const createTeam = async ( name: string, ownerId: string, info: string ) => {
     const uid = crypto.randomUUID();
     await set(ref(db, `${TEAMS}/${uid}`), {
         name,
-        owner,
-        ownerId,
+        owner: ownerId,
+        info,
         teamId: uid,
-        members: { ownerId: owner },
-        info: '',
+        members: { [`${ownerId}`]: true },
         createdOn: Date.now(),
     });
+
+    await addUserToTeam(ownerId, uid);
 }
 
 export const getTeamInfo = async (teamId: string) => {
@@ -85,4 +86,9 @@ export const doesTeamNameExist = async (teamName: string) => {
         return false;
     }
     return true;
+}
+
+export const deleteTeam = async (teamId: string) => {
+    const teamRef = ref(db, `${TEAMS}/${teamId}`);
+    await remove(teamRef);
 }
