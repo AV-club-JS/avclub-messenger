@@ -23,11 +23,7 @@ export const Teams = () => {
                     teams.push(data);
                 }
                 
-                console.log(teams);
-                
                 setTeamsArr(teams);
-                
-                console.log(teamsArr);
             })()
         }
     }, [userData]);
