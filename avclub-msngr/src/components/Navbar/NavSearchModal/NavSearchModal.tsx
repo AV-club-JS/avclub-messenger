@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { Search2Icon } from '@chakra-ui/icons';
 import { useState, ChangeEvent } from "react";
-import { getUsersByKey } from "../../../services";
+import { getUsersByUsername } from "../../../services";
 import { DefaultUserData } from "../../../types/types";
 import { SearchResults } from "./SearchResults";
 
@@ -28,7 +28,7 @@ export const NavSearchModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: 
 
     const handleSearch = async () => {
         try {
-            const users = await getUsersByKey('username', query) as DefaultUserData[];
+            const users = await getUsersByUsername(query) as DefaultUserData[];
             setResults(users);            
         } catch (error) {
             console.error(error);
