@@ -73,20 +73,21 @@ export const updateUserData = async (uid: string, data: object) => {
 };
 
 export const changeUserAvatar = async (userUid: string, avatar: File) => {
-        const storageUserRef = storageRef(storage, `/${AVATARS}/${userUid}`);
-        await uploadBytes(storageUserRef, avatar);
+    const storageUserRef = storageRef(storage, `/${AVATARS}/${userUid}`);
+    await uploadBytes(storageUserRef, avatar);
 
-        const url = await getDownloadURL(storageUserRef);
+    const url = await getDownloadURL(storageUserRef);
 
-        await updateUserData(userUid, { avatarUrl: url });
-        return url;
+    await updateUserData(userUid, { avatarUrl: url });
+    return url;
 };
 
-export const getUsersByKey = async (key: string, val: string) => {
-    const req = await get(query(usersRef, orderByChild(key)));
+export const getUsersByUsername = async (val: string) => {
+    const req = await get(query(usersRef));
     const data = req.val();
     const filteredData = Object.values(data).filter((el) => {
-        return (el as DefaultUserData).username.toLowerCase().includes(val.toLowerCase())});
+        return (el as DefaultUserData).username.toLowerCase().includes(val.toLowerCase())
+    });
     return filteredData;
 }
 
@@ -111,13 +112,37 @@ export const getUsersByTeam = async (teamid: string) => {
     const users = Object.values(data) as DefaultUserData[];
     const teamUsers = users.filter((user) => {
         const typedUser = user as DefaultUserData;
-        if (typedUser.teamIds && 
-            typeof typedUser.teamIds === "object" && 
+        if (typedUser.teamIds &&
+            typeof typedUser.teamIds === "object" &&
             teamid in typedUser.teamIds) {
+            console.log(typedUser);
+            
             return true;
         }
         return false;
     })
+    
     return teamUsers;
 }
 
+export const getUsersNotInTeam = async (val: string, teamId: string) => {
+    const req = await get(query(usersRef));
+    const data = req.val();
+    const filteredData = Object.values(data).filter((el) => {
+        const username = (el as DefaultUserData).username?.toLowerCase();
+
+        if (username && username.includes(val.toLowerCase())) {
+            const userTeamIds = (el as DefaultUserData).teamIds;
+
+            if (userTeamIds && Object.keys(userTeamIds).includes(teamId)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
+    });
+
+    return filteredData;
+}
