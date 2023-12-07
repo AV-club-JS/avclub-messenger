@@ -33,6 +33,7 @@ export const Chats = () => {
     (async () => {
       if (userData) {
         const channels = await getChannelsByUid(userData?.uid as string);
+        console.log(channels)
         setChats(Object.values(channels));
       }
     })();
@@ -43,8 +44,7 @@ export const Chats = () => {
         ? chats[0]
         : selectedChatProp;
     });
-  }, [selectedChat]);
-  console.log(chats)
+  }, [chats, selectedChat]);
   return (
     <HStack h="100vh">
       {chats.length

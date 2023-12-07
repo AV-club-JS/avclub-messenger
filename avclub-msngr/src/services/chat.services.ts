@@ -96,10 +96,6 @@ export const createChat = async (
     //   chatId,
     //   participants,
     // });
-
-    if (!addParticipants.success) {
-      return { chatId: null, success: false, error: addParticipants.error };
-    }
     console.log("new chat created...");
     return { success: true, chatId: chatId };
   } catch (error) {
@@ -250,10 +246,10 @@ export const findChannelByParticipantIds = async (
 
 export const getChannelsByUid = async (uid: string) => {
   const channelsRef = ref(db, `${CHANNELS}`);
-  const snapshot = await get(
-    query(channelsRef, orderByChild("uid"), equalTo(uid)),
-  );
-  return snapshot.val() || [];
+  const snapshot = await get(channelsRef);
+  const channels: ChatInfo[] = Object.values(snapshot.val());
+  const userChannels = channels.filter(channel => channel.participants[uid])
+  return userChannels || [];
 };
 
 export const getChannelsByUID = (
