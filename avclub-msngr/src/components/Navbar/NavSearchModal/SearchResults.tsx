@@ -16,7 +16,7 @@ import { createChat } from "../../../services";
 export const SearchResults = ({ users, onClose }: SearchResultsProps) => {
   const { userData } = useContext(UserContext);
   const createChatInstance = async (user: DefaultUserData) => {
-    console.log(userData);
+    console.log(userData.uid, user.uid);
     await createChat({
       name: user.username,
       uid: (userData as DefaultUserData).uid,

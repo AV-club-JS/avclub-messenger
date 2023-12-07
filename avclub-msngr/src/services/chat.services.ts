@@ -5,6 +5,7 @@ import {
   orderByChild,
   query,
   ref,
+  remove,
   set,
   update,
 } from "firebase/database";
@@ -18,6 +19,12 @@ import {
 } from "../types/types";
 import { getUserDataByUid, updateUserData } from "./index.ts";
 import { Unsubscribe } from "firebase/auth";
+import {
+  CHANELS,
+  CHATIDS,
+  PARTICIPANTS,
+  USERS,
+} from "../constants/servicesConstants.ts";
 
 /**
  * Creates the needed records to
@@ -56,7 +63,6 @@ export const createChat = async (
   // check if the participants have already a chanel
   // check if the name is taken
   // if no name exists, then set it to empty string
-  console.log(participants);
   const chanel = await findChanelByParticipantIds(participants);
   if (chanel.chatId) {
     console.log("The chanel already exist", chanel.chatId, chanel);
@@ -65,10 +71,6 @@ export const createChat = async (
   try {
     const chatId: string = crypto.randomUUID();
     const createdOn = Date.now();
-    const addParticipants = await addChatPatricipants({
-      chatId,
-      participants,
-    });
 
     await set(ref(db, `chanels/${chatId}`), {
       name,
@@ -79,6 +81,11 @@ export const createChat = async (
       type,
       createdOn,
     });
+    const addParticipants = await addChatPatricipants({
+      chatId,
+      participants,
+    });
+
     if (!addParticipants.success) {
       return { chatId: null, success: false, error: addParticipants.error };
     }
@@ -247,9 +254,9 @@ export const getChanelsByUID = (
         // select only the chats which have as participants
         // the current uid
         const chats: ChatInfo[] = Object.values(result);
+        console.log(chats);
         const userChats = chats.filter((chat) => chat.participants[uid]);
         // get for each chat get the username, avatarUrl.
-        console.log(userChats);
         setChats(userChats);
       }
     }
@@ -282,4 +289,22 @@ export const setMessagesListener = (
       } else setMessages([]);
     }
   });
+};
+
+export const deleteChanel = async (
+  chatId: string,
+): Promise<{ chatId: string; success: boolean; error?: string }> => {
+  let uid: string;
+  try {
+    // get the user ids of the chanel:
+    const snapshot = await get(ref(db, `${CHANELS}/${chatId}/${PARTICIPANTS}`));
+    const uids: string[] = Object.values(snapshot.val());
+    // delete the chatId from the chatids property of every user
+    for (uid of uids) await remove(ref(db, `${USERS}/${CHATIDS}/${uid}`));
+    // delete the Chanel
+    await remove(ref(db, `${CHANELS}/${chatId}`));
+    return { chatId, success: true };
+  } catch (error) {
+    return { chatId, success: false, error: (error as Error).message };
+  }
 };
