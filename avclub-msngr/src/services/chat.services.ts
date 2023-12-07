@@ -213,6 +213,7 @@ export const findChanelByParticipantIds = async (
   ids: string[],
 ): Promise<{ chatId: string | null }> => {
   const chanels = await getChanels();
+  console.log(chanels)
   let chanel: ChatInfo | null = null;
   if (chanels) {
     for (const currentChanel of chanels) {

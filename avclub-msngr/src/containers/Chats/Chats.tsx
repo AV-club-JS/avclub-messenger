@@ -24,7 +24,6 @@ export const Chats = () => {
         userData?.uid as string,
         setChats,
       );
-      console.log(chats);
     } catch (error) {
       console.log((error as Error).message);
     }
@@ -33,8 +32,8 @@ export const Chats = () => {
   useEffect(() => {
     (async () => {
       if (userData) {
-        const chanels = await getChanelsByUid(userData?.uid as string);
-        setChats(Object.values(chanels));
+        const channels = await getChanelsByUid(userData?.uid as string);
+        setChats(Object.values(channels));
       }
     })();
   }, [userData]);

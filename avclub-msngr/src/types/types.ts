@@ -11,7 +11,7 @@ export type ChildrenProps = {
   children: JSX.Element;
 };
 
-export type DefaultUserData = {
+export type DefaultUserData = { 
     username: string,
     email: string,
     firstName: string,
@@ -109,7 +109,7 @@ export type ChatInfo = {
     [uid: string]: number;
   };
   personal: boolean;
-  type: "chat" | "chanel";
+  type: "chat" | "channel";
   messages?: Chat;
   createdOn: number;
 };
