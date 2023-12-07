@@ -20,7 +20,7 @@ import {
 import { getUserDataByUid, updateUserData } from "./index.ts";
 import { Unsubscribe } from "firebase/auth";
 import {
-  CHANELS,
+  CHANNELS,
   CHATIDS,
   PARTICIPANTS,
   USERS,
@@ -46,7 +46,7 @@ import {
  * then it will be true and if the chat is
  * public then the value is false
  * @param type  a chat have
- * to be either chat or chanel type.
+ * to be either chat or channel type.
  */
 
 export const createChat = async (
@@ -55,24 +55,24 @@ export const createChat = async (
     participants: string[];
     name: string;
     personal: boolean;
-    type: "chat" | "chanel";
+    type: "chat" | "channel";
   },
 ): Promise<{ chatId: string | null; success: boolean; error?: string }> => {
   // check if the uid exists
   // generate a chatid
-  // check if the participants have already a chanel
+  // check if the participants have already a channel
   // check if the name is taken
   // if no name exists, then set it to empty string
-  const chanel = await findChanelByParticipantIds(participants);
-  if (chanel.chatId) {
-    console.log("The chanel already exist", chanel.chatId, chanel);
-    return { chatId: chanel.chatId as string, success: true };
+  const channel = await findChannelByParticipantIds(participants);
+  if (channel.chatId) {
+    console.log("The channel already exist", channel.chatId, channel);
+    return { chatId: channel.chatId as string, success: true };
   }
   try {
     const chatId: string = crypto.randomUUID();
     const createdOn = Date.now();
 
-    await set(ref(db, `chanels/${chatId}`), {
+    await set(ref(db, `${CHANNELS}/${chatId}`), {
       name,
       chatId,
       uid,
@@ -106,7 +106,7 @@ export const getChatInfo = async (
   chatId: string,
 ): Promise<{ chatInfo?: ChatInfo; error?: string }> => {
   try {
-    const chatInfo = await get(ref(db, `chanels/${chatId}`));
+    const chatInfo = await get(ref(db, `${CHANNELS}/${chatId}`));
     return { chatInfo: chatInfo.val() };
   } catch (error) {
     return { error: (error as Error).message };
@@ -141,7 +141,7 @@ export const addMessageToChat = async ({
       if (chat.chatInfo.participants[uid]) {
         const createdOn: number = Date.now();
         const messageId: string = crypto.randomUUID();
-        await update(ref(db, `chanels/${chatId}/messages`), {
+        await update(ref(db, `${CHANNELS}/${chatId}/messages`), {
           [messageId]: {
             messageId,
             uid,
@@ -183,23 +183,23 @@ export const addChatParticipants = async ({ chatId, participants }: {
   let participant: string;
   for (participant of participants) {
     participantsObject[participant] = createdOn;
-    await update(ref(db, `users/${participant}/chatids`), {
+    await update(ref(db, `${USERS}/${participant}/chatids`), {
       [chatId]: createdOn,
     });
   }
   try {
-    await update(ref(db, `chanels/${chatId}/participants`), participantsObject);
+    await update(ref(db, `${CHANNELS}/${chatId}/participants`), participantsObject);
     return { success: true };
   } catch (error) {
     return { success: false, error: (error as Error).message };
   }
 };
 
-export const getChanels = async (): Promise<
+export const getChannels = async (): Promise<
   ChatInfo[] | null
 > => {
   try {
-    const snapshot = await get(ref(db, `chanels`));
+    const snapshot = await get(ref(db, `${CHANNELS}`));
     const chats = snapshot.val();
     return Object.values(chats);
   } catch (error) {
@@ -209,44 +209,44 @@ export const getChanels = async (): Promise<
   }
 };
 
-export const findChanelByParticipantIds = async (
+export const findChannelByParticipantIds = async (
   ids: string[],
 ): Promise<{ chatId: string | null }> => {
-  const chanels = await getChanels();
-  let chanel: ChatInfo | null = null;
-  if (chanels) {
-    for (const currentChanel of chanels) {
+  const channels = await getChannels();
+  let channel: ChatInfo | null = null;
+  if (channels) {
+    for (const currentChannel of channels) {
       if (
         ids.every((id) =>
-          typeof (currentChanel as ChatInfo).participants[id] !== "undefined"
+          typeof (currentChannel as ChatInfo).participants[id] !== "undefined"
         )
       ) {
-        chanel = currentChanel;
+        channel = currentChannel;
         break;
       }
     }
-    if (chanel) {
-      if (Object.keys(chanel.participants).length === ids.length) {
-        return { chatId: chanel.chatId as string };
+    if (channel) {
+      if (Object.keys(channel.participants).length === ids.length) {
+        return { chatId: channel.chatId as string };
       }
     }
   }
   return { chatId: null };
 };
 
-export const getChanelsByUid = async (uid: string) => {
-  const chanelsRef = ref(db, "chanels");
+export const getChannelsByUid = async (uid: string) => {
+  const channelsRef = ref(db, `${CHANNELS}`);
   const snapshot = await get(
-    query(chanelsRef, orderByChild("uid"), equalTo(uid)),
+    query(channelsRef, orderByChild("uid"), equalTo(uid)),
   );
   return snapshot.val();
 };
 
-export const getChanelsByUID = (
+export const getChannelsByUID = (
   uid: string,
   setChats: SetChats,
 ): Unsubscribe => {
-  const chatsRef = ref(db, `chanels`);
+  const chatsRef = ref(db, `${CHANNELS}`);
   return onValue(chatsRef, (snapshot) => {
     if (snapshot.exists()) {
       const result = snapshot.val();
@@ -266,7 +266,7 @@ export const getChanelsByUID = (
 export const getChatMessages = async (
   chatId: string,
 ): Promise<{ messages: MessageInfo[] | null; error?: string }> => {
-  const messagesRef = ref(db, `chanels/${chatId}/messages`);
+  const messagesRef = ref(db, `${CHANNELS}/${chatId}/messages`);
   try {
     const req = await get(messagesRef);
     const messages: MessageInfo[] = Object.values(req.val());
@@ -280,7 +280,7 @@ export const setMessagesListener = (
   chatId: string,
   setMessages: SetMessages,
 ): Unsubscribe => {
-  const messagesRef = ref(db, `chanels/${chatId}/messages`);
+  const messagesRef = ref(db, `${CHANNELS}/${chatId}/messages`);
   return onValue(messagesRef, (snapshot) => {
     if (snapshot.exists()) {
       if (snapshot.val()) {
@@ -291,25 +291,25 @@ export const setMessagesListener = (
   });
 };
 
-export const deleteChanel = async (
+export const deleteChannel = async (
   chatId: string,
 ): Promise<{ chatId: string; success: boolean; error?: string }> => {
   let uid: string;
   try {
-    // get the user ids of the chanel:
-    const snapshot = await get(ref(db, `${CHANELS}/${chatId}/${PARTICIPANTS}`));
+    // get the user ids of the channel:
+    const snapshot = await get(ref(db, `${CHANNELS}/${chatId}/${PARTICIPANTS}`));
     const uids: string[] = Object.values(snapshot.val());
     // delete the chatId from the chatids property of every user
     for (uid of uids) await remove(ref(db, `${USERS}/${CHATIDS}/${uid}`));
-    // delete the Chanel
-    await remove(ref(db, `${CHANELS}/${chatId}`));
+    // delete the Channel
+    await remove(ref(db, `${CHANNELS}/${chatId}`));
     return { chatId, success: true };
   } catch (error) {
     return { chatId, success: false, error: (error as Error).message };
   }
 };
 
-export const deleteChanelForUser = async (
+export const deleteChannelForUser = async (
   { uid, chatId }: { uid: string; chatId: string },
 ): Promise<{ success: boolean; error?: string }> => {
   try {

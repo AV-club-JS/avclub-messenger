@@ -7,9 +7,9 @@ import { useContext, useEffect, useState } from "react";
 import { ChatCard } from "../../components/ChatCard";
 import {
   createChat,
-  getChanels,
-  getChanelsByUID,
-  getChanelsByUid,
+  getChannels,
+  getChannelsByUID,
+  getChannelsByUid,
   getChatInfo,
 } from "../../services";
 import { Unsubscribe } from "firebase/auth";
@@ -20,7 +20,7 @@ export const Chats = () => {
   useEffect(() => {
     let disconnect: Unsubscribe;
     try {
-      disconnect = getChanelsByUID(
+      disconnect = getChannelsByUID(
         userData?.uid as string,
         setChats,
       );
@@ -33,8 +33,8 @@ export const Chats = () => {
   useEffect(() => {
     (async () => {
       if (userData) {
-        const chanels = await getChanelsByUid(userData?.uid as string);
-        setChats(Object.values(chanels));
+        const channels = await getChannelsByUid(userData?.uid as string);
+        setChats(Object.values(channels));
       }
     })();
   }, [userData]);

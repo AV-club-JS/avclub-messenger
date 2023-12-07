@@ -104,12 +104,12 @@ export type Chat = {
 export type ChatInfo = {
   name: string;
   chatId?: string;
-  uid: string; // the creator (owner) of the chanel
+  uid: string; // the creator (owner) of the channel
   participants: {
     [uid: string]: number;
   };
   personal: boolean;
-  type: "chat" | "chanel";
+  type: "chat" | "channel";
   messages?: Chat;
   createdOn: number;
 };
