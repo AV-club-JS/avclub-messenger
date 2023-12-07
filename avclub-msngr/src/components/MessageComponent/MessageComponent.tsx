@@ -21,7 +21,7 @@ export const MessageComponent = (
       sx={user?.uid === userData?.uid
         ? { justifyContent: "end" }
         : { justifyContent: "start" }}
-      key={message.uid}
+      key={message.messageId}
       w="100%"
     >
       <Avatar name={user?.username} src={user?.avatarUrl} />

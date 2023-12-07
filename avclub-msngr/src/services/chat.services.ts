@@ -1,4 +1,13 @@
-import { orderByChild, equalTo, get, onValue, query, ref, set, update } from "firebase/database";
+import {
+  equalTo,
+  get,
+  onValue,
+  orderByChild,
+  query,
+  ref,
+  set,
+  update,
+} from "firebase/database";
 import { db } from "../config/firebase-config";
 import {
   ChatInfo,
@@ -47,15 +56,19 @@ export const createChat = async (
   // check if the participants have already a chanel
   // check if the name is taken
   // if no name exists, then set it to empty string
-  console.log(participants)
+  console.log(participants);
   const chanel = await findChanelByParticipantIds(participants);
   if (chanel.chatId) {
-    console.log('The chanel already exist', chanel.chatId, chanel)
+    console.log("The chanel already exist", chanel.chatId, chanel);
     return { chatId: chanel.chatId as string, success: true };
   }
   try {
     const chatId: string = crypto.randomUUID();
     const createdOn = Date.now();
+    const addParticipants = await addChatPatricipants({
+      chatId,
+      participants,
+    });
 
     await set(ref(db, `chanels/${chatId}`), {
       name,
@@ -66,17 +79,13 @@ export const createChat = async (
       type,
       createdOn,
     });
-    const addParticipants = await addChatPatricipants({
-      chatId,
-      participants,
-    });
     if (!addParticipants.success) {
       return { chatId: null, success: false, error: addParticipants.error };
     }
     console.log("new chat created...");
     return { success: true, chatId: chatId };
   } catch (error) {
-    console.log('I fall here!!!')
+    console.log("I fall here!!!");
     return { chatId: null, success: false, error: (error as Error).message };
   }
 };
@@ -131,9 +140,7 @@ export const addMessageToChat = async ({
             uid,
             createdOn,
             content,
-            reactions: {
-
-            }
+            reactions: {},
           },
         });
         return { success: true };
@@ -189,7 +196,7 @@ export const getChanels = async (): Promise<
     const chats = snapshot.val();
     return Object.values(chats);
   } catch (error) {
-    console.log('I am here!!!')
+    console.log("I am here!!!");
     console.log((error as Error).message);
     return null;
   }
@@ -220,12 +227,13 @@ export const findChanelByParticipantIds = async (
   return { chatId: null };
 };
 
-
 export const getChanelsByUid = async (uid: string) => {
-  const chanelsRef = ref(db, 'chanels');
-  const snapshot = await get(query(chanelsRef, orderByChild('uid'), equalTo(uid)))
+  const chanelsRef = ref(db, "chanels");
+  const snapshot = await get(
+    query(chanelsRef, orderByChild("uid"), equalTo(uid)),
+  );
   return snapshot.val();
-}
+};
 
 export const getChanelsByUID = (
   uid: string,
@@ -239,9 +247,9 @@ export const getChanelsByUID = (
         // select only the chats which have as participants
         // the current uid
         const chats: ChatInfo[] = Object.values(result);
-        const userChats = chats.filter((chat) => chat.participants[uid])
+        const userChats = chats.filter((chat) => chat.participants[uid]);
         // get for each chat get the username, avatarUrl.
-        console.log(userChats)
+        console.log(userChats);
         setChats(userChats);
       }
     }
