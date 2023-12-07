@@ -12,7 +12,6 @@ export type ChildrenProps = {
 };
 
 export type DefaultUserData = {
-<<<<<<< HEAD
     username: string,
     email: string,
     firstName: string,
@@ -139,4 +138,3 @@ export type MessageInfo = {
 };
 
 export type SetMessages = Dispatch<SetStateAction<MessageInfo[]>>;
->>>>>>> add-chats-component

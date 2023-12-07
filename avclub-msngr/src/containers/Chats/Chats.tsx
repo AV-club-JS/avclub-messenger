@@ -9,6 +9,7 @@ import {
   createChat,
   getChanels,
   getChanelsByUID,
+  getChanelsByUid,
   getChatInfo,
 } from "../../services";
 import { Unsubscribe } from "firebase/auth";
@@ -23,18 +24,27 @@ export const Chats = () => {
         userData?.uid as string,
         setChats,
       );
+      console.log(chats);
     } catch (error) {
       console.log((error as Error).message);
     }
     return () => disconnect();
   }, []);
   useEffect(() => {
+    (async () => {
+      if (userData) {
+        const chanels = await getChanelsByUid(userData?.uid as string);
+        setChats(Object.values(chanels));
+      }
+    })();
+  }, [userData]);
+  useEffect(() => {
     setSelectedChat((selectedChatProp: ChatInfo | null) => {
       return chats !== null && selectedChatProp === null
         ? chats[0]
         : selectedChatProp;
     });
-  }, [chats, selectedChat]);
+  }, [selectedChat]);
   return (
     <HStack h="100vh">
       {chats
@@ -49,11 +59,14 @@ export const Chats = () => {
               {chats
                 ? chats.map((chat) => (
                   <ChatCard
+                    key={chat.chatId}
                     isActive={selectedChat?.chatId === chat.chatId}
                     name={chat.name}
                     participants={Object.keys(chat.participants)}
                     lastMessage={"Put last message"}
-                    onClick={() => setSelectedChat(chat)}
+                    onClick={() => {
+                      setSelectedChat(chat);
+                    }}
                   />
                 ))
                 : (

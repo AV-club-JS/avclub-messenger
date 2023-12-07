@@ -70,7 +70,7 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
         <>
           {messages.length
             ? messages.map((data: MessageInfo) => (
-              <MessageComponent message={data} />
+              <MessageComponent key={data.uid} message={data} />
             ))
             : (
               <NoMessages

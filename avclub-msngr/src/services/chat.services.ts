@@ -241,6 +241,7 @@ export const getChanelsByUID = (
         const chats: ChatInfo[] = Object.values(result);
         const userChats = chats.filter((chat) => chat.participants[uid])
         // get for each chat get the username, avatarUrl.
+        console.log(userChats)
         setChats(userChats);
       }
     }

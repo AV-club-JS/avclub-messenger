@@ -12,6 +12,7 @@ export const ChatCardsContainer = (
     <VStack>
       {chats ? chats.map((chat) => (
         <ChatCard
+          key={chat.chatId}
           name={chat.name}
           participants={Object.values(chat.participants)}
           lastMessage={'Hello world'}

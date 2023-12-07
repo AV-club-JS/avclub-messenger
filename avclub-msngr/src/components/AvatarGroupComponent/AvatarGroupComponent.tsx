@@ -12,7 +12,7 @@ export const AvatarGroupComponent = (
   return (
     <AvatarGroup size="md" max={max}>
       {users.map((user) => (
-        <Avatar name={user.username} src={user.avatarUrl}>
+        <Avatar key={user.uid} name={user.username} src={user.avatarUrl}>
           <AvatarBadge boxSize="1.1em" bg={getStatusBadgeColor(user.status)} />
         </Avatar>
       ))}

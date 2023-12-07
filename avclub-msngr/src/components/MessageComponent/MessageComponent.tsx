@@ -5,7 +5,9 @@ import { DefaultUserData, MessageInfo } from "../../types/types";
 import { useContext, useEffect, useState } from "react";
 import { getUserByUid } from "../../services";
 import { UserContext } from "../../context/AuthContext";
-export const MessageComponent = ({ message }: { message: MessageInfo }): JSX.Element => {
+export const MessageComponent = (
+  { message }: { message: MessageInfo },
+): JSX.Element => {
   const [user, setUser] = useState<DefaultUserData | null>(null);
   const { userData } = useContext(UserContext);
   useEffect(() => {
@@ -13,12 +15,14 @@ export const MessageComponent = ({ message }: { message: MessageInfo }): JSX.Ele
       const data = await getUserByUid(message.uid);
       setUser(data.val());
     })();
-  })
+  }, []);
   return (
-    <Flex 
-      sx={user?.uid === userData?.uid ? {justifyContent: 'end'} : {justifyContent: 'start'}}
+    <Flex
+      sx={user?.uid === userData?.uid
+        ? { justifyContent: "end" }
+        : { justifyContent: "start" }}
       key={message.uid}
-      w='100%'
+      w="100%"
     >
       <Avatar name={user?.username} src={user?.avatarUrl} />
       <Text>{message?.content}</Text>
