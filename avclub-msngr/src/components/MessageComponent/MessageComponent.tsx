@@ -6,6 +6,12 @@ import { DefaultUserData, MessageInfo } from "../../types/types";
 import { useContext, useEffect, useState } from "react";
 import { getUserByUid } from "../../services";
 import { UserContext } from "../../context/AuthContext";
+import 'froala-editor/css/froala_style.min.css';
+import 'froala-editor/css/froala_editor.pkgd.min.css';
+import 'froala-editor/js/plugins.pkgd.min.js';
+import FroalaEditorView from "react-froala-wysiwyg/FroalaEditorView";
+import { froalaBioConfig } from "../../utils/profileUtils";
+
 export const MessageComponent = (
   { message }: { message: MessageInfo }
 ): JSX.Element => {
@@ -33,7 +39,7 @@ export const MessageComponent = (
 
             <Box>
               <Heading size="sm">{user?.username}</Heading>
-              <Text fontStyle={'italic'} color={'grey'}>
+              <Text fontStyle={'italic'} color={'grey'} fontSize={'smaller'}>
                 {new Date(message.createdOn).toDateString()}
               </Text>
             </Box>
@@ -47,9 +53,10 @@ export const MessageComponent = (
         </Flex>
       </CardHeader>
       <CardBody>
-        <Text>
+        {/* <Text>
           {message.content}
-        </Text>
+        </Text> */}
+        <FroalaEditorView model={message.content} />
       </CardBody>
       <CardFooter
         justify="space-between"

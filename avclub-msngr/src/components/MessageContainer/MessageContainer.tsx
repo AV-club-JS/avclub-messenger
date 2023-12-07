@@ -7,7 +7,7 @@ export const MessageContainer = ({ children }: ChildrenProps) => (
     overflowY={'scroll'}
     flexDir={'column'}
     gap={'2'}
-    border={'1px solid'}
+    borderLeft={'1px solid'}
     borderColor={'gray.100'}
   >
     {children}

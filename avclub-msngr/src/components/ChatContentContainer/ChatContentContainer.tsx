@@ -19,6 +19,11 @@ import { Unsubscribe } from "firebase/auth";
 import { UserContext } from "../../context/AuthContext";
 import { AdditionalSettingsBar } from "../AdditionalSettingsBar";
 import { addMessageToChat } from "../../services";
+import 'froala-editor/css/froala_style.min.css';
+import 'froala-editor/css/froala_editor.pkgd.min.css';
+import 'froala-editor/js/plugins.pkgd.min.js';
+import FroalaEditorComponent from 'react-froala-wysiwyg';
+import { froalaMessageConfig } from "../../utils/profileUtils";
 
 export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
   const { userData } = useContext(UserContext);
@@ -47,6 +52,7 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
   }, [chat]);
 
   const handleMessage = async () => {
+    setInsertedMessage('');
     const sendedMessage = await addMessageToChat({
       chatId: chat.chatId as string,
       uid: userData?.uid as string,
@@ -67,7 +73,7 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
       maxW={"100%"}
       h="100%"
       p={2}
-      m={0}
+      mb={1}
       overflowX={'hidden'}
     >
       <AdditionalSettingsBar
@@ -91,13 +97,13 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
       <Flex
         flex={"1 1 20%"}
       >
-        <Textarea
-          m={2}
-          w={"80%"}
-          placeholder="Insert your message here"
-          onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-            setInsertedMessage(e.target.value)}
+        <Box m={1}>
+        <FroalaEditorComponent
+          model={insertedMessage}
+          onModelChange={(e: string) => setInsertedMessage(e)}
+          config={froalaMessageConfig}
         />
+        </Box>
         <Button
           m={2}
           size={'lg'}
