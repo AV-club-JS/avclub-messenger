@@ -64,13 +64,22 @@ export const createChat = async (
   // check if the name is taken
   // if no name exists, then set it to empty string
   const chanel = await findChanelByParticipantIds(participants);
+
   if (chanel.chatId) {
     console.log("The chanel already exist", chanel.chatId, chanel);
     return { chatId: chanel.chatId as string, success: true };
   }
+
   try {
     const chatId: string = crypto.randomUUID();
     const createdOn = Date.now();
+<<<<<<< HEAD
+=======
+    const addParticipants = await addChatParticipants({
+      chatId,
+      participants,
+    });
+>>>>>>> 6e1bd6aedc9def37ac993dc68ee3a55a5de69f8a
 
     await set(ref(db, `chanels/${chatId}`), {
       name,
@@ -81,14 +90,18 @@ export const createChat = async (
       type,
       createdOn,
     });
+<<<<<<< HEAD
     const addParticipants = await addChatPatricipants({
       chatId,
       participants,
     });
+=======
+>>>>>>> 6e1bd6aedc9def37ac993dc68ee3a55a5de69f8a
 
     if (!addParticipants.success) {
       return { chatId: null, success: false, error: addParticipants.error };
     }
+
     console.log("new chat created...");
     return { success: true, chatId: chatId };
   } catch (error) {
@@ -134,10 +147,14 @@ export const addMessageToChat = async ({
 > => {
   try {
     const chat = await getChatInfo(chatId);
+    
     if (chat.chatInfo) {
       const req = await getUserDataByUid(uid);
+
       if (req.error) return { success: false, error: req.error };
+
       const user = req.data;
+
       if (chat.chatInfo.participants[uid]) {
         const createdOn: number = Date.now();
         const messageId: string = crypto.randomUUID();
@@ -157,6 +174,7 @@ export const addMessageToChat = async ({
           error: "The user does not exist in the chat participants.",
         };
       }
+
     } else {
       return {
         success: false,
@@ -169,7 +187,7 @@ export const addMessageToChat = async ({
   }
 };
 
-export const addChatPatricipants = async ({ chatId, participants }: {
+export const addChatParticipants = async ({ chatId, participants }: {
   chatId: string;
   participants: string[];
 }): Promise<{
@@ -181,12 +199,14 @@ export const addChatPatricipants = async ({ chatId, participants }: {
   } = {};
   const createdOn = Date.now();
   let participant: string;
+
   for (participant of participants) {
     participantsObject[participant] = createdOn;
     await update(ref(db, `users/${participant}/chatids`), {
       [chatId]: createdOn,
     });
   }
+
   try {
     await update(ref(db, `chanels/${chatId}/participants`), participantsObject);
     return { success: true };
@@ -201,10 +221,12 @@ export const getChanels = async (): Promise<
   try {
     const snapshot = await get(ref(db, `chanels`));
     const chats = snapshot.val();
+
     return Object.values(chats);
   } catch (error) {
     console.log("I am here!!!");
     console.log((error as Error).message);
+
     return null;
   }
 };
@@ -214,22 +236,22 @@ export const findChanelByParticipantIds = async (
 ): Promise<{ chatId: string | null }> => {
   const chanels = await getChanels();
   let chanel: ChatInfo | null = null;
+
   if (chanels) {
     for (const currentChanel of chanels) {
-      if (
-        ids.every((id) =>
-          typeof (currentChanel as ChatInfo).participants[id] !== "undefined"
-        )
-      ) {
+      if (ids.every((id) =>
+          typeof (currentChanel as ChatInfo).participants[id] !== "undefined")) {
         chanel = currentChanel;
         break;
       }
     }
+
     if (chanel) {
       if (Object.keys(chanel.participants).length === ids.length) {
         return { chatId: chanel.chatId as string };
       }
     }
+
   }
   return { chatId: null };
 };
@@ -248,8 +270,10 @@ export const getChanelsByUID = (
 ): Unsubscribe => {
   const chatsRef = ref(db, `chanels`);
   return onValue(chatsRef, (snapshot) => {
+
     if (snapshot.exists()) {
       const result = snapshot.val();
+
       if (result) {
         // select only the chats which have as participants
         // the current uid
@@ -259,7 +283,9 @@ export const getChanelsByUID = (
         // get for each chat get the username, avatarUrl.
         setChats(userChats);
       }
+
     }
+    
   });
 };
 
