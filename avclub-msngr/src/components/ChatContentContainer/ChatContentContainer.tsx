@@ -37,10 +37,9 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
     (async () => {
       const users = await getUsersByUIDs(Object.keys(chat.participants));
       setParticipants(users);
-      const req = await getChatMessages(chat.chatId); 
+      const req = await getChatMessages(chat?.chatId as string); 
       const messages = req.messages;
-      console.log(req)
-      if (messages) setMessages(messages);
+      if (messages) setMessages(messages.sort((m1, m2) => m1.createdOn < m2.createdOn ? -1 : 1));
     })();
   }, [chat]);
   const handleMessage = async () => {

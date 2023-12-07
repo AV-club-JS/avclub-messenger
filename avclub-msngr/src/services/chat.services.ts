@@ -295,7 +295,7 @@ export const setMessagesListener = (
     if (snapshot.exists()) {
       if (snapshot.val()) {
         const messages: MessageInfo[] = Object.values(snapshot.val());
-        setMessages(messages);
+        setMessages(messages.sort((m1, m2) => m1.createdOn < m2.createdOn ? -1 : 1));
       } else setMessages([]);
     }
   });
