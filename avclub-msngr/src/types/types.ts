@@ -69,20 +69,39 @@ export type Chat = {
 };
 
 export type ChatInfo = {
+  name: string;
   chatId?: string;
   uid: string; // the creator (owner) of the chanel
-  name: string;
-  owner: string;
-  participants: { [uid: string]: number };
+  participants: {
+    [uid: string]: number;
+  };
   personal: boolean;
   type: "chat" | "chanel";
-  messages: Chat;
+  messages?: Chat;
   createdOn: number;
 };
 
 export type ChatsCollection = ChatInfo[];
 export interface SearchResultsProps {
   users: DefaultUserData[];
+  onClose: () => void;
 }
 
 export type SetUserData = Dispatch<SetStateAction<DefaultUserData | null>>;
+export type SetUsersData = Dispatch<SetStateAction<DefaultUserData []| []>>;
+
+export type SetChats = Dispatch<SetStateAction<ChatInfo[] | null>>;
+
+export type MessageInfo = {
+  uid: string;
+  messageId: string;
+  createdOn: number;
+  content: string;
+  reactions?: {
+    [symbol: string]: {
+      [uid: string]: number; 
+    }
+  }
+};
+
+export type SetMessages = Dispatch<SetStateAction<MessageInfo[]>>;

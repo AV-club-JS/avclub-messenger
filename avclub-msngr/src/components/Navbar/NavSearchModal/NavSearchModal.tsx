@@ -65,7 +65,7 @@ export const NavSearchModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: 
                         </InputGroup>
                     </Flex>
                     <ModalBody>
-                        <SearchResults users={results} />
+                        <SearchResults onClose={handleClose} users={results} />
                     </ModalBody>
 
                     <ModalFooter>

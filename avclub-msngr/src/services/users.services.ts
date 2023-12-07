@@ -23,6 +23,7 @@ import { db, storage } from "../config/firebase-config";
 import { DefaultUserData, SetCount, SetUserData } from "../types/types";
 // constants
 import { AVATARS, USERS } from "../constants/servicesConstants";
+import { Unsubscribe } from "firebase/auth";
 
 const usersRef = ref(db, `${USERS}/`);
 
@@ -142,4 +143,18 @@ export const setUserDataListen = (
       }
     }
   });
+};
+
+
+
+export const getUsersByUIDs = async (uids: string[]) :Promise<DefaultUserData[]> => {
+  try {
+    const usersRef = ref(db, "users");
+    const requests = uids.map(uid => get(query(usersRef, orderByChild('uid'), equalTo(uid))));
+    const resolves = await Promise.all(requests);
+    return resolves.map(res => Object.values(res.val())[0]) as DefaultUserData[];
+  } catch (error) {
+    console.log((error as Error).message);
+    return [];
+  }
 };

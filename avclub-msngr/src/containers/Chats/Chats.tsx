@@ -1,35 +1,76 @@
-import {
-  Button,
-  Flex,
-  HStack,
-  Stack,
-  Text,
-  useDisclosure,
-} from "@chakra-ui/react";
-import { ChatCardsContainer } from "../../components/ChatCardsContainer";
-import { ChatsCollection, DefaultUserData } from "../../types/types";
+import { Box, Flex, HStack, Text, VStack } from "@chakra-ui/react";
+import { ChatInfo, ChatsCollection, DefaultUserData } from "../../types/types";
 import { ChatContentContainer } from "../../components/ChatContentContainer";
 import { getLastChat, getLastChatMessage } from "../../utils/dataPreparation";
 import { UserContext } from "../../context/AuthContext";
 import { useContext, useEffect, useState } from "react";
-import { createChat, getChatInfo, getUsers } from "../../services";
+import { ChatCard } from "../../components/ChatCard";
+import {
+  createChat,
+  getChanels,
+  getChanelsByUID,
+  getChatInfo,
+} from "../../services";
+import { Unsubscribe } from "firebase/auth";
 export const Chats = () => {
-  const { user, userData, setAuth } = useContext(UserContext);
-
-  let chats: ChatsCollection | null;
-  chats = null;
-  const selectUser = async () => {
-    const users = await getUsers();
-  };
+  const { userData, setAuth } = useContext(UserContext);
+  const [chats, setChats] = useState<ChatsCollection | null>(null);
+  const [selectedChat, setSelectedChat] = useState<ChatInfo | null>(null);
+  useEffect(() => {
+    let disconnect: Unsubscribe;
+    try {
+      disconnect = getChanelsByUID(
+        userData?.uid as string,
+        setChats,
+      );
+    } catch (error) {
+      console.log((error as Error).message);
+    }
+    return () => disconnect();
+  }, []);
+  useEffect(() => {
+    setSelectedChat((selectedChatProp: ChatInfo | null) => {
+      return chats !== null && selectedChatProp === null
+        ? chats[0]
+        : selectedChatProp;
+    });
+  }, [chats, selectedChat]);
   return (
     <HStack h="100vh">
       {chats
         ? (
           <>
-            <ChatCardsContainer chats={chats as ChatsCollection} />
-            <ChatContentContainer
-              chat={getLastChat(chats as ChatsCollection)}
-            />
+            <VStack
+              h="100%"
+              w="24vw"
+              overflow={"scroll"}
+              p={1}
+            >
+              {chats
+                ? chats.map((chat) => (
+                  <ChatCard
+                    isActive={selectedChat?.chatId === chat.chatId}
+                    name={chat.name}
+                    participants={Object.keys(chat.participants)}
+                    lastMessage={"Put last message"}
+                    onClick={() => setSelectedChat(chat)}
+                  />
+                ))
+                : (
+                  <Box>
+                    <Text>
+                      You still not have any chat. Start a chat with some of
+                      your friends.
+                    </Text>
+                  </Box>
+                )}
+            </VStack>
+
+            {selectedChat && (
+              <ChatContentContainer
+                chat={selectedChat}
+              />
+            )}
           </>
         )
         : (
@@ -45,13 +86,8 @@ export const Chats = () => {
               mx="auto"
               fontSize={"30px"}
             >
-              No chats yet
+              No chats. Please select a user to chat!
             </Text>
-            <Button
-              onClick={selectUser}
-            >
-              Create new chat
-            </Button>
           </Flex>
         )}
     </HStack>
