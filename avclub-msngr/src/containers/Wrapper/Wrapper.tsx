@@ -7,7 +7,8 @@ import { Navbar } from '../../components/Navbar';
 import customTheme from '../../theme/theme';
 import { auth } from '../../config/firebase-config';
 import { useAuthState } from "react-firebase-hooks/auth";
-import { getUserByUid } from '../../services';
+import { getUserByUid, setUserDataListen } from '../../services';
+import { Unsubscribe } from 'firebase/database';
 
 export const Wrapper = () => {
   const [appState, setAppState] = useState<AppState>({
@@ -22,28 +23,24 @@ export const Wrapper = () => {
   }
 
   useEffect(() => {
-    (async () => {
-      if (user === null) {
-        return;
-      }
-      try {
-        setUserDataLoading(true);
-        const req = await getUserByUid(user!.uid);
-        const data = req.val();
-        setAppState({
-          ...appState,
-          userData: { ...data },
-        });
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setUserDataLoading(false);
-      }
-    })();
+    if (!user) {
+      return;
+    }
+
+    let disconnect: Unsubscribe;
+
+    try {
+      disconnect = setUserDataListen(user?.uid as string, setAppState);
+    } catch (error) {
+      console.error(error);
+    }
+
+    return () => {
+      disconnect();
+    }
   }, [user]);
 
-  if (!loading && !userDataLoading) {
-
+  if (!loading && !userDataLoading) {    
     return (
       <ChakraProvider theme={customTheme}>
         <UserContext.Provider value={{ ...appState, setAuth: setAppState }}>
@@ -60,5 +57,5 @@ export const Wrapper = () => {
         </UserContext.Provider>
       </ChakraProvider>
     )
-  };
+  }
 }

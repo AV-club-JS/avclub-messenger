@@ -3,7 +3,7 @@ import { NavItem } from "../types/types";
 export const NAV_ITEMS: Array<NavItem> = [
     {
         label: 'Teams',
-        nav: '/'
+        nav: '/teams'
     },
     {
         label: 'Chats',
@@ -11,6 +11,6 @@ export const NAV_ITEMS: Array<NavItem> = [
     },
     {
         label: 'Profile',
-        nav: 'profile',
+        nav: '/profile',
     },
 ]

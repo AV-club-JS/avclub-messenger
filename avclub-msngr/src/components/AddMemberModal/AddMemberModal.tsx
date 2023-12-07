@@ -14,11 +14,11 @@ import {
 } from "@chakra-ui/react";
 import { Search2Icon } from '@chakra-ui/icons';
 import { useState, ChangeEvent } from "react";
-import { getUsersByUsername } from "../../../services";
-import { DefaultUserData } from "../../../types/types";
-import { SearchResults } from "./SearchResults";
+import { getUsersNotInTeam } from "../../services";
+import { DefaultUserData } from "../../types/types";
+import { SearchResults } from './SearchResults';
 
-export const NavSearchModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+export const AddMemberModal = ({ isOpen, onClose, teamId }: { isOpen: boolean, onClose: () => void , teamId: string}) => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<DefaultUserData[]>([]);
 
@@ -28,7 +28,7 @@ export const NavSearchModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: 
 
     const handleSearch = async () => {
         try {
-            const users = await getUsersByUsername(query) as DefaultUserData[];
+            const users = await getUsersNotInTeam(query, teamId) as DefaultUserData[];            
             setResults(users);            
         } catch (error) {
             console.error(error);
@@ -65,7 +65,7 @@ export const NavSearchModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: 
                         </InputGroup>
                     </Flex>
                     <ModalBody>
-                        <SearchResults users={results} />
+                        <SearchResults users={results} currentTeamId={teamId}/>
                     </ModalBody>
 
                     <ModalFooter>

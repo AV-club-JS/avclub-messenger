@@ -17,7 +17,7 @@ import { db, storage } from "../config/firebase-config";
 // types
 import { DefaultUserData, SetCount, SetUserData } from "../types/types";
 // constants
-import { AVATARS, USERS } from "../constants/servicesConstants";
+import { AVATARS, USERS, TEAMIDS } from "../constants/servicesConstants";
 
 const usersRef = ref(db, `${USERS}/`);
 
@@ -73,20 +73,21 @@ export const updateUserData = async (uid: string, data: object) => {
 };
 
 export const changeUserAvatar = async (userUid: string, avatar: File) => {
-        const storageUserRef = storageRef(storage, `/${AVATARS}/${userUid}`);
-        await uploadBytes(storageUserRef, avatar);
+    const storageUserRef = storageRef(storage, `/${AVATARS}/${userUid}`);
+    await uploadBytes(storageUserRef, avatar);
 
-        const url = await getDownloadURL(storageUserRef);
+    const url = await getDownloadURL(storageUserRef);
 
-        await updateUserData(userUid, { avatarUrl: url });
-        return url;
+    await updateUserData(userUid, { avatarUrl: url });
+    return url;
 };
 
-export const getUsersByKey = async (key: string, val: string) => {
-    const req = await get(query(usersRef, orderByChild(key)));
+export const getUsersByUsername = async (val: string) => {
+    const req = await get(query(usersRef));
     const data = req.val();
     const filteredData = Object.values(data).filter((el) => {
-        return (el as DefaultUserData).username.toLowerCase().includes(val.toLowerCase())});
+        return (el as DefaultUserData).username.toLowerCase().includes(val.toLowerCase())
+    });
     return filteredData;
 }
 
@@ -94,11 +95,58 @@ export const setUserDataListen = (userUid: string, setUserData: SetUserData) => 
     const userRef = ref(db, `${USERS}/${userUid}`);
     return onValue(userRef, (snapshot) => {
         if (snapshot.exists()) {
-            const data = snapshot.val();
+            const data = snapshot.val() as DefaultUserData;
             if (data !== null) {
-                setUserData(data);
+                setUserData((prevState) => ({
+                    ...prevState,
+                    userData: data
+                }));
             }
         }
     })
 }
 
+export const getUsersByTeam = async (teamid: string) => {
+    const req = await get(usersRef);
+    const data = req.val();
+    const users = Object.values(data) as DefaultUserData[];
+    const teamUsers = users.filter((user) => {
+        const typedUser = user as DefaultUserData;
+        if (typedUser.teamIds &&
+            typeof typedUser.teamIds === "object" &&
+            teamid in typedUser.teamIds) {
+            
+            return true;
+        }
+        return false;
+    })
+    
+    return teamUsers;
+}
+
+export const getUsersNotInTeam = async (val: string, teamId: string) => {
+    const req = await get(query(usersRef));
+    const data = req.val();
+    const filteredData = Object.values(data).filter((el) => {
+        const username = (el as DefaultUserData).username?.toLowerCase();
+
+        if (username && username.includes(val.toLowerCase())) {
+            const userTeamIds = (el as DefaultUserData).teamIds;
+
+            if (userTeamIds && Object.keys(userTeamIds).includes(teamId)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
+    });
+
+    return filteredData;
+}
+
+export const removeUserTeam = async (userId: string, teamId: string) => {
+    const userTeamRef = ref(db, `${USERS}/${userId}/${TEAMIDS}/${teamId}`);
+    await remove(userTeamRef);
+}

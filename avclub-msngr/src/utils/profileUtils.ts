@@ -26,6 +26,7 @@ export const froalaBioConfig = {
     charCounterCount: true,
     charCounterMax: 8200,
     attribution: false,
+    quickInsertEnabled: false,
     "toolbarButtons": {
         "moreText": {
             "buttons": [
