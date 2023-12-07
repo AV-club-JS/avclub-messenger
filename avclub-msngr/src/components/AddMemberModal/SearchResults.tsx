@@ -1,4 +1,4 @@
-import { UserDataProps, DefaultUserData } from "../../types/types";
+import {  DefaultUserData } from "../../types/types";
 import { VStack, HStack, Avatar, AvatarBadge, Text, Divider, Button } from "@chakra-ui/react";
 import { getStatusBadgeColor } from "../../utils/profileUtils";
 import { addUserToTeam } from "../../services";

@@ -1,14 +1,14 @@
-import { Box, ChakraProvider } from '@chakra-ui/react';
-import { Outlet } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { UserContext } from '../../context/AuthContext';
-import { AppState } from '../../types/types';
-import { Navbar } from '../../components/Navbar';
-import customTheme from '../../theme/theme';
-import { auth } from '../../config/firebase-config';
+import { Box, ChakraProvider } from "@chakra-ui/react";
+import { Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { UserContext } from "../../context/AuthContext";
+import { AppState } from "../../types/types";
+import { Navbar } from "../../components/Navbar";
+import customTheme from "../../theme/theme";
+import { auth } from "../../config/firebase-config";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { getUserByUid, setUserDataListen } from '../../services';
-import { Unsubscribe } from 'firebase/database';
+import { getUserByUid, setUserDataListen } from "../../services";
+import { Unsubscribe } from "firebase/database";
 
 export const Wrapper = () => {
   const [appState, setAppState] = useState<AppState>({
@@ -37,25 +37,25 @@ export const Wrapper = () => {
 
     return () => {
       disconnect();
-    }
+    };
   }, [user]);
 
-  if (!loading && !userDataLoading) {    
+  if (!loading && !userDataLoading) {
     return (
       <ChakraProvider theme={customTheme}>
         <UserContext.Provider value={{ ...appState, setAuth: setAppState }}>
           <Box
             m={0}
             p={0}
-            minH={'100vh'}
-            w={'100vw'}
-            maxW={'100%'}
+            minH={"100vh"}
+            w={"100vw"}
+            maxW={"100%"}
           >
             <Navbar />
             <Outlet />
           </Box>
         </UserContext.Provider>
       </ChakraProvider>
-    )
+    );
   }
-}
+};
