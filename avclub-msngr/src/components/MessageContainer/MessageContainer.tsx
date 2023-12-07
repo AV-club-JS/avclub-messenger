@@ -9,6 +9,7 @@ export const MessageContainer = ({ children }: ChildrenProps) => (
     gap={'2'}
     borderLeft={'1px solid'}
     borderColor={'gray.100'}
+    height={'100vh'}
   >
     {children}
   </Flex>
