@@ -6,7 +6,7 @@ export const TEAMS = 'teams'
 
 export const TEAMIDS = 'teamIds';
 
-export const CHANELS = 'chanels';
+export const CHANNELS = 'channels';
 
 export const PARTICIPANTS = 'participants';
 
