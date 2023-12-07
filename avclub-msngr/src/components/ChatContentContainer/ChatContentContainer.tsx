@@ -45,8 +45,8 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
   }, [chat]);
   const handleMessage = async () => {
     const sendedMessage = await addMessageToChat({
-      chatId: chat.chatId,
-      uid: userData?.uid,
+      chatId: chat.chatId as string,
+      uid: userData?.uid as string,
       content: insertedMessage,
     });
   };

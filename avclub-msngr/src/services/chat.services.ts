@@ -22,6 +22,7 @@ import { Unsubscribe } from "firebase/auth";
 import {
   CHANNELS,
   CHATIDS,
+  MESSAGES,
   PARTICIPANTS,
   USERS,
 } from "../constants/servicesConstants.ts";
@@ -77,7 +78,7 @@ export const createChat = async (
     let participant: string;
     for (participant of participants) {
       participantsObject[participant] = createdOn;
-      await update(ref(db, `${USERS}/${participant}/chatids`), {
+      await update(ref(db, `${USERS}/${participant}/${CHATIDS}`), {
         [chatId]: createdOn,
       });
     }
@@ -151,7 +152,7 @@ export const addMessageToChat = async ({
       if (chat.chatInfo.participants[uid]) {
         const createdOn: number = Date.now();
         const messageId: string = crypto.randomUUID();
-        await update(ref(db, `${CHANNELS}/${chatId}/messages`), {
+        await update(ref(db, `${CHANNELS}/${chatId}/${MESSAGES}`), {
           [messageId]: {
             messageId,
             uid,
@@ -193,13 +194,13 @@ export const addChatParticipants = async ({ chatId, participants }: {
   let participant: string;
   for (participant of participants) {
     participantsObject[participant] = createdOn;
-    await update(ref(db, `${USERS}/${participant}/chatids`), {
+    await update(ref(db, `${USERS}/${participant}/${CHATIDS}`), {
       [chatId]: createdOn,
     });
   }
   try {
     await update(
-      ref(db, `${CHANNELS}/${chatId}/participants`),
+      ref(db, `${CHANNELS}/${chatId}/${PARTICIPANTS}`),
       participantsObject,
     );
     return { success: true };
@@ -279,7 +280,7 @@ export const getChannelsByUID = (
 export const getChatMessages = async (
   chatId: string,
 ): Promise<{ messages: MessageInfo[] | null; error?: string }> => {
-  const messagesRef = ref(db, `${CHANNELS}/${chatId}/messages`);
+  const messagesRef = ref(db, `${CHANNELS}/${chatId}/${MESSAGES}`);
   try {
     const req = await get(messagesRef);
     const messages: MessageInfo[] = Object.values(req.val());
@@ -293,7 +294,7 @@ export const setMessagesListener = (
   chatId: string,
   setMessages: SetMessages,
 ): Unsubscribe => {
-  const messagesRef = ref(db, `${CHANNELS}/${chatId}/messages`);
+  const messagesRef = ref(db, `${CHANNELS}/${chatId}/${MESSAGES}`);
   return onValue(messagesRef, (snapshot) => {
     if (snapshot.exists()) {
       if (snapshot.val()) {

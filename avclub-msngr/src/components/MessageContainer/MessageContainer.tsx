@@ -4,7 +4,8 @@ import { ChildrenProps } from "../../types/types";
 export const MessageContainer = ({ children }: ChildrenProps) => (
   <Flex
     overflow={'scroll'}
-    flex='1 1 60%'
+    flexDir={'column'}
+    gap={'2'}
   >
     {children}
   </Flex>
