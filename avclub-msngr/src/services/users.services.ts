@@ -20,7 +20,7 @@ import {
 // database, storage
 import { db, storage } from "../config/firebase-config";
 // types
-import { DefaultUserData, SetCount, SetUserData } from "../types/types";
+import { DefaultUserData, SetCount, SetUserDataContext } from "../types/types";
 // constants
 import { AVATARS, USERS, TEAMIDS } from "../constants/servicesConstants";
 import { Unsubscribe } from "firebase/auth";
@@ -112,7 +112,7 @@ export const getUsersByUsername = async (val: string) => {
     return filteredData;
 }
 
-export const setUserDataListen = (userUid: string, setUserData: SetUserData) => {
+export const setUserDataListen = (userUid: string, setUserData: SetUserDataContext) => {
     const userRef = ref(db, `${USERS}/${userUid}`);
     return onValue(userRef, (snapshot) => {
         if (snapshot.exists()) {
@@ -197,7 +197,7 @@ export const getUsersByKey = async (key: string, val: string) => {
 
 export const setUserDataListener = (
   userUid: string,
-  setUserData: SetUserData,
+  setUserData: SetUserDataContext,
 ) => {
   const userRef = ref(db, `${USERS}/${userUid}`);
   return onValue(userRef, (snapshot) => {

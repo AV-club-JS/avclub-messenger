@@ -65,7 +65,7 @@ export interface UserDataProps {
     users: DefaultUserData[];
 }
 
-// export type SetUserData = Dispatch<SetStateAction<AppState>>;
+export type SetUserDataContext = Dispatch<SetStateAction<AppState>>;
 
 export type UserTeams = {
     name: string
