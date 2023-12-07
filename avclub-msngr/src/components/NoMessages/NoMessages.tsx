@@ -11,7 +11,7 @@ interface NoMessagesProps {
 export const NoMessages: React.FC<NoMessagesProps> = ({ senderName, receiverName }) => {
   
   return (
-    <VStack spacing={4} align="center" justify="center" height="100%" width='100%'>
+    <VStack spacing={4} align="center" justify="center" height="100vh" width='100%'>
       <Icon as={FaComments} boxSize={10} color="gray.500" />
       <Heading size="lg" textAlign="center">
         No messages between {receiverName} and {senderName}.

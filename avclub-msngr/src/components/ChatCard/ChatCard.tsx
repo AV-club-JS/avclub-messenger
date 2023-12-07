@@ -4,7 +4,8 @@ import { ChatInfo, DefaultUserData } from "../../types/types";
 import { ChatHeader } from "../ChatHeader";
 import { UserContext } from "../../context/AuthContext";
 import { useContext, useEffect, useState } from "react";
-import { getUsersByUIDs} from "../../services";
+import { getUsersByUIDs } from "../../services";
+
 export const ChatCard = (
   { name, participants, lastMessage, isActive, onClick }: {
     name: string;
@@ -14,28 +15,36 @@ export const ChatCard = (
     onClick: () => void;
   },
 ) => {
-  
+
   const { userData } = useContext(UserContext);
   const [participantsData, setParticipantsData] = useState<DefaultUserData[]>([]);
+
   useEffect(() => {
     (async () => {
       const users: DefaultUserData[] = await getUsersByUIDs(participants);
       setParticipantsData(users);
     })();
   }, [])
+
   const chatParticipants = participantsData.filter((participant: DefaultUserData) =>
     participant.uid !== userData?.uid
   );
+
   const chatName = name || chatParticipants
     .map((participant: DefaultUserData) => participant.username)
     .join(" , ");
-    return (
+
+  return (
     <Card
       w="100%"
-      bgColor={isActive ? 'blue.50': ''}
+      bgColor={isActive ? 'brand.accent' : ''}
       maxH="100px"
       border={"1px solid black"}
-      _hover={{ bgColor: "blue.50", cursor: "pointer" }}
+      _hover={{
+        bg: 'brand.primary',
+        color: 'brand.accent',
+        cursor: 'pointer'
+    }}
       onClick={onClick}
     >
       <CardHeader>

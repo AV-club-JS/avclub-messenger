@@ -13,10 +13,12 @@ import {
   getChatInfo,
 } from "../../services";
 import { Unsubscribe } from "firebase/auth";
+
 export const Chats = () => {
   const { userData, setAuth } = useContext(UserContext);
   const [chats, setChats] = useState<ChatsCollection | []>([]);
   const [selectedChat, setSelectedChat] = useState<ChatInfo | null>(null);
+
   useEffect(() => {
     let disconnect: Unsubscribe;
     try {
@@ -29,6 +31,7 @@ export const Chats = () => {
     }
     return () => disconnect();
   }, []);
+
   useEffect(() => {
     (async () => {
       if (userData) {
@@ -38,6 +41,7 @@ export const Chats = () => {
       }
     })();
   }, [userData]);
+
   useEffect(() => {
     setSelectedChat((selectedChatProp: ChatInfo | null) => {
       return chats !== null && selectedChatProp === null
@@ -45,15 +49,16 @@ export const Chats = () => {
         : selectedChatProp;
     });
   }, [chats, selectedChat]);
+
   return (
-    <HStack h="100vh">
+    <HStack h={`calc(100vh - 60px)`} overflowY={'hidden'}>
       {chats.length
         ? (
           <>
             <VStack
               h="100%"
               w="24vw"
-              overflow={"scroll"}
+              overflowX={"hidden"}
               p={1}
             >
               {chats
@@ -72,8 +77,7 @@ export const Chats = () => {
                 : (
                   <Box>
                     <Text>
-                      You still not have any chat. Start a chat with some of
-                      your friends.
+                      No chats to display.
                     </Text>
                   </Box>
                 )}

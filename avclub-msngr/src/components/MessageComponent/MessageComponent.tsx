@@ -21,9 +21,10 @@ export const MessageComponent = (
     <Card
     alignSelf={message.uid === userData?.uid ? 'flex-end' : 'flex-start'} 
     maxW='md'
+    mb={2}
     border={'1px solid'}
-    borderColor={'black.300'}
-    bgColor={'blue.200'}
+    borderColor={'brand.accent'}
+    bgColor={'gray.50'}
     >
       <CardHeader >
         <Flex>

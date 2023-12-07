@@ -20,7 +20,7 @@ export const AdditionalSettingsBar = ({
   );
   return (
     <Flex
-      px={2}
+      px={4}
       alignItems={"center"}
     >
       <ChatBar name={name} participants={participants} />
