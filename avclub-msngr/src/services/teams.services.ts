@@ -12,11 +12,9 @@ import {
 // database
 import { db } from "../config/firebase-config";
 // types
-import { SetCount, DefaultTeamData, SetTeamData, Participants } from "../types/types";
+import { SetCount, SetTeamData } from "../types/types";
 // constants
 import { CHANNELS, TEAMS, USERS } from "../constants/servicesConstants";
-// services
-import { updateUserData } from ".";
 
 const teamsRef = ref(db, `${TEAMS}/`);
 
