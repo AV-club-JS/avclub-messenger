@@ -146,17 +146,19 @@ export const addMessageToChat = async ({
       if (req.error) return { success: false, error: req.error };
       const user = req.data;
       if (chat.chatInfo.participants[uid]) {
-        const createdOn: number = Date.now();
-        const messageId: string = crypto.randomUUID();
-        await update(ref(db, `${CHANNELS}/${chatId}/${MESSAGES}`), {
-          [messageId]: {
-            messageId,
-            uid,
-            createdOn,
-            content,
-            reactions: {},
-          },
-        });
+        if (content) {
+          const createdOn: number = Date.now();
+          const messageId: string = crypto.randomUUID();
+          await update(ref(db, `${CHANNELS}/${chatId}/${MESSAGES}`), {
+            [messageId]: {
+              messageId,
+              uid,
+              createdOn,
+              content,
+              reactions: {},
+            },
+          });
+        }
         return { success: true };
       } else {
         return {
@@ -248,7 +250,7 @@ export const getChannelsByUid = async (uid: string) => {
   const channelsRef = ref(db, `${CHANNELS}`);
   const snapshot = await get(channelsRef);
   const channels: ChatInfo[] = Object.values(snapshot.val());
-  const userChannels = channels.filter(channel => channel.participants[uid])
+  const userChannels = channels.filter((channel) => channel.participants[uid]);
   return userChannels || [];
 };
 
@@ -295,7 +297,9 @@ export const setMessagesListener = (
     if (snapshot.exists()) {
       if (snapshot.val()) {
         const messages: MessageInfo[] = Object.values(snapshot.val());
-        setMessages(messages.sort((m1, m2) => m1.createdOn < m2.createdOn ? -1 : 1));
+        setMessages(
+          messages.sort((m1, m2) => m1.createdOn < m2.createdOn ? -1 : 1),
+        );
       } else setMessages([]);
     }
   });
