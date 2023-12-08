@@ -305,6 +305,27 @@ export const setMessagesListener = (
   });
 };
 
+export const removeMessageFromChat = async (
+  chatId: string,
+  messageId: stirng,
+): Promise<
+  { success: boolean; chatId: string; messageId: string; error?: string }
+> => {
+  try {
+    const messageRef = ref(db, `${CHANNELS}/${chatId}/${MESSAGES}/${messageId}`);
+    await remove(messageRef);
+    return { success: true, chatId, messageId };
+  } catch (error) {
+    return {
+      success: false,
+      messageId,
+      chatId,
+      error: (error as Error).message,
+    };
+  }
+  return null;
+};
+
 export const deleteChannel = async (
   chatId: string,
 ): Promise<{ chatId: string; success: boolean; error?: string }> => {
