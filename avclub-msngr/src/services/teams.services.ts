@@ -12,9 +12,9 @@ import {
 // database
 import { db } from "../config/firebase-config";
 // types
-import { SetCount, DefaultTeamData, SetTeamData } from "../types/types";
+import { SetCount, DefaultTeamData, SetTeamData, Participants } from "../types/types";
 // constants
-import { TEAMS, USERS } from "../constants/servicesConstants";
+import { CHANNELS, TEAMS, USERS } from "../constants/servicesConstants";
 // services
 import { updateUserData } from ".";
 
@@ -36,7 +36,7 @@ export const createTeam = async ( name: string, ownerId: string, info: string ) 
         owner: ownerId,
         info,
         teamId: uid,
-        members: { [`${ownerId}`]: true },
+        members: { [`${ownerId}`]: Date.now() },
         createdOn: Date.now(),
     });
 
@@ -55,6 +55,7 @@ export const listenTeamData = (teamId: string, setTeamData: SetTeamData) => {
     try {
         const unsubscribe = onValue(teamRef, (snapshot) => {
             const data = snapshot.val();
+            
             setTeamData(data);
         });
         return unsubscribe;
@@ -70,18 +71,18 @@ export const updateTeamData = async (uid: string, data: object) => {
 }
 
 export const addUserToTeam = async (userId: string, teamId: string) => {
-    const teamRef = ref(db, `${TEAMS}/${teamId}/members`);
     const userRef = ref(db, `${USERS}/${userId}/teamIds`);
-    const dataForTeam = { [`${userId}`]: true };
-    const dataForUser = { [`${teamId}`]: true};
-    await update(teamRef, dataForTeam);
+    const teamRef = ref(db, `${TEAMS}/${teamId}/members`);
+    const dataForTeam = { [`${userId}`]: Date.now() };
+    const dataForUser = { [`${teamId}`]: Date.now() };
     await update(userRef, dataForUser);
+    await update(teamRef, dataForTeam);
 }
 
 export const doesTeamNameExist = async (teamName: string) => {
     const req = await get(query(teamsRef, orderByChild('name'), equalTo(teamName)));
     const data = req.val();
-    console.log(data);
+
     if (data === null) {
         return false;
     }
@@ -96,6 +97,35 @@ export const deleteTeam = async (teamId: string) => {
 export const removeUserFromTeam = async (teamId: string, userId: string) => {
         const teamRef = ref(db, `${TEAMS}/${teamId}/members/${userId}`);
         const userRef = ref(db, `${USERS}/${userId}/teamIds/${teamId}`);
-        await remove(teamRef);
         await remove(userRef);
+        await remove(teamRef);
+}
+
+export const createTeamChannel = async (
+    teamId: string,
+    channelName: string, 
+    privateStatus: boolean, 
+    ownerId: string,
+    participants: Participants
+    ) => {
+    const channelId = crypto.randomUUID(); 
+    let channelMembers: Participants;
+
+    if (privateStatus) {
+        channelMembers = { ownerId: Date.now()};
+    } else {
+        channelMembers = participants;
+    }
+
+    await set(ref(db, `${CHANNELS}/${channelId}`), {
+        name: channelName,
+        chatId: channelId,
+        personal: privateStatus,
+        uid: ownerId,
+        createdOn: Date.now(),
+        type: 'channel',
+        participants: channelMembers,
+        affiliatedTeam: teamId
+    })
+
 }
