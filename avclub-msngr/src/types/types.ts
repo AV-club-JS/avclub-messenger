@@ -138,3 +138,8 @@ export type MessageInfo = {
 };
 
 export type SetMessages = Dispatch<SetStateAction<MessageInfo[]>>;
+
+export type Participants = {
+  [key: string]: number;
+};
+
