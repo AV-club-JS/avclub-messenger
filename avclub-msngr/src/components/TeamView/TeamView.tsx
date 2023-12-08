@@ -39,7 +39,6 @@ export const TeamView = () => {
         onSearchOpen();
     };
 
-
     const handleTeamNameEdit = async () => {
 
         if (teamName.length < 5) {
@@ -106,7 +105,7 @@ export const TeamView = () => {
                     setOwner(ownerData.username);
                     const membersData = await getUsersByTeam(teamData.teamId);
 
-                    setMembers([...membersData]);
+                    setMembers(membersData);
                     setTeamName(teamData.name);
                     setTeamInfo(teamData.info);
                 } catch (error) {
@@ -118,12 +117,14 @@ export const TeamView = () => {
 
     useEffect(() => {
         let disconnectTeamListener: Unsubscribe;
+
         try {
             disconnectTeamListener = listenTeamData(urlTeamId!, setTeamData);
         } catch (error) {
             console.error(error);
 
         }
+
         return () => {
             setIsEditingTeamName(false);
             setIsEditingInfo(false);
@@ -194,11 +195,14 @@ export const TeamView = () => {
                     <Text fontSize='sm' color='gray.400'>ID: {teamData.teamId}</Text>
                     <Divider />
                 </Stack>
-                {(userData!.uid === teamData.owner) && <TeamOwnerMenu handleSearchOpen={handleSearchOpen} handleDelete={handleDelete} />}
+                {(userData!.uid === teamData.owner) && 
+                <TeamOwnerMenu handleSearchOpen={handleSearchOpen} handleDelete={handleDelete} />}
                 <Stack direction={{ base: 'column', md: 'row' }} alignItems="left" m={6} spacing={4}>
                     <Stack direction="column">
                         <Text fontWeight={600}>Members:</Text>
-                        <TeamMembers users={members} />
+                        <TeamMembers users={members} 
+                        isOwner={userData!.uid === teamData.owner} 
+                        teamId={teamData.teamId} />
                     </Stack>
                     <Stack direction="column" ml={{ base: 0, md: 3 }}>
                         <Stack direction="row" mb={2} align='center'>

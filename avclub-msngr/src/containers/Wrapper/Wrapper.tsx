@@ -7,7 +7,7 @@ import { Navbar } from "../../components/Navbar";
 import customTheme from "../../theme/theme";
 import { auth } from "../../config/firebase-config";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { getUserByUid, setUserDataListen } from "../../services";
+import { setUserDataListen } from "../../services";
 import { Unsubscribe } from "firebase/database";
 
 export const Wrapper = () => {
@@ -16,7 +16,6 @@ export const Wrapper = () => {
     userData: null,
   });
   const [user, loading] = useAuthState(auth);
-  const [userDataLoading, setUserDataLoading] = useState(false);
 
   if (appState.user !== user) {
     setAppState({ ...appState, user });
@@ -40,7 +39,7 @@ export const Wrapper = () => {
     };
   }, [user]);
 
-  if (!loading && !userDataLoading) {
+  if (!loading) {
     return (
       <ChakraProvider theme={customTheme}>
         <UserContext.Provider value={{ ...appState, setAuth: setAppState }}>
