@@ -106,17 +106,20 @@ export const createTeamChannel = async (
     channelName: string, 
     privateStatus: boolean, 
     ownerId: string,
-    participants: Participants
+    participants: object
     ) => {
     const channelId = crypto.randomUUID(); 
-    let channelMembers: Participants;
+    let channelMembers;
 
     if (privateStatus) {
         channelMembers = { ownerId: Date.now()};
     } else {
         channelMembers = participants;
     }
-
+    
+    const teamChannelIdRef = ref(db, `${TEAMS}/${teamId}/channelIds/${channelId}`);
+    const teamChannelUpdate = { [`${channelId}`]: Date.now() };
+    await update(teamChannelIdRef, teamChannelUpdate); 
     await set(ref(db, `${CHANNELS}/${channelId}`), {
         name: channelName,
         chatId: channelId,
@@ -129,3 +132,5 @@ export const createTeamChannel = async (
     })
 
 }
+
+
