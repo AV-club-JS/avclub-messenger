@@ -33,6 +33,7 @@ export type DefaultTeamData = {
     members: object,
     info: string,
     createdOn: string
+    channelIds: object
 };
 
 export type Credentials = {

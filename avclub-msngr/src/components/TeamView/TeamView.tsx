@@ -29,6 +29,7 @@ import FroalaEditorComponent from 'react-froala-wysiwyg';
 import FroalaEditorView from "react-froala-wysiwyg/FroalaEditorView";
 import { froalaBioConfig } from "../../utils/profileUtils";
 import { AddMemberModal } from "../AddMemberModal";
+import { TeamChannels } from "../TeamChannels";
 
 
 export const TeamView = () => {
@@ -250,6 +251,7 @@ export const TeamView = () => {
                             : <FroalaEditorView model={teamInfo} />}
                     </Stack>
                 </Stack>
+                    < TeamChannels teamData={teamData}/>
                 <AddMemberModal isOpen={isSearchOpen} onClose={onSearchClose} teamId={urlTeamId!} />
             </Stack >
         )

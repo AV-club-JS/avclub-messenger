@@ -1,0 +1,1 @@
+export { TeamChannels } from './TeamChannels';
