@@ -7,7 +7,7 @@ export const ChannelList: FC<{ channelArr: ChatsCollection }> = ({ channelArr })
     return (
         <Stack direction='column' mt={2}>
             {channelArr.map(channel => (
-            <Box borderBottom='1px solid' borderColor='gray.100'>
+            <Box borderBottom='1px solid' borderColor='gray.100' key={channel.chatId}>
                 <Link as={NavLink} key={channel.chatId}
                     fontSize={20}
                     fontWeight={600}

@@ -14,7 +14,7 @@ export const TeamMembers = ({ users, isOwner, teamId }: UserDataProps & { isOwne
     }
 
     return (
-        <VStack alignItems={'flex-start'} mt={3} borderRight='1px solid' borderColor='gray.200' h='300px' w='300px' overflow={'auto'}>
+        <VStack alignItems={'flex-start'} mt={3} borderRight='1px solid' borderColor='gray.200' h='300px' w='350px' overflow={'auto'}>
             {users.length && users.map(user => (
                 <HStack key={user.uid} p={1}>
                     <Avatar size="md" src={user.avatarUrl} mr={2}>
@@ -43,5 +43,3 @@ export const TeamMembers = ({ users, isOwner, teamId }: UserDataProps & { isOwne
         </VStack>
     )
 }
-
-// {users, isOnwer, teamId}: UserDataProps & { isOwner: boolean; teamId: string }
