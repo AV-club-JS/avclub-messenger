@@ -49,7 +49,6 @@ export const froalaBioConfig = {
         },
         "moreParagraph": {
             "buttons": [
-                "markdown",
                 "emoticons",
                 "alignRight",
                 "alignJustify",
@@ -105,7 +104,6 @@ export const froalaMessageConfig = {
         },
         "moreParagraph": {
             "buttons": [
-                "markdown",
                 "emoticons",
                 "alignRight",
                 "alignJustify",
