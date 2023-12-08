@@ -6,11 +6,8 @@ import { UserContext } from "../../context/AuthContext";
 import { useContext, useEffect, useState } from "react";
 import { ChatCard } from "../../components/ChatCard";
 import {
-  createChat,
-  getChannels,
   getChannelsByUID,
   getChannelsByUid,
-  getChatInfo,
 } from "../../services";
 import { Unsubscribe } from "firebase/auth";
 

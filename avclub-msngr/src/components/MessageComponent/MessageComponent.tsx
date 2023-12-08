@@ -1,10 +1,8 @@
 "use strict";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { BiChat, BiLike, BiShare } from "react-icons/bi";
 import {
   Avatar,
   Box,
-  Button,
   Card,
   CardBody,
   CardFooter,

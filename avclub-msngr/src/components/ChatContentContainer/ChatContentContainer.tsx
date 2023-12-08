@@ -1,24 +1,23 @@
 "use strict";
-import {
-  Box,
-  Button,
-  Flex,
-} from "@chakra-ui/react";
-import { ChatBar } from "../ChatBar";
+import { Box, Button, Flex } from "@chakra-ui/react";
 import { ChatInfo, DefaultUserData, MessageInfo } from "../../types/types";
 import { MessageContainer } from "../MessageContainer";
-import { ChangeEvent, useContext, useEffect, useState } from "react";
-import { getChatMessages, getUsersByUIDs, setMessagesListener } from "../../services";
+import { useContext, useEffect, useRef, useState } from "react";
+import {
+  getChatMessages,
+  getUsersByUIDs,
+  setMessagesListener,
+} from "../../services";
 import { MessageComponent } from "../MessageComponent";
 import { NoMessages } from "../NoMessages";
 import { Unsubscribe } from "firebase/auth";
 import { UserContext } from "../../context/AuthContext";
 import { AdditionalSettingsBar } from "../AdditionalSettingsBar";
 import { addMessageToChat } from "../../services";
-import 'froala-editor/css/froala_style.min.css';
-import 'froala-editor/css/froala_editor.pkgd.min.css';
-import 'froala-editor/js/plugins.pkgd.min.js';
-import FroalaEditorComponent from 'react-froala-wysiwyg';
+import "froala-editor/css/froala_style.min.css";
+import "froala-editor/css/froala_editor.pkgd.min.css";
+import "froala-editor/js/plugins.pkgd.min.js";
+import FroalaEditorComponent from "react-froala-wysiwyg";
 import { froalaMessageConfig } from "../../utils/profileUtils";
 
 export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
@@ -26,7 +25,7 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
   const [messages, setMessages] = useState<MessageInfo[] | []>([]);
   const [participants, setParticipants] = useState<DefaultUserData[]>([]);
   const [insertedMessage, setInsertedMessage] = useState<string>("");
-
+  const MessagesBottomElement = useRef<HTMLElement | null>(null);
   useEffect(() => {
     let disconnect: Unsubscribe;
     try {
@@ -43,12 +42,20 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
       setParticipants(users);
       const req = await getChatMessages(chat?.chatId as string);
       const messages = req.messages;
-      if (messages) setMessages(messages.sort((m1, m2) => m1.createdOn < m2.createdOn ? -1 : 1));
+      if (messages) {
+        setMessages(
+          messages.sort((m1, m2) => m1.createdOn < m2.createdOn ? -1 : 1),
+        );
+      }
     })();
   }, [chat]);
 
+  useEffect(() => {
+    MessagesBottomElement.current?.scrollIntoView({ behavior: "instant" });
+  }, [messages]);
+
   const handleMessage = async () => {
-    setInsertedMessage('');
+    setInsertedMessage("");
     const sendedMessage = await addMessageToChat({
       chatId: chat.chatId as string,
       uid: userData?.uid as string,
@@ -70,7 +77,7 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
       h="100%"
       p={2}
       mb={1}
-      overflowX={'hidden'}
+      overflowX={"hidden"}
     >
       <AdditionalSettingsBar
         participants={participants}
@@ -88,26 +95,27 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
                 receiverName={name}
               />
             )}
+          <Box ref={MessagesBottomElement}></Box>
         </>
       </MessageContainer>
       <Flex
         flex={"1 1 20%"}
       >
         <Box m={1}>
-        <FroalaEditorComponent
-          model={insertedMessage}
-          onModelChange={(e: string) => setInsertedMessage(e)}
-          config={froalaMessageConfig}
-        />
+          <FroalaEditorComponent
+            model={insertedMessage}
+            onModelChange={(e: string) => setInsertedMessage(e)}
+            config={froalaMessageConfig}
+          />
         </Box>
         <Button
           m={2}
-          size={'lg'}
-          color={'brand.primary'}
-          variant={'ghost'}
+          size={"lg"}
+          color={"brand.primary"}
+          variant={"ghost"}
           _hover={{
-            bg: 'brand.primary',
-            color: 'brand.accent',
+            bg: "brand.primary",
+            color: "brand.accent",
           }}
           onClick={handleMessage}
         >
