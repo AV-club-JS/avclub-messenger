@@ -36,7 +36,6 @@ export const Chats = () => {
     (async () => {
       if (userData) {
         const channels = await getChannelsByUid(userData?.uid as string);
-        console.log(channels)
         setChats(Object.values(channels));
       }
     })();
@@ -44,11 +43,11 @@ export const Chats = () => {
 
   useEffect(() => {
     setSelectedChat((selectedChatProp: ChatInfo | null) => {
-      return chats !== null && selectedChatProp === null
+      return chats && !selectedChatProp
         ? chats[0]
         : selectedChatProp;
     });
-  }, [chats, selectedChat]);
+  }, [chats ,selectedChat, setSelectedChat]);
 
   return (
     <HStack h={`calc(100vh - 60px)`} overflowY={'hidden'}>

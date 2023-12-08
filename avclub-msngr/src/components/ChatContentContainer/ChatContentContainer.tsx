@@ -3,10 +3,6 @@ import {
   Box,
   Button,
   Flex,
-  Stack,
-  Text,
-  Textarea,
-  VStack,
 } from "@chakra-ui/react";
 import { ChatBar } from "../ChatBar";
 import { ChatInfo, DefaultUserData, MessageInfo } from "../../types/types";

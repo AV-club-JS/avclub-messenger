@@ -215,7 +215,6 @@ export const getChannels = async (): Promise<
     const chats = snapshot.val();
     return Object.values(chats);
   } catch (error) {
-    console.log("I am here!!!");
     console.log((error as Error).message);
     return null;
   }
@@ -266,7 +265,6 @@ export const getChannelsByUID = (
         // select only the chats which have as participants
         // the current uid
         const chats: ChatInfo[] = Object.values(result);
-        console.log(chats);
         const userChats = chats.filter((chat) => chat.participants[uid]);
         // get for each chat get the username, avatarUrl.
         setChats(userChats);
