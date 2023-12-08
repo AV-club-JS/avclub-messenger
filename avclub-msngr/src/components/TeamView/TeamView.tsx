@@ -104,6 +104,9 @@ export const TeamView = () => {
 
                     setOwner(ownerData.username);
                     const membersData = await getUsersByTeam(teamData.teamId);
+                    if (!Object.keys(teamData.members).includes(userData!.uid)) {
+                        navigate('/teams');
+                    }
 
                     setMembers(membersData);
                     setTeamName(teamData.name);
@@ -122,7 +125,6 @@ export const TeamView = () => {
             disconnectTeamListener = listenTeamData(urlTeamId!, setTeamData);
         } catch (error) {
             console.error(error);
-
         }
 
         return () => {
