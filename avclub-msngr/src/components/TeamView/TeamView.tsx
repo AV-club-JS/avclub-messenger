@@ -1,4 +1,15 @@
-import { Text, Flex, Stack, Heading, Divider, Button, FormControl, Center, Input, useDisclosure, FormErrorMessage } from "@chakra-ui/react";
+import { 
+    Text, 
+    Stack, 
+    Heading, 
+    Divider, 
+    Button, 
+    FormControl, 
+    Center, 
+    Input, 
+    useDisclosure, 
+    FormErrorMessage 
+} from "@chakra-ui/react";
 import { useEffect, useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../context/AuthContext";
@@ -80,6 +91,9 @@ export const TeamView = () => {
         try {
             await deleteTeam(teamData.teamId);
             await removeUserTeam(userData!.uid, teamData.teamId);
+            for (const user in teamData.members) {
+                await removeUserTeam(user, teamData.teamId);
+            }
             navigate('/teams');
         } catch (error) {
             console.error(error);
@@ -107,7 +121,7 @@ export const TeamView = () => {
                     if (!Object.keys(teamData.members).includes(userData!.uid)) {
                         navigate('/teams');
                     }
-
+                    
                     setMembers(membersData);
                     setTeamName(teamData.name);
                     setTeamInfo(teamData.info);
