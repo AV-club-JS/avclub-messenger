@@ -93,13 +93,7 @@ export interface TeamButtonsProps {
     handleSearchOpen: HandleSearchOpenFunction;
 }
 export type Chat = {
-  [messageId: string]: {
-    messageId: string;
-    author: string;
-    username: string;
-    avatarURL: string;
-    content: string;
-  };
+  [messageId: string]: MessageInfo
 };
 
 export type ChatInfo = {

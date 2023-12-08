@@ -15,20 +15,21 @@ export const ChatCard = (
     onClick: () => void;
   },
 ) => {
-
   const { userData } = useContext(UserContext);
-  const [participantsData, setParticipantsData] = useState<DefaultUserData[]>([]);
+  const [participantsData, setParticipantsData] = useState<DefaultUserData[]>(
+    [],
+  );
 
   useEffect(() => {
     (async () => {
       const users: DefaultUserData[] = await getUsersByUIDs(participants);
       setParticipantsData(users);
     })();
-  }, [])
+  }, []);
 
-  const chatParticipants = participantsData.filter((participant: DefaultUserData) =>
-    participant.uid !== userData?.uid
-  );
+  const chatParticipants = participantsData.filter((
+    participant: DefaultUserData,
+  ) => participant.uid !== userData?.uid);
 
   const chatName = name || chatParticipants
     .map((participant: DefaultUserData) => participant.username)
@@ -37,25 +38,31 @@ export const ChatCard = (
   return (
     <Card
       w="100%"
-      bgColor={isActive ? 'brand.accent' : ''}
+      bgColor={isActive ? "brand.accent" : ""}
       maxH="100px"
       border={"1px solid black"}
       _hover={{
-        bg: 'brand.primary',
-        color: 'brand.accent',
-        cursor: 'pointer'
-    }}
+        bg: "brand.primary",
+        color: "brand.accent",
+        cursor: "pointer",
+      }}
       onClick={onClick}
     >
       <CardHeader>
         <ChatHeader name={chatName} participants={chatParticipants} />
         <CardBody
-          flexWrap={'wrap'}
+          flexWrap={"wrap"}
           m="0"
           p="0"
           textAlign={"center"}
+          overflow={"hidden"}
         >
-          <Text >{lastMessage}</Text>
+          <Text
+            w={'100%'}
+            h={18}
+            dangerouslySetInnerHTML={{ __html: lastMessage }}
+          >
+          </Text>
         </CardBody>
       </CardHeader>
       <CardFooter />
