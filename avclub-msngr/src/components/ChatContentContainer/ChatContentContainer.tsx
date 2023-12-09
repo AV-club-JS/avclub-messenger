@@ -36,7 +36,7 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
         setMessages(messages);
       }
     })();
-  }, [chat]);
+  }, [chat, messages]);
 
   useEffect(() => {
     let disconnect: Unsubscribe;
