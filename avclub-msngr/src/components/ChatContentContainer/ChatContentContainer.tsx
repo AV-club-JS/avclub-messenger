@@ -81,9 +81,9 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
       />
       <MessageContainer>
         <>
-          {messages.length && (
+          {messages.length !== 0 &&
             <Messages user={userData as DefaultUserData} messages={messages} />
-          ) } 
+          } 
         </>
       </MessageContainer>
       <Flex

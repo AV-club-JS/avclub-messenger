@@ -245,17 +245,18 @@ export const findChannelByParticipantIds = async (
   return { chatId: null };
 };
 
-export const getChannelsByUid = async (uid: string) => {
+export const getChannelsByUid = async (uid: string, type: 'chat' | 'channel' = 'chat') => {
   const channelsRef = ref(db, `${CHANNELS}`);
   const snapshot = await get(channelsRef);
   const channels: ChatInfo[] = Object.values(snapshot.val());
-  const userChannels = channels.filter((channel) => channel.participants[uid]);
+  const userChannels = channels.filter((channel) => channel.participants[uid] && channel.type === type);
   return userChannels || [];
 };
 
 export const getChannelsByUID = (
   uid: string,
   setChats: SetChats,
+  type: 'chat' | 'channel' = 'chat'
 ): Unsubscribe => {
   const chatsRef = ref(db, `${CHANNELS}`);
   return onValue(chatsRef, (snapshot) => {
@@ -265,7 +266,7 @@ export const getChannelsByUID = (
         // select only the chats which have as participants
         // the current uid
         const chats: ChatInfo[] = Object.values(result);
-        const userChats = chats.filter((chat) => chat.participants[uid]);
+        const userChats = chats.filter((chat) => chat.participants[uid] && chat.type === type);
         // get for each chat get the username, avatarUrl.
         setChats(userChats);
       }

@@ -26,7 +26,7 @@ export const Chats = () => {
     (async () => {
       const channels = await getChannelsByUid(userData?.uid as string);
       console.log(userData?.uid, Object.values(channels))
-      setChats(Object.values(channels));
+      setChats(channels);
     })();
   }, [userData]);
 
