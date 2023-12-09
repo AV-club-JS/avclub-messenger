@@ -1,9 +1,10 @@
-import { Stack, Heading, Divider, Button, useDisclosure, Box } from "@chakra-ui/react";
+import { Stack, Heading, Divider, Button, 
+    useDisclosure, Box, Accordion } from "@chakra-ui/react";
 import { useEffect, useState, useContext } from "react";
 import { Outlet } from "react-router-dom";
 import { UserContext } from "../../context/AuthContext";
 import { DefaultTeamData } from "../../types/types";
-import { TeamsDisplay } from "../../components/TeamsDisplay";
+import { TeamDisplay } from "../../components/TeamDisplay";
 import { getTeamInfo, removeUserTeam } from "../../services";
 import { CreateTeam } from "../../components/CreateTeam";
 import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
@@ -89,7 +90,12 @@ export const Teams = () => {
                             <Heading m={3}>Teams</Heading>
                             <Divider />
                             <Stack direction={'column'} overflow={'auto'} ml={4}>
-                                {teamsArr.length > 0 && <TeamsDisplay teams={teamsArr} />}
+                                {teamsArr.length > 0 && 
+                                <Accordion defaultIndex={[0]} allowMultiple>
+                                    {teamsArr.map((team: DefaultTeamData) => (
+                                        <TeamDisplay team={team} key={team.teamId}/>
+                                    ))}
+                                </Accordion>}
                             </Stack>
                         </Box>}
                 </Stack>
