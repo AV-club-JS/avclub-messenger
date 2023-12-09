@@ -28,7 +28,6 @@ export type DefaultUserData = {
 export type DefaultTeamData = {
     name: string,
     owner: string,
-    ownerId: string,
     teamId: string,
     members: object,
     info: string,
@@ -138,5 +137,10 @@ export type SetMessages = Dispatch<SetStateAction<MessageInfo[]>>;
 export type Participants = {
   [key: string]: number;
 };
+
+export interface ChannelListProps {
+  channelArr: ChatsCollection;
+  isOwner: boolean;
+}
 
 
