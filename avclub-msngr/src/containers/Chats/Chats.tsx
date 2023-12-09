@@ -36,7 +36,7 @@ export const Chats = () => {
       }
     })();
     console.log('changed')
-  }, []);
+  }, [userData]);
 
   useEffect(() => {
     setSelectedChat((selectedChatProp: ChatInfo | null) => {
@@ -44,8 +44,7 @@ export const Chats = () => {
         ? chats[0]
         : selectedChatProp;
     });
-  }, [selectedChat]);
-  if (chats) console.log('I am defined')
+  }, [chats, selectedChat]);
   return (
     <HStack h={`calc(100vh - 60px)`} overflowY={'hidden'}>
       {chats.length

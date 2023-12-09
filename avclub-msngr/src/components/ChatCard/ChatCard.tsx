@@ -31,7 +31,7 @@ export const ChatCard = (
     participant: DefaultUserData,
   ) => participant.uid !== userData?.uid);
 
-  const chatName = name || chatParticipants
+  const chatName = chatParticipants
     .map((participant: DefaultUserData) => participant.username)
     .join(" , ");
 
