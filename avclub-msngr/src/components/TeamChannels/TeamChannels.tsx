@@ -1,9 +1,9 @@
-import { Button, Stack, Input, Heading } from "@chakra-ui/react";
+import { Button, Stack, Input, Heading, Checkbox, Text } from "@chakra-ui/react";
 import { DefaultTeamData, ChatsCollection } from "../../types/types";
 import { UserContext } from "../../context/AuthContext";
 import { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { createTeamChannel, getChatInfo } from "../../services";
+import { createTeamChannel, getTeamChannels } from "../../services";
 import { ChannelList } from "../ChannelList";
 
 export const TeamChannels = ({ teamData }: { teamData: DefaultTeamData }) => {
@@ -12,12 +12,11 @@ export const TeamChannels = ({ teamData }: { teamData: DefaultTeamData }) => {
     const [creatingChannel, setCreatingChannel] = useState(false);
     const [channelName, setChannelName] = useState('');
     const [privateStatus, setPrivateStatus] = useState(false);
-    const [channels, setChannels] = useState<ChatsCollection | null>(null);
+    const [channels, setChannels] = useState<ChatsCollection | []>([]);
 
     const handleSave = async () => {
-        console.log(channelName);
         const ownerId = userData!.uid;
-        const participants = Object.values(teamData.members);
+        const participants = Object.keys(teamData.members);
 
         await createTeamChannel(
             teamData.teamId,
@@ -38,31 +37,27 @@ export const TeamChannels = ({ teamData }: { teamData: DefaultTeamData }) => {
     useEffect(() => {
         if (teamData && teamData.channelIds) {
             const teamChannels = Object.keys(teamData.channelIds);
-            const channelArray = [];
             (async () => {
-                for (const channelKey of teamChannels) {
                     try {
-                        const chat = await getChatInfo(channelKey);
-                        if (chat && chat.chatInfo) {
-                            channelArray.push(chat.chatInfo);
-                            console.log(channelArray);
-                        }
+                        const chats = await getTeamChannels(teamChannels);
+                        setChannels(chats);
+                        
                     } catch (error) {
                         console.error(error);
                     }
-                }
-                setChannels(channelArray);
-            })()
+            })()            
+        } else if (!teamData.channelIds) {
+            setChannels([]);
         }
     }, [teamData])
 
     useEffect(() => {
         setCreatingChannel(false);
-        setChannels(null);
+        setChannels([]);
     }, [location.pathname])
 
     return (
-        <Stack direction='column'>
+        <Stack direction='column' mb={5}>
             <Heading mt={3} as={'h3'} fontWeight={600}>
                 Channels:
             </Heading>
@@ -92,10 +87,12 @@ export const TeamChannels = ({ teamData }: { teamData: DefaultTeamData }) => {
                             >Cancel</Button>
                         </Stack>
                         <Input
+                            type="text"
                             w='30%'
                             placeholder="Enter channel name"
                             onChange={e => setChannelName(e.target.value)}
                         />
+                        <Checkbox>Private</Checkbox>
                     </>
                     : <>
                         <Button size='sm'
@@ -109,7 +106,7 @@ export const TeamChannels = ({ teamData }: { teamData: DefaultTeamData }) => {
                             }}
                         >Add Channel</Button>
                     </>)}
-                    {channels !== null && <ChannelList channelArr={channels} />}
+            <ChannelList channelArr={channels} />
         </Stack>
     )
 }
