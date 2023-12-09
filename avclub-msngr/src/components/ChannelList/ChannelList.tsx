@@ -20,6 +20,7 @@ export const ChannelList: FC<{ channelArr: ChatsCollection }> = ({ channelArr })
         <VStack alignItems={'flex-start'} mt={3}
             minH='300px' w='auto' overflow={'auto'} direction='column'>
             {channelArr !== null && channelArr.map(channel => (
+                (Object.prototype.hasOwnProperty.call(channel.participants, userData!.uid)) &&
                 <HStack key={channel.chatId}>
                     <Text
                         key={channel.chatId}
