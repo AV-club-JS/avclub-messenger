@@ -19,6 +19,7 @@ import "froala-editor/css/froala_editor.pkgd.min.css";
 import "froala-editor/js/plugins.pkgd.min.js";
 import FroalaEditorComponent from "react-froala-wysiwyg";
 import { froalaMessageConfig } from "../../utils/profileUtils";
+import { Messages } from "../Messages";
 // import { Messages } from "../Messages";
 export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
   const { userData } = useContext(UserContext);
@@ -34,10 +35,6 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
     }
     return () => disconnect();
   }, []);
-const MessagesBottomElement = useRef<HTMLElement | null>(null);
-  useEffect(() => {
-    MessagesBottomElement.current?.scrollIntoView({ behavior: "instant" });
-  }, [messages]);
 
   useEffect(() => {
     (async () => {
@@ -51,9 +48,8 @@ const MessagesBottomElement = useRef<HTMLElement | null>(null);
         );
       }
     })();
-  }, [chat, messages]);
+  }, [messages]);
 
-  
   const handleMessage = async () => {
     setInsertedMessage("");
     const sendedMessage = await addMessageToChat({
@@ -84,20 +80,11 @@ const MessagesBottomElement = useRef<HTMLElement | null>(null);
         name={name}
       />
       <MessageContainer>
-      <>
-      {messages.length
-        ? messages.map((data: MessageInfo) => (
-          <MessageComponent key={data.messageId} message={data} />
-        ))
-        : (
-          <NoMessages
-            senderName={(userData as DefaultUserData).username}
-            receiverName={name}
-          />
-        )}
-      <Box ref={MessagesBottomElement}></Box>
-    </>
- 
+        <>
+          {messages.length && (
+            <Messages user={userData as DefaultUserData} messages={messages} />
+          ) } 
+        </>
       </MessageContainer>
       <Flex
         flex={"1 1 20%"}
