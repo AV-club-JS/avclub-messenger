@@ -25,11 +25,13 @@ export const TeamChannels = ({ teamData }: { teamData: DefaultTeamData }) => {
             ownerId,
             participants,
         )
+        setPrivateStatus(false);
         setChannelName('');
         setCreatingChannel(false);
     }
 
     const handleCancel = () => {
+        setPrivateStatus(false);
         setChannelName('');
         setCreatingChannel(false);
     }
@@ -92,7 +94,7 @@ export const TeamChannels = ({ teamData }: { teamData: DefaultTeamData }) => {
                             placeholder="Enter channel name"
                             onChange={e => setChannelName(e.target.value)}
                         />
-                        <Checkbox>Private</Checkbox>
+                        <Checkbox onChange={() => setPrivateStatus(!privateStatus)}>Private</Checkbox>
                     </>
                     : <>
                         <Button size='sm'
