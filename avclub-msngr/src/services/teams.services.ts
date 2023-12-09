@@ -15,6 +15,8 @@ import { db } from "../config/firebase-config";
 import { SetCount, SetTeamData } from "../types/types";
 // constants
 import { CHANNELS, TEAMS, USERS } from "../constants/servicesConstants";
+// services
+import { getChatInfo } from ".";
 
 const teamsRef = ref(db, `${TEAMS}/`);
 
@@ -27,7 +29,7 @@ export const getTeamsCount = (setTeamsCount: SetCount) => {
     })
 }
 
-export const createTeam = async ( name: string, ownerId: string, info: string ) => {
+export const createTeam = async (name: string, ownerId: string, info: string) => {
     const uid = crypto.randomUUID();
     await set(ref(db, `${TEAMS}/${uid}`), {
         name,
@@ -53,12 +55,12 @@ export const listenTeamData = (teamId: string, setTeamData: SetTeamData) => {
     try {
         const unsubscribe = onValue(teamRef, (snapshot) => {
             const data = snapshot.val();
-            
+
             setTeamData(data);
         });
         return unsubscribe;
     } catch (error) {
-        return () => {};
+        return () => { };
     }
 }
 
@@ -93,31 +95,30 @@ export const deleteTeam = async (teamId: string) => {
 }
 
 export const removeUserFromTeam = async (teamId: string, userId: string) => {
-        const teamRef = ref(db, `${TEAMS}/${teamId}/members/${userId}`);
-        const userRef = ref(db, `${USERS}/${userId}/teamIds/${teamId}`);
-        await remove(userRef);
-        await remove(teamRef);
+    const teamRef = ref(db, `${TEAMS}/${teamId}/members/${userId}`);
+    const userRef = ref(db, `${USERS}/${userId}/teamIds/${teamId}`);
+    await remove(userRef);
+    await remove(teamRef);
 }
 
 export const createTeamChannel = async (
     teamId: string,
-    channelName: string, 
-    privateStatus: boolean, 
+    channelName: string,
+    privateStatus: boolean,
     ownerId: string,
     participants: object
-    ) => {
-    const channelId = crypto.randomUUID(); 
+) => {
+    const channelId = crypto.randomUUID();
     let channelMembers;
 
     if (privateStatus) {
-        channelMembers = { ownerId: Date.now()};
+        channelMembers = { ownerId: Date.now() };
     } else {
         channelMembers = participants;
     }
-    
+
     const teamChannelIdRef = ref(db, `${TEAMS}/${teamId}/channelIds/${channelId}`);
     const teamChannelUpdate = { [`${channelId}`]: Date.now() };
-    await update(teamChannelIdRef, teamChannelUpdate); 
     await set(ref(db, `${CHANNELS}/${channelId}`), {
         name: channelName,
         chatId: channelId,
@@ -128,7 +129,27 @@ export const createTeamChannel = async (
         participants: channelMembers,
         affiliatedTeam: teamId
     })
+    await update(teamChannelIdRef, teamChannelUpdate);
+}
 
+export const deleteTeamChannel = async (teamId: string, channelId: string) => {
+    const teamChannelIdRef = ref(db, `${TEAMS}/${teamId}/channelIds/${channelId}`);
+    const channelRef = ref(db, `${CHANNELS}/${channelId}`);
+    await remove(teamChannelIdRef);
+    await remove(channelRef);
+    return true;
+}
+
+export const getTeamChannels = async (channelKeys: string[]) => {
+    const result = [];
+    for (const channelKey of channelKeys) {
+
+        const chat = await getChatInfo(channelKey);
+        if (chat && chat.chatInfo) {
+            result.push(chat.chatInfo);
+        }
+    }
+    return result;
 }
 
 
