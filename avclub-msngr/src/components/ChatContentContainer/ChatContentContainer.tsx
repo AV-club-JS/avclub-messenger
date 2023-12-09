@@ -19,13 +19,12 @@ import "froala-editor/css/froala_editor.pkgd.min.css";
 import "froala-editor/js/plugins.pkgd.min.js";
 import FroalaEditorComponent from "react-froala-wysiwyg";
 import { froalaMessageConfig } from "../../utils/profileUtils";
-
+// import { Messages } from "../Messages";
 export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
   const { userData } = useContext(UserContext);
   const [messages, setMessages] = useState<MessageInfo[] | []>([]);
   const [participants, setParticipants] = useState<DefaultUserData[]>([]);
   const [insertedMessage, setInsertedMessage] = useState<string>("");
-  const MessagesBottomElement = useRef<HTMLElement | null>(null);
   useEffect(() => {
     let disconnect: Unsubscribe;
     try {
@@ -35,6 +34,10 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
     }
     return () => disconnect();
   }, []);
+const MessagesBottomElement = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    MessagesBottomElement.current?.scrollIntoView({ behavior: "instant" });
+  }, [messages]);
 
   useEffect(() => {
     (async () => {
@@ -48,12 +51,9 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
         );
       }
     })();
-  }, [chat]);
+  }, [chat, messages]);
 
-  useEffect(() => {
-    MessagesBottomElement.current?.scrollIntoView({ behavior: "instant" });
-  }, [messages]);
-
+  
   const handleMessage = async () => {
     setInsertedMessage("");
     const sendedMessage = await addMessageToChat({
@@ -84,19 +84,20 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
         name={name}
       />
       <MessageContainer>
-        <>
-          {messages.length
-            ? messages.map((data: MessageInfo) => (
-              <MessageComponent key={data.messageId} message={data} />
-            ))
-            : (
-              <NoMessages
-                senderName={(userData as DefaultUserData).username}
-                receiverName={name}
-              />
-            )}
-          <Box ref={MessagesBottomElement}></Box>
-        </>
+      <>
+      {messages.length
+        ? messages.map((data: MessageInfo) => (
+          <MessageComponent key={data.messageId} message={data} />
+        ))
+        : (
+          <NoMessages
+            senderName={(userData as DefaultUserData).username}
+            receiverName={name}
+          />
+        )}
+      <Box ref={MessagesBottomElement}></Box>
+    </>
+ 
       </MessageContainer>
       <Flex
         flex={"1 1 20%"}

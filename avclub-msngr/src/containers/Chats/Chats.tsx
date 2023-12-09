@@ -15,7 +15,6 @@ export const Chats = () => {
   const { userData, setAuth } = useContext(UserContext);
   const [chats, setChats] = useState<ChatsCollection | []>([]);
   const [selectedChat, setSelectedChat] = useState<ChatInfo | null>(null);
-
   useEffect(() => {
     let disconnect: Unsubscribe;
     try {
@@ -36,7 +35,8 @@ export const Chats = () => {
         setChats(Object.values(channels));
       }
     })();
-  }, [userData]);
+    console.log('changed')
+  }, []);
 
   useEffect(() => {
     setSelectedChat((selectedChatProp: ChatInfo | null) => {
@@ -44,8 +44,8 @@ export const Chats = () => {
         ? chats[0]
         : selectedChatProp;
     });
-  }, [chats ,selectedChat, setSelectedChat]);
-
+  }, [selectedChat]);
+  if (chats) console.log('I am defined')
   return (
     <HStack h={`calc(100vh - 60px)`} overflowY={'hidden'}>
       {chats.length
