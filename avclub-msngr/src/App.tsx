@@ -14,6 +14,7 @@ import { Chats } from './containers/Chats';
 import { NotFound } from './containers/NotFound';
 import { Teams } from './containers/Teams';
 import { TeamView } from './components/TeamView';
+import { TeamChannelWrapper } from './components/TeamChannelWrapper';
 
 //Browser router
 const appRoutes = createBrowserRouter(
@@ -24,9 +25,10 @@ const appRoutes = createBrowserRouter(
       <Route path='/register' element={<Register />} />
       <Route path='/profile' element={<Profile />} />
       <Route path='/teams' element={<Teams />}>
-        <Route path=':teamId' element={<TeamView />}/>
+        <Route path='team/:teamId' element={<TeamView />} />
+        <Route path='channel/:chatId' element={<TeamChannelWrapper />} />
       </Route>
-      <Route path='/chats' element={<Chats />}/>
+      <Route path='/chats' element={<Chats />} />
       <Route path='*' element={<NotFound />} />
     </Route>
   )

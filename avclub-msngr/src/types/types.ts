@@ -143,4 +143,8 @@ export interface ChannelListProps {
   isOwner: boolean;
 }
 
+export interface FetchDataResponse {
+  chatInfo?: ChatInfo;
+  error?: string;
+}
 

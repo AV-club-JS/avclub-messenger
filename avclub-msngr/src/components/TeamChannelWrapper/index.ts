@@ -1,0 +1,1 @@
+export { TeamChannelWrapper } from './TeamChannelWrapper';
