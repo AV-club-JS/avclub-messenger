@@ -16,7 +16,7 @@ export const TeamChannels = ({ teamData }: { teamData: DefaultTeamData }) => {
 
     const handleSave = async () => {
         const ownerId = userData!.uid;
-        const participants = Object.keys(teamData.members);
+        const participants = {...teamData.members};
 
         await createTeamChannel(
             teamData.teamId,

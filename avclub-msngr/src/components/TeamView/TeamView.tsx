@@ -1,15 +1,6 @@
-import {
-    Text,
-    Stack,
-    Heading,
-    Divider,
-    Button,
-    FormControl,
-    Center,
-    Input,
-    useDisclosure,
-    FormErrorMessage
-} from "@chakra-ui/react";
+import { Text, Stack,Heading, Divider, 
+    Button, FormControl, Center, Input, 
+    useDisclosure, FormErrorMessage } from "@chakra-ui/react";
 import { useEffect, useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../context/AuthContext";
@@ -21,7 +12,7 @@ import {
 import { Unsubscribe } from "firebase/database";
 import { formatTimestamp } from "../../utils/formatTimestamp";
 import { TeamMembers } from "../TeamMembers";
-import { TeamOwnerMenu } from "../TeamOnwerMenu";
+import { TeamOwnerMenu } from "../TeamOwnerMenu";
 import 'froala-editor/css/froala_style.min.css';
 import 'froala-editor/css/froala_editor.pkgd.min.css';
 import 'froala-editor/js/plugins.pkgd.min.js';
@@ -46,6 +37,7 @@ export const TeamView = () => {
     const [teamNameError, setTeamNameError] = useState('');
     const { isOpen: isSearchOpen, onOpen: onSearchOpen, onClose: onSearchClose } = useDisclosure();
     const navigate = useNavigate();
+
 
     const handleSearchOpen = () => {
         onSearchOpen();
@@ -152,7 +144,8 @@ export const TeamView = () => {
 
     if (teamData && owner) {
         return (
-            <Stack direction="column" px={4} mt={4} mb={4} overflowY="auto" maxHeight="100vh">
+            <Stack direction="column" px={4} mt={4} mb={4} overflowY="auto" >
+                
                 <Stack direction='column' align='center'>
                     <Stack alignItems='center'>
                         <FormControl isInvalid={teamNameInvalid}>

@@ -1,6 +1,5 @@
 import { ChatsCollection } from "../../types/types";
-import { HStack, Link, VStack, Button, Text } from "@chakra-ui/react";
-import { NavLink } from "react-router-dom";
+import { HStack, VStack, Button, Text } from "@chakra-ui/react";
 import { FC, useContext } from "react";
 import { deleteTeamChannel } from "../../services";
 import { UserContext } from "../../context/AuthContext";
@@ -22,13 +21,10 @@ export const ChannelList: FC<{ channelArr: ChatsCollection }> = ({ channelArr })
             minH='300px' w='auto' overflow={'auto'} direction='column'>
             {channelArr !== null && channelArr.map(channel => (
                 <HStack key={channel.chatId}>
-                    <Link as={NavLink} key={channel.chatId}
+                    <Text
+                        key={channel.chatId}
                         fontSize={20}
-                        fontWeight={600}
-                        _hover={{
-                            color: 'brand.accent',
-                        }}
-                    >{channel.name}</Link>
+                        fontWeight={600}>{channel.name}</Text>
                     {channel.uid === userData!.uid &&
                         <Button size='sm' ml={4}
                             minW="fit-content" maxW="fit-content"
