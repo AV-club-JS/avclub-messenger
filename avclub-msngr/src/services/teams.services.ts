@@ -112,7 +112,7 @@ export const createTeamChannel = async (
     let channelMembers;
 
     if (privateStatus) {
-        channelMembers = { ownerId: Date.now() };
+        channelMembers = { [`${ownerId}`]: Date.now() };
     } else {
         channelMembers = participants;
     }
