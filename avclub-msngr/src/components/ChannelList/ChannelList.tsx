@@ -1,22 +1,49 @@
 import { ChatsCollection } from "../../types/types";
-import { Stack, Link, Box } from "@chakra-ui/react";
+import { HStack, Link, VStack, Button, Text } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
-import { FC } from "react";
+import { FC, useContext } from "react";
+import { deleteTeamChannel } from "../../services";
+import { UserContext } from "../../context/AuthContext";
 
 export const ChannelList: FC<{ channelArr: ChatsCollection }> = ({ channelArr }) => {
+    const { userData } = useContext(UserContext);
+
+    const handleDelete = async (teamId: string, channelId: string) => {
+        try {
+            await deleteTeamChannel(teamId, channelId);
+
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     return (
-        <Stack direction='column' mt={2}>
-            {channelArr.map(channel => (
-            <Box borderBottom='1px solid' borderColor='gray.100' key={channel.chatId}>
-                <Link as={NavLink} key={channel.chatId}
-                    fontSize={20}
-                    fontWeight={600}
-                    _hover={{
-                        color: 'brand.accent',
-                    }}
-                >{channel.name}</Link>
-            </Box>
+        <VStack alignItems={'flex-start'} mt={3}
+            minH='300px' w='auto' overflow={'auto'} direction='column'>
+            {channelArr !== null && channelArr.map(channel => (
+                <HStack key={channel.chatId}>
+                    <Link as={NavLink} key={channel.chatId}
+                        fontSize={20}
+                        fontWeight={600}
+                        _hover={{
+                            color: 'brand.accent',
+                        }}
+                    >{channel.name}</Link>
+                    {channel.uid === userData!.uid &&
+                        <Button size='sm' ml={4}
+                            minW="fit-content" maxW="fit-content"
+                            onClick={() => handleDelete(channel.affiliatedTeam!, channel.chatId!)}
+                            color={'red.400'}
+                            variant={'outline'}
+                            _hover={{
+                                bg: 'red.400',
+                                color: 'brand.primary',
+                            }}>Delete</Button>
+                    }
+                </HStack>
             ))}
-        </Stack>
+            {channelArr?.length === 0 && <Text>No channels to display</Text>}
+        </VStack>
     );
+
 };
