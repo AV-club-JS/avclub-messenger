@@ -10,10 +10,12 @@ import {
     VStack
 } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { getTeamChannels } from "../../services";
+import { UserContext } from "../../context/AuthContext";
 
 export const TeamDisplay = ({ team }: { team: DefaultTeamData }) => {
+    const { userData } = useContext(UserContext);
     const [channels, setChannels] = useState<ChatsCollection | []>([]);
 
     useEffect(() => {
@@ -57,6 +59,7 @@ export const TeamDisplay = ({ team }: { team: DefaultTeamData }) => {
             <AccordionPanel pb={4}>
                 <VStack align='left' gap={1}>
                     {team.channelIds ? channels.map(channel => (
+                        (Object.prototype.hasOwnProperty.call(channel.participants, userData!.uid)) &&
                         <Link pl={2} key={channel.chatId}
                             as={NavLink}
                             to={`channel/${channel.chatId}`}
