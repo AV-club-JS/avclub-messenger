@@ -20,7 +20,7 @@ export const TeamChannelWrapper = () => {
             console.log('HERE!');
             
         })()
-    }, [])
+    }, [urlChatId])
 
 
     if (chatInfo) {
