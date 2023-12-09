@@ -64,7 +64,7 @@ export const Chats = () => {
                     isActive={selectedChat?.chatId === chat.chatId}
                     name={chat.name}
                     participants={Object.keys(chat.participants)}
-                    lastMessage={getLastChatMessage(chat)}
+                    lastMessage={getLastChatMessage(chat) as string}
                     onClick={() => {
                       setSelectedChat(chat);
                     }}
