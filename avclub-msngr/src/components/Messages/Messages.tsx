@@ -2,14 +2,18 @@ import { Box } from "@chakra-ui/react";
 import { DefaultUserData, MessageInfo } from "../../types/types";
 import { MessageComponent } from "../MessageComponent";
 import { NoMessages } from "../NoMessages";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 export const Messages = (
   { messages, user }: { messages: MessageInfo[] | []; user: DefaultUserData },
 ): JSX.Element => {
   const MessagesBottomElement = useRef<HTMLElement | null>(null);
+  const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
   useEffect(() => {
-    MessagesBottomElement.current?.scrollIntoView({ behavior: "instant" });
-  }, [messages]);
+    if (shouldScrollToBottom) {
+      MessagesBottomElement.current?.scrollIntoView({ behavior: "instant" });
+      setShouldScrollToBottom(false);
+    }
+  }, [shouldScrollToBottom, messages]);
 
   return (
     <>

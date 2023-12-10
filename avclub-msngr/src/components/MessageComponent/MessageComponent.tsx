@@ -3,6 +3,7 @@ import {
   Avatar,
   Box,
   Button,
+  ButtonGroup,
   Card,
   CardBody,
   CardFooter,
@@ -12,12 +13,12 @@ import {
   IconButton,
   Text,
 } from "@chakra-ui/react";
+import { MdDelete, MdDns } from "react-icons/md";
 import {
   Popover,
   PopoverArrow,
   PopoverBody,
   PopoverContent,
-  PopoverFooter,
   PopoverTrigger,
 } from "@chakra-ui/react";
 import { DefaultUserData, MessageInfo } from "../../types/types";
@@ -29,7 +30,7 @@ import "froala-editor/css/froala_editor.pkgd.min.css";
 import "froala-editor/js/plugins.pkgd.min.js";
 import FroalaEditorView from "react-froala-wysiwyg/FroalaEditorView";
 import { froalaBioConfig } from "../../utils/profileUtils";
-
+import { emojiList } from "../../constants/emojiList";
 export const MessageComponent = (
   { message }: { message: MessageInfo },
 ): JSX.Element => {
@@ -41,8 +42,14 @@ export const MessageComponent = (
       setUser(data.val());
     })();
   }, []);
+  const handleReaction = (reaction: string) => {
+    console.log(
+      message.uid,
+      `the reaction of user ${userData?.uid} on the message ${message.messageId} of user ${message.uid} is ${reaction}`,
+    );
+  };
   return (
-    <Popover>
+    <Popover trigger="hover">
       <PopoverTrigger>
         <Card
           p="0"
@@ -87,13 +94,46 @@ export const MessageComponent = (
           </CardFooter>
         </Card>
       </PopoverTrigger>
-      <PopoverContent bgColor={'gray.500'}>
+      <PopoverContent bgColor={"gray.500"}>
         <PopoverArrow />
-        <PopoverBody>
-          <Button>
-           React 
-          </Button>
-         {message.uid === (userData as DefaultUserData).uid && <Button>Delete message</Button>} 
+        <PopoverBody display="flex" flexDir={"column"}>
+          <ButtonGroup m='0'>
+            <Button
+              onClick={() => handleReaction(emojiList.ThumbsUp)}
+            >
+              {emojiList.ThumbsUp}
+            </Button>
+            <Button
+              onClick={() => handleReaction(emojiList.ThumbsDown)}
+            >
+              {emojiList.ThumbsDown}
+            </Button>
+            <Button
+              onClick={() => handleReaction(emojiList.Heart)}
+            >
+              {emojiList.Heart}
+            </Button>
+            <Button
+              onClick={() => handleReaction(emojiList.Smile)}
+            >
+              {emojiList.Smile}
+            </Button>
+            <Button
+              onClick={() => handleReaction(emojiList.Surprice)}
+            >
+              {emojiList.Surprice}
+            </Button>
+            {message.uid === (userData as DefaultUserData).uid &&
+              (
+                <Button
+                  aria-label="delete"
+                  onClick={() => handleReaction('delete')}
+                  _hover={{ color: "red" }}
+                >
+                  <MdDelete fontSize='40'/>
+                </Button>
+              )}
+          </ButtonGroup>
         </PopoverBody>
       </PopoverContent>
     </Popover>
