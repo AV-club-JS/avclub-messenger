@@ -1,26 +1,22 @@
-import { Box } from "@chakra-ui/react";
+import {Box} from '@chakra-ui/react'
 import { DefaultUserData, MessageInfo } from "../../types/types";
-import { MessageComponent } from "../MessageComponent";
+import { MessageComponent } from '../MessageComponent';
 import { NoMessages } from "../NoMessages";
-import { useEffect, useRef, useState } from "react";
-export const Messages = (
-  { messages, user }: { messages: MessageInfo[] | []; user: DefaultUserData },
-): JSX.Element => {
-  const MessagesBottomElement = useRef<HTMLElement | null>(null);
-  const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
+import {useEffect, useRef} from 'react';
+export const Messages = ({ messages, user }: {messages: MessageInfo[] | [], user: DefaultUserData}): JSX.Element => {
+  const BottomRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
-    if (shouldScrollToBottom) {
-      MessagesBottomElement.current?.scrollIntoView({ behavior: "instant" });
-      setShouldScrollToBottom(false);
-    }
-  }, [shouldScrollToBottom, messages]);
-
+    BottomRef.current?.scrollIntoView({behavior: 'auto'})
+    console.log(messages)
+  }, [messages])
   return (
     <>
-      {messages.map((data: MessageInfo) => (
-        <MessageComponent key={data.messageId} message={data} />
-      ))}
-      <Box ref={MessagesBottomElement}></Box>
+      {
+        messages.map((data: MessageInfo) => (
+          <MessageComponent key={data.messageId} message={data} />
+        ))
+       }
+      <Box ref={BottomRef}></Box>
     </>
   );
 };

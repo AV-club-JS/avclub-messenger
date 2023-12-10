@@ -280,7 +280,7 @@ export const getChatMessages = async (
   const messagesRef = ref(db, `${CHANNELS}/${chatId}/${MESSAGES}`);
   try {
     const req = await get(messagesRef);
-    const messages: MessageInfo[] = Object.values(req.val());
+    const messages: MessageInfo[] = Object.values(req.val()).sort((m1, m2) => m1.createdOn < m2.createdOn ? -1 : 1);
     return { messages };
   } catch (error) {
     return { messages: [], error: (error as Error).message };
@@ -297,7 +297,7 @@ export const setMessagesListener = (
       if (snapshot.val()) {
         const messages: MessageInfo[] = Object.values(snapshot.val());
         setMessages(
-          messages.sort((m1, m2) => m1.createdOn < m2.createdOn ? -1 : 1),
+          [...messages.sort((m1, m2) => m1.createdOn < m2.createdOn ? -1 : 1)]
         );
       } else setMessages([]);
     }

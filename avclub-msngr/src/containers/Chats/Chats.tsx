@@ -19,7 +19,7 @@ export const Chats = () => {
     } catch (error) {
       console.log((error as Error).message);
     }
-    return () => disconnect();
+    return () => {console.log('It was disconnected');return disconnect();}
   }, []);
 
   useEffect(() => {

@@ -27,29 +27,29 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
   const [participants, setParticipants] = useState<DefaultUserData[]>([]);
   const [insertedMessage, setInsertedMessage] = useState<string>("");
   useEffect(() => {
-    let disconnect: Unsubscribe;
-    try {
-      disconnect = setMessagesListener(chat.chatId as string, setMessages);
-    } catch (error) {
-      console.log((error as Error).message);
-    }
-    return () => disconnect();
-  }, []);
-
-  useEffect(() => {
     (async () => {
       const users = await getUsersByUIDs(Object.keys(chat.participants));
       setParticipants(users);
       const req = await getChatMessages(chat?.chatId as string);
       const messages = req.messages;
       if (messages) {
-        setMessages(
-          messages.sort((m1, m2) => m1.createdOn < m2.createdOn ? -1 : 1),
-        );
+        setMessages([...messages]);
       }
     })();
-  }, [messages]);
+  }, [chat]);
 
+  useEffect(() => {
+    let disconnect: Unsubscribe;
+    try {
+      disconnect = setMessagesListener(chat.chatId as string, setMessages);
+    } catch (error) {
+      console.log((error as Error).message);
+    }
+    return () =>{
+      console.log('The messages was disconnected')
+      return  disconnect();
+    } 
+  }, []);
   const handleMessage = async () => {
     setInsertedMessage("");
     const sendedMessage = await addMessageToChat({
@@ -64,7 +64,6 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
       .filter((participant) => participant?.uid !== userData?.uid)
       .map((participant) => participant.username)
       .join(",");
-
   return (
     <Flex
       flexDir={"column"}
@@ -82,8 +81,7 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
       <MessageContainer>
         <>
           {messages.length !== 0 &&
-            <Messages user={userData as DefaultUserData} messages={messages} />
-          } 
+            <Messages user={userData as DefaultUserData} messages={messages} />}
         </>
       </MessageContainer>
       <Flex
