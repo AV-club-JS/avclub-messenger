@@ -36,7 +36,7 @@ export const createTeam = async (name: string, ownerId: string, info: string) =>
         owner: ownerId,
         info,
         teamId: uid,
-        members: { [`${ownerId}`]: Date.now() },
+        members: { [ownerId]: Date.now() },
         createdOn: Date.now(),
     });
 
@@ -73,8 +73,8 @@ export const updateTeamData = async (uid: string, data: object) => {
 export const addUserToTeam = async (userId: string, teamId: string) => {
     const userRef = ref(db, `${USERS}/${userId}/teamIds`);
     const teamRef = ref(db, `${TEAMS}/${teamId}/members`);
-    const dataForTeam = { [`${userId}`]: Date.now() };
-    const dataForUser = { [`${teamId}`]: Date.now() };
+    const dataForTeam = { [userId]: Date.now() };
+    const dataForUser = { [teamId]: Date.now() };
     await update(userRef, dataForUser);
     await update(teamRef, dataForTeam);
 }
@@ -112,7 +112,7 @@ export const createTeamChannel = async (
     let channelMembers;
 
     if (privateStatus) {
-        channelMembers = { [`${ownerId}`]: Date.now() };
+        channelMembers = { [ownerId]: Date.now() };
     } else {
         channelMembers = participants;
     }
