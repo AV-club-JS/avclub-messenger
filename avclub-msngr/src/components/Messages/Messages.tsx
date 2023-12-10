@@ -7,7 +7,6 @@ export const Messages = ({ messages, user }: {messages: MessageInfo[] | [], user
   const BottomRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
     BottomRef.current?.scrollIntoView({behavior: 'auto'})
-    console.log(messages)
   }, [messages])
   return (
     <>

@@ -1,14 +1,14 @@
 import { ChatInfo } from "../../types/types";
-import { Box, Flex, Text, VStack } from "@chakra-ui/react";
+import { Box, Text, VStack } from "@chakra-ui/react";
 import { ChatCard } from "../ChatCard";
 import { ChatContentContainer } from "../ChatContentContainer";
 import { useEffect, useState } from "react";
 import { getLastChatMessage } from "../../utils/dataPreparation";
 export const ChatsComponent = ({ chats }: { chats: ChatInfo[] }) => {
-  const [selectedChat, setSelectedChat] = useState<ChatInfo | null>(null);
+  const [selectedChat, setSelectedChat] = useState<ChatInfo | {}>({});
   useEffect(() => {
     setSelectedChat((selectedChatProp: ChatInfo | null) => {
-      return chats && !selectedChatProp ? chats[0] : selectedChatProp;
+      return chats && !Object.keys(selectedChatProp as {}).length ? {...chats[0]} : {...selectedChatProp};
     });
   }, [chats]);
 
@@ -25,9 +25,9 @@ export const ChatsComponent = ({ chats }: { chats: ChatInfo[] }) => {
           ? chats.map((chat) => (
             <ChatCard
               key={chat.chatId}
-              isActive={selectedChat?.chatId === chat.chatId}
+              isActive={(selectedChat as ChatInfo)?.chatId === chat.chatId}
               name={chat.name}
-              participants={Object.keys(chat.participants)}
+              participants={Object.keys(chat?.participants)}
               lastMessage={getLastChatMessage(chat) as string}
               onClick={() => {
                 setSelectedChat(chat);
@@ -44,7 +44,7 @@ export const ChatsComponent = ({ chats }: { chats: ChatInfo[] }) => {
       </VStack>
       {selectedChat && (
         <ChatContentContainer
-          chat={selectedChat}
+          chat={selectedChat as ChatInfo}
         />
       )}
     </>

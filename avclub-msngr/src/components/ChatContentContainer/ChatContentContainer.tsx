@@ -33,7 +33,7 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
       const req = await getChatMessages(chat?.chatId as string);
       const messages = req.messages;
       if (messages) {
-        setMessages([...messages]);
+        setMessages(messages);
       }
     })();
   }, [chat]);

@@ -295,6 +295,7 @@ export const setMessagesListener = (
   return onValue(messagesRef, (snapshot) => {
     if (snapshot.exists()) {
       if (snapshot.val()) {
+        console.log('was changed')
         const messages: MessageInfo[] = Object.values(snapshot.val());
         setMessages(
           [...messages.sort((m1, m2) => m1.createdOn < m2.createdOn ? -1 : 1)]
