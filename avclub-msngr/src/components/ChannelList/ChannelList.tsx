@@ -1,8 +1,10 @@
 import { ChatsCollection } from "../../types/types";
-import { HStack, VStack, Button, Text } from "@chakra-ui/react";
-import { FC, useContext } from "react";
+import { HStack, VStack, Button, Text, Menu, MenuButton, MenuList, MenuItem, IconButton, FormControl } from "@chakra-ui/react";
+import { FC, useContext, useState } from "react";
 import { deleteTeamChannel } from "../../services";
 import { UserContext } from "../../context/AuthContext";
+import { TbDotsVertical } from "react-icons/tb";
+
 
 export const ChannelList: FC<{ channelArr: ChatsCollection }> = ({ channelArr }) => {
     const { userData } = useContext(UserContext);
@@ -27,15 +29,17 @@ export const ChannelList: FC<{ channelArr: ChatsCollection }> = ({ channelArr })
                         fontSize={20}
                         fontWeight={600}>{channel.name}</Text>
                     {channel.uid === userData!.uid &&
-                        <Button size='sm' ml={4}
-                            minW="fit-content" maxW="fit-content"
-                            onClick={() => handleDelete(channel.affiliatedTeam!, channel.chatId!)}
-                            color={'red.400'}
-                            variant={'outline'}
-                            _hover={{
-                                bg: 'red.400',
-                                color: 'brand.primary',
-                            }}>Delete</Button>
+                        <Menu isLazy>
+                            <MenuButton as={IconButton} icon={<TbDotsVertical />}>
+                            </MenuButton>
+                            <MenuList>
+                                <MenuItem>Add Members</MenuItem>
+                                <MenuItem>Edit Name</MenuItem>
+                                <MenuItem
+                                    onClick={() => handleDelete(channel.affiliatedTeam!, channel.chatId!)} color='red.500'
+                                >Delete</MenuItem>
+                            </MenuList>
+                        </Menu>
                     }
                 </HStack>
             ))}
