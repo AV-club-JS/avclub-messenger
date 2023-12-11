@@ -1,4 +1,3 @@
-import { UserDataProps } from "../../../types/types";
 import { DefaultUserData, SearchResultsProps } from "../../../types/types";
 import {
   Avatar,
@@ -11,22 +10,31 @@ import {
 import { UserContext } from "../../../context/AuthContext";
 import { useContext } from "react";
 import { getStatusBadgeColor } from "../../../utils/profileUtils";
-import { createChat } from "../../../services";
+import { addRoomID, createChat, dyteRoomCreate } from "../../../services";
 
 export const SearchResults = ({ users, onClose }: SearchResultsProps) => {
   const { userData } = useContext(UserContext);
+
   const createChatInstance = async (user: DefaultUserData) => {
-    console.log(userData.uid, user.uid);
-    await createChat({
+
+    const reqInfo = await createChat({
       name: user.username,
       uid: (userData as DefaultUserData).uid,
       personal: false,
       participants: [(userData as DefaultUserData).uid, user.uid],
       type: "chat",
     });
+    const chatIdentifier = reqInfo.chatId;
+
+    const res = await dyteRoomCreate(reqInfo.chatId!);
+    const dyteData = await res.json();
+
+    addRoomID(chatIdentifier!, dyteData.data.id);
 
     onClose();
   };
+
+
   if (users.length > 0) {
     return (
       <VStack alignItems={"flex-start"} mt={3}>
