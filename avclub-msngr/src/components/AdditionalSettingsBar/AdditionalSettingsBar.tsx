@@ -7,17 +7,23 @@ import { UserContext } from "../../context/AuthContext";
 import { FaPhoneVolume } from "react-icons/fa6";
 import { FaVideo } from "react-icons/fa";
 import { IoPersonAdd } from "react-icons/io5";
+import { Link } from "react-router-dom";
+
 export const AdditionalSettingsBar = ({
   name,
-  participants
+  participants,
+  roomId
 }: {
   name: string;
   participants: DefaultUserData[];
+  roomId: string
 }) => {
   const { userData } = useContext(UserContext);
+
   participants = participants.filter((participant) =>
     participant.uid !== userData?.uid
   );
+
   return (
     <Flex
       px={4}
@@ -25,7 +31,7 @@ export const AdditionalSettingsBar = ({
     >
       <ChatBar name={name} participants={participants} />
       <ButtonGroup>
-        <Button>
+        <Button as={Link} to={`/${roomId}`} >
           <FaVideo />
         </Button>
         <Button>
