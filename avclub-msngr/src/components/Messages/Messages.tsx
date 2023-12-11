@@ -10,6 +10,7 @@ export const Messages = (
   },
 ): JSX.Element => {
   const BottomRef = useRef<HTMLElement | null>(null);
+  
   useEffect(() => {
     BottomRef.current?.scrollIntoView({ behavior: "auto" });
   }, [messages]);
