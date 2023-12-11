@@ -66,10 +66,12 @@ export const createChat = async (
   // check if the name is taken
   // if no name exists, then set it to empty string
   const channel = await findChannelByParticipantIds(participants);
+
   if (channel.chatId) {
     console.log("The channel already exist", channel.chatId, channel);
     return { chatId: channel.chatId as string, success: true };
   }
+
   try {
     const chatId: string = crypto.randomUUID();
     const createdOn = Date.now();
@@ -77,12 +79,14 @@ export const createChat = async (
       [uid: string]: number;
     } = {};
     let participant: string;
+
     for (participant of participants) {
       participantsObject[participant] = createdOn;
       await update(ref(db, `${USERS}/${participant}/${CHATIDS}`), {
         [chatId]: createdOn,
       });
     }
+
     await set(ref(db, `${CHANNELS}/${chatId}`), {
       name,
       chatId,
@@ -93,14 +97,9 @@ export const createChat = async (
       type,
       createdOn,
     });
-    // const addParticipants = await addChatParticipants({
-    //   chatId,
-    //   participants,
-    // });
-    console.log("new chat created...");
+
     return { success: true, chatId: chatId };
   } catch (error) {
-    console.log("I fall here!!!");
     return { chatId: null, success: false, error: (error as Error).message };
   }
 };
