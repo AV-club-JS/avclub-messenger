@@ -1,6 +1,6 @@
 "use strict";
 import { Card, CardBody, CardFooter, CardHeader, Text } from "@chakra-ui/react";
-import { ChatInfo, DefaultUserData } from "../../types/types";
+import { DefaultUserData } from "../../types/types";
 import { ChatHeader } from "../ChatHeader";
 import { UserContext } from "../../context/AuthContext";
 import { useContext, useEffect, useState } from "react";
@@ -9,10 +9,10 @@ import { getUsersByUIDs } from "../../services";
 export const ChatCard = (
   { name, participants, lastMessage, isActive, onClick }: {
     name: string;
-    participants: string[] | [];
-    lastMessage: string;
-    isActive: boolean;
-    onClick: () => void;
+    participants: number[] | [];
+    lastMessage?: string;
+    isActive?: boolean;
+    onClick?: () => void;
   },
 ) => {
   const { userData } = useContext(UserContext);
@@ -40,7 +40,8 @@ export const ChatCard = (
       w="100%"
       bgColor={isActive ? "brand.accent" : ""}
       maxH="100px"
-      border={"1px solid black"}
+      borderBottom={"1px solid"}
+      borderColor='brand.primary'
       _hover={{
         bg: "brand.primary",
         color: "brand.accent",
@@ -59,8 +60,10 @@ export const ChatCard = (
         >
           <Text
             w={'100%'}
+            fontSize='sm'
+            color='gray.500'
             h={18}
-            dangerouslySetInnerHTML={{ __html: lastMessage }}
+            dangerouslySetInnerHTML={{ __html: lastMessage! }}
           >
           </Text>
         </CardBody>

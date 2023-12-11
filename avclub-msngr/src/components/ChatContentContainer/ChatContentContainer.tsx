@@ -2,14 +2,12 @@
 import { Box, Button, Flex } from "@chakra-ui/react";
 import { ChatInfo, DefaultUserData, MessageInfo } from "../../types/types";
 import { MessageContainer } from "../MessageContainer";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   getChatMessages,
   getUsersByUIDs,
   setMessagesListener,
 } from "../../services";
-import { MessageComponent } from "../MessageComponent";
-import { NoMessages } from "../NoMessages";
 import { Unsubscribe } from "firebase/auth";
 import { UserContext } from "../../context/AuthContext";
 import { AdditionalSettingsBar } from "../AdditionalSettingsBar";
@@ -20,12 +18,13 @@ import "froala-editor/js/plugins.pkgd.min.js";
 import FroalaEditorComponent from "react-froala-wysiwyg";
 import { froalaMessageConfig } from "../../utils/profileUtils";
 import { Messages } from "../Messages";
-// import { Messages } from "../Messages";
+
 export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
   const { userData } = useContext(UserContext);
   const [messages, setMessages] = useState<MessageInfo[] | []>([]);
   const [participants, setParticipants] = useState<DefaultUserData[]>([]);
   const [insertedMessage, setInsertedMessage] = useState<string>("");
+
   useEffect(() => {
     (async () => {
       const users = await getUsersByUIDs(Object.keys(chat.participants));
@@ -52,7 +51,7 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
   }, []);
   const handleMessage = async () => {
     setInsertedMessage("");
-    const sendedMessage = await addMessageToChat({
+    const sentMessage = await addMessageToChat({
       chatId: chat.chatId as string,
       uid: userData?.uid as string,
       content: insertedMessage,
@@ -64,6 +63,7 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
       .filter((participant) => participant?.uid !== userData?.uid)
       .map((participant) => participant.username)
       .join(",");
+
   return (
     <Flex
       flexDir={"column"}
@@ -77,6 +77,7 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
       <AdditionalSettingsBar
         participants={participants}
         name={name}
+        roomId={chat.roomId}
       />
       <MessageContainer>
         <>
