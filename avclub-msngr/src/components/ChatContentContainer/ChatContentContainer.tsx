@@ -29,13 +29,14 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
     (async () => {
       const users = await getUsersByUIDs(Object.keys(chat.participants));
       setParticipants(users);
+      
       const req = await getChatMessages(chat?.chatId as string);
       const messages = req.messages;
       if (messages) {
         setMessages(messages);
       }
     })();
-  }, [chat, messages]);
+  }, [chat]);
 
   useEffect(() => {
     let disconnect: Unsubscribe;
