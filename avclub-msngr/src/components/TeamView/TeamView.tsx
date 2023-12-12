@@ -157,7 +157,6 @@ export const TeamView = () => {
                             ) : (
                                 <>
                                     <Heading>{teamData.name}</Heading>
-                                    {teamNameInvalid && <FormErrorMessage>{teamNameError}</FormErrorMessage>}
                                 </>
                             )}
                             <Center>
