@@ -16,20 +16,23 @@ export const SearchResults = ({ users, onClose }: SearchResultsProps) => {
   const { userData } = useContext(UserContext);
 
   const createChatInstance = async (user: DefaultUserData) => {
-
-    const reqInfo = await createChat({
-      name: user.username,
-      uid: (userData as DefaultUserData).uid,
-      personal: false,
-      participants: [(userData as DefaultUserData).uid, user.uid],
-      type: "chat",
-    });
-    const chatIdentifier = reqInfo.chatId;
-
-    const res = await dyteRoomCreate(reqInfo.chatId!);
-    const dyteData = await res.json();
-
-    addRoomID(chatIdentifier!, dyteData.data.id);
+    try {
+      const reqInfo = await createChat({
+        name: user.username,
+        uid: (userData as DefaultUserData).uid,
+        personal: false,
+        participants: [(userData as DefaultUserData).uid, user.uid],
+        type: "chat",
+      });
+      const chatIdentifier = reqInfo.chatId;
+  
+      const res = await dyteRoomCreate(reqInfo.chatId!);
+      const dyteData = await res.json();
+  
+      addRoomID(chatIdentifier!, dyteData.data.id);
+    } catch (error) {
+      console.error(error);
+    }
 
     onClose();
   };
