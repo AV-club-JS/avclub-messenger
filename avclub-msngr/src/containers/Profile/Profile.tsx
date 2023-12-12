@@ -136,17 +136,17 @@ export const Profile = () => {
 
     const handleStatusChange = async (newStatus: string) => {
         setCurrentStatus(newStatus);
-            try {
-                await updateUserData(userData!.uid, { status: newStatus });
-                setAuth({
-                    user,
-                    userData: { ...userData!, status: newStatus },
-                });
-            } catch (error) {
-                console.error(error);
-                alert('Update failed');
-                setCurrentStatus(userData!.status);
-            }
+        try {
+            await updateUserData(userData!.uid, { status: newStatus });
+            setAuth({
+                user,
+                userData: { ...userData!, status: newStatus },
+            });
+        } catch (error) {
+            console.error(error);
+            alert('Update failed');
+            setCurrentStatus(userData!.status);
+        }
     };
 
     const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -175,118 +175,114 @@ export const Profile = () => {
 
     }, [userData])
 
-
-    if (userData) {
-        return (
-            <Flex direction="column" alignItems="center" px={4} mb={12}>
-
-                <Stack direction="row" p={6}>
-                    <Avatar size="2xl" src={userData.avatarUrl}>
-                        <AvatarBadge boxSize="1em" bg={getStatusBadgeColor(userData.status)} />
-                    </Avatar>
+    return (
+        <Flex direction="column" alignItems="center" px={4} mb={12}>
+            <Stack direction="row" p={6}>
+                <Avatar size="2xl" src={userData!.avatarUrl}>
+                    <AvatarBadge boxSize="1em" bg={getStatusBadgeColor(userData!.status)} />
+                </Avatar>
+                <FormControl>
+                    <FormLabel>Status</FormLabel>
+                    <Select defaultValue={userData!.status} onChange={(e) => handleStatusChange(e.target.value)}>
+                        <option value="online">Online</option>
+                        <option value="away">Away</option>
+                        <option value="busy">Busy</option>
+                        <option value="in meeting">In Meeting</option>
+                        <option value="offline">Offline</option>
+                    </Select>
+                    <Button onClick={handleButtonClick} size="xs" m="3">Change Avatar</Button>
+                    <Input
+                        ref={inputRef}
+                        type="file"
+                        accept=".jpeg,.jpg,.png"
+                        onChange={handleAvatarChange}
+                        display="none"
+                    />
+                </FormControl>
+            </Stack>
+            <Stack direction="row" spacing={4} mt={4}>
+                <Text fontWeight={600}>Email: {userData!.email}</Text>
+            </Stack>
+            <Text fontSize="small">Member Since: {formatTimestamp(userData!.createdOn)}</Text>
+            <Box mt={8} w="100%" maxW="600px">
+                <Stack direction="row" spacing={4}>
                     <FormControl>
-                        <FormLabel>Status</FormLabel>
-                        <Select defaultValue={userData.status} onChange={(e) => handleStatusChange(e.target.value)}>
-                            <option value="online">Online</option>
-                            <option value="away">Away</option>
-                            <option value="busy">Busy</option>
-                            <option value="in meeting">In Meeting</option>
-                            <option value="offline">Offline</option>
-                        </Select>
-                        <Button onClick={handleButtonClick} size="xs" m="3">Change Avatar</Button>
-                        <Input
-                            ref={inputRef}
-                            type="file"
-                            accept=".jpeg,.jpg,.png"
-                            onChange={handleAvatarChange}
-                            display="none"
-                        />
+                        <Stack direction="row">
+                            <FormLabel fontWeight={600}>Username</FormLabel>
+                            {isEditingUsername ?
+                                <Button size={'xs'} onClick={handleUsernameEdit}>Save</Button>
+                                : <Button size={'xs'} onClick={() => setIsEditingUsername(true)}>Edit</Button>
+                            }
+                        </Stack>
+                        {isEditingUsername ?
+                            <Input value={username}
+                                maxLength={35}
+                                onChange={e => setUsername(e.target.value)}></Input>
+                            : <Text>{userData!.username}</Text>}
                     </FormControl>
                 </Stack>
                 <Stack direction="row" spacing={4} mt={4}>
-                    <Text fontWeight={600}>Email: {userData.email}</Text>
-                </Stack>
-                <Text fontSize="small">Member Since: {formatTimestamp(userData.createdOn)}</Text>
-                <Box mt={8} w="100%" maxW="600px">
-                    <Stack direction="row" spacing={4}>
-                        <FormControl>
-                            <Stack direction="row">
-                                <FormLabel fontWeight={600}>Username</FormLabel>
-                                {isEditingUsername ?
-                                    <Button size={'xs'} onClick={handleUsernameEdit}>Save</Button>
-                                    : <Button size={'xs'} onClick={() => setIsEditingUsername(true)}>Edit</Button>
-                                }
-                            </Stack>
-                            {isEditingUsername ?
-                                <Input value={username}
-                                    maxLength={35}
-                                    onChange={e => setUsername(e.target.value)}></Input>
-                                : <Text>{userData.username}</Text>}
-                        </FormControl>
-                    </Stack>
-                    <Stack direction="row" spacing={4} mt={4}>
-                        <FormControl>
-                            <Stack direction="row">
-                                <FormLabel fontWeight={600}>First Name</FormLabel>
-                                {isEditingFirstName ?
-                                    <Button size={'xs'} onClick={handleFirstNameEdit}>Save</Button>
-                                    : <Button size={'xs'} onClick={() => setIsEditingFirstName(true)}>Edit</Button>
-                                }
-                            </Stack>
+                    <FormControl>
+                        <Stack direction="row">
+                            <FormLabel fontWeight={600}>First Name</FormLabel>
                             {isEditingFirstName ?
-                                <Input value={firstName}
-                                    maxLength={1019}
-                                    onChange={e => setFirstName(e.target.value)}></Input>
-                                : <Text>{userData.firstName}</Text>}
-                        </FormControl>
-                        <FormControl>
-                            <Stack direction='row'>
-                                <FormLabel fontWeight={600}>Last Name</FormLabel>
-                                {isEditingLastName ?
-                                    <Button size={'xs'} onClick={handleLastNameEdit}>Save</Button>
-                                    : <Button size={'xs'} onClick={() => setIsEditingLastName(true)}>Edit</Button>
-                                }
-                            </Stack>
+                                <Button size={'xs'} onClick={handleFirstNameEdit}>Save</Button>
+                                : <Button size={'xs'} onClick={() => setIsEditingFirstName(true)}>Edit</Button>
+                            }
+                        </Stack>
+                        {isEditingFirstName ?
+                            <Input value={firstName}
+                                maxLength={1019}
+                                onChange={e => setFirstName(e.target.value)}></Input>
+                            : <Text>{userData!.firstName}</Text>}
+                    </FormControl>
+                    <FormControl>
+                        <Stack direction='row'>
+                            <FormLabel fontWeight={600}>Last Name</FormLabel>
                             {isEditingLastName ?
-                                <Input value={lastName}
-                                    maxLength={747}
-                                    onChange={e => setLastName(e.target.value)}></Input>
-                                : <Text>{userData.lastName}</Text>}
-                        </FormControl>
-                    </Stack>
-                    <FormControl mt={4}>
-                        <Stack direction='row'>
-                            <FormLabel fontWeight={600}>Phone Number</FormLabel>
-                            {isEditingPhone ?
-                                <Button size={'xs'} onClick={handlePhoneEdit}>Save</Button>
-                                : <Button size={'xs'} onClick={() => setIsEditingPhone(true)}>Edit</Button>
+                                <Button size={'xs'} onClick={handleLastNameEdit}>Save</Button>
+                                : <Button size={'xs'} onClick={() => setIsEditingLastName(true)}>Edit</Button>
                             }
                         </Stack>
+                        {isEditingLastName ?
+                            <Input value={lastName}
+                                maxLength={747}
+                                onChange={e => setLastName(e.target.value)}></Input>
+                            : <Text>{userData!.lastName}</Text>}
+                    </FormControl>
+                </Stack>
+                <FormControl mt={4}>
+                    <Stack direction='row'>
+                        <FormLabel fontWeight={600}>Phone Number</FormLabel>
                         {isEditingPhone ?
-                            <Input value={phone}
-                                type="tel"
-                                onChange={e => setPhone(e.target.value)}></Input>
-                            : <Text>{userData.phone}</Text>}
-                    </FormControl>
-                    <FormControl mt={8}>
-                        <Stack direction='row'>
-                            <FormLabel fontWeight={600}>Bio</FormLabel>
-                            {isEditingBio ?
-                                <Button size={'xs'} onClick={handleBioEdit}>Save</Button>
-                                : <Button size={'xs'} onClick={() => setIsEditingBio(true)}>Edit</Button>
-                            }
-                        </Stack>
-                        {isEditingBio ?
-                            <FroalaEditorComponent
-                                model={bio}
-                                onModelChange={(e: string) => setBio(e)}
-                                config={froalaBioConfig}
-                            />
-                            : <FroalaEditorView model={userData.bio} />
+                            <Button size={'xs'} onClick={handlePhoneEdit}>Save</Button>
+                            : <Button size={'xs'} onClick={() => setIsEditingPhone(true)}>Edit</Button>
                         }
-                    </FormControl>
-                </Box>
-            </Flex>
-        );
-    }
+                    </Stack>
+                    {isEditingPhone ?
+                        <Input value={phone}
+                            type="tel"
+                            onChange={e => setPhone(e.target.value)}></Input>
+                        : <Text>{userData!.phone}</Text>}
+                </FormControl>
+                <FormControl mt={8}>
+                    <Stack direction='row'>
+                        <FormLabel fontWeight={600}>Bio</FormLabel>
+                        {isEditingBio ?
+                            <Button size={'xs'} onClick={handleBioEdit}>Save</Button>
+                            : <Button size={'xs'} onClick={() => setIsEditingBio(true)}>Edit</Button>
+                        }
+                    </Stack>
+                    {isEditingBio ?
+                        <FroalaEditorComponent
+                            model={bio}
+                            onModelChange={(e: string) => setBio(e)}
+                            config={froalaBioConfig}
+                        />
+                        : <FroalaEditorView model={userData!.bio} />
+                    }
+                </FormControl>
+            </Box>
+        </Flex>
+    );
 };
