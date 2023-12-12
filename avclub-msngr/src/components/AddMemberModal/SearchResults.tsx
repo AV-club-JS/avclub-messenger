@@ -1,15 +1,20 @@
-import {  DefaultUserData } from "../../types/types";
+import { DefaultUserData } from "../../types/types";
 import { VStack, HStack, Avatar, AvatarBadge, Text, Divider, Button } from "@chakra-ui/react";
 import { getStatusBadgeColor } from "../../utils/profileUtils";
-import { addUserToTeam } from "../../services";
+import { addUserToTeam, addUserToTeamChannel } from "../../services";
 
 
-export const SearchResults = ({ users, currentTeamId }: { users: DefaultUserData[], currentTeamId: string }) => {
+export const SearchResults = ({ users, currentTeamId, channelAdd = false, channelId }:
+    { users: DefaultUserData[], currentTeamId: string, channelAdd: boolean, channelId?: string }) => {
 
     const handleClick = async (userId: string, teamId: string) => {
 
         try {
-            await addUserToTeam(userId, teamId);
+            if (channelAdd) {
+                await addUserToTeamChannel(userId, channelId!);
+            } else {
+                await addUserToTeam(userId, teamId);
+            }
         } catch (error) {
             console.error(error);
         }
