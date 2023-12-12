@@ -9,13 +9,13 @@ import { Wrapper } from './containers/Wrapper';
 import { Home } from './containers/Home';
 import { Login } from './components/Login';
 import { Register } from './components/Register';
-import { Profile } from './containers/Profile';
 import { Chats } from './containers/Chats';
 import { NotFound } from './containers/NotFound';
 import { Teams } from './containers/Teams';
 import { TeamView } from './components/TeamView';
 import { TeamChannelWrapper } from './components/TeamChannelWrapper';
 import { MeetingWrapper } from './components/MeetingWrapper';
+import { ProfileWrapper } from './containers/Profile';
 
 //Browser router
 const appRoutes = createBrowserRouter(
@@ -24,7 +24,7 @@ const appRoutes = createBrowserRouter(
       <Route index element={<Home />} />
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
-      <Route path=':userId' element={<Profile />} />
+      <Route path=':userId' element={<ProfileWrapper />} />
       <Route path='/teams' element={<Teams />}>
         <Route path='team/:teamId' element={<TeamView />} />
         <Route path='channel/:chatId' element={<TeamChannelWrapper />} />

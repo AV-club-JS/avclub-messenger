@@ -2,6 +2,7 @@ import { DefaultUserData } from "../../types/types";
 import { VStack, HStack, Avatar, AvatarBadge, Text, Divider, Button } from "@chakra-ui/react";
 import { getStatusBadgeColor } from "../../utils/profileUtils";
 import { addUserToTeam, addUserToTeamChannel } from "../../services";
+import { Link } from "react-router-dom";
 
 
 export const SearchResults = ({ users, currentTeamId, channelAdd = false, channelId }:
@@ -25,9 +26,11 @@ export const SearchResults = ({ users, currentTeamId, channelAdd = false, channe
             <VStack alignItems={'flex-start'} mt={3}>
                 {users.length && users.map(user => (
                     <HStack key={user.uid} p={1}>
-                        <Avatar size="md" src={user.avatarUrl} mr={2}>
-                            <AvatarBadge boxSize="1em" bg={getStatusBadgeColor(user.status)} />
-                        </Avatar>
+                        <Link to={`/${user.uid}`}>
+                            <Avatar size="md" src={user.avatarUrl} mr={2}>
+                                <AvatarBadge boxSize="1em" bg={getStatusBadgeColor(user.status)} />
+                            </Avatar>
+                        </Link>
                         <VStack>
                             <Text fontSize={'sm'}>{user.username}</Text>
                             <Divider />
