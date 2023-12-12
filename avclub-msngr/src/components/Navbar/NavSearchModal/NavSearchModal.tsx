@@ -42,7 +42,9 @@ export const NavSearchModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: 
 
     return (
         <>
-            <Modal isOpen={isOpen} onClose={handleClose} size={'lg'}>
+            <Modal isOpen={isOpen} onClose={handleClose} 
+            size={'lg'}
+            scrollBehavior='inside'>
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Search</ModalHeader>
