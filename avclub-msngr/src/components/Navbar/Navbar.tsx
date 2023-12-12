@@ -11,6 +11,7 @@ import {
     useDisclosure,
     Avatar,
     AvatarBadge,
+    Image,
 } from '@chakra-ui/react';
 import {
     HamburgerIcon,
@@ -19,6 +20,7 @@ import {
 import { Search2Icon } from '@chakra-ui/icons';
 import { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import logo from '../../assets/logo-no-background.png'
 // components
 import { DesktopNav } from './DesktopNav';
 import { MobileNav } from './MobileNav';
@@ -83,15 +85,9 @@ export const Navbar = () => {
                     />
                 </Flex>}
                 <Flex flex={{ base: 1 }} justify={{ base: 'left', md: 'start' }}>
-                    <Text
-                        display={{ base: 'none', md: 'flex' }}
-                        textAlign={useBreakpointValue({ base: 'left', md: 'left' })}
-                        fontFamily={'heading'}
-                        ml={4}
-                        color={useColorModeValue('gray.800', 'white')}>
-                        AVM
-                    </Text>
-
+                    <Image src={logo} 
+                    htmlWidth='75px'
+                    htmlHeight='30px'/>
                     <Flex display={{ base: 'none', md: 'flex' }} ml={10}>
                         {user && <DesktopNav />}
                     </Flex>
