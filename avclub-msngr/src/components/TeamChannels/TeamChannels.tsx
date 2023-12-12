@@ -1,4 +1,4 @@
-import { Button, Stack, Input, Heading, Checkbox } from "@chakra-ui/react";
+import { Button, Stack, Input, Heading, Checkbox, FormControl, FormErrorMessage } from "@chakra-ui/react";
 import { DefaultTeamData, ChatsCollection } from "../../types/types";
 import { UserContext } from "../../context/AuthContext";
 import { useContext, useEffect, useState } from "react";
@@ -12,12 +12,20 @@ export const TeamChannels = ({ teamData }: { teamData: DefaultTeamData }) => {
     const location = useLocation();
     const [creatingChannel, setCreatingChannel] = useState(false);
     const [channelName, setChannelName] = useState('');
+    const [channelNameInvalid, setChannelNameInvalid] = useState(false);
+    const [channelNameError, setChannelNameError] = useState('');
     const [privateStatus, setPrivateStatus] = useState(false);
     const [channels, setChannels] = useState<ChatsCollection | []>([]);
 
     const handleSave = async () => {
         const ownerId = userData!.uid;
         const participants = { ...teamData.members };
+
+        if (channelName.length < 2) {
+            setChannelNameInvalid(true);
+            setChannelNameError('Channel name must be at least 2 characters long.');
+            return;
+        }
 
         try {
             const channelId = await createTeamChannel(
@@ -30,12 +38,13 @@ export const TeamChannels = ({ teamData }: { teamData: DefaultTeamData }) => {
 
             const res = await dyteRoomCreate(channelId);
             const dyteData = await res.json();
-            
+
             await addRoomID(channelId, dyteData.data.id);
         } catch (error) {
             console.error(error);
         }
 
+        setChannelNameInvalid(false);
         setPrivateStatus(false);
         setChannelName('');
         setCreatingChannel(false);
@@ -99,12 +108,15 @@ export const TeamChannels = ({ teamData }: { teamData: DefaultTeamData }) => {
                                 }}
                             >Cancel</Button>
                         </Stack>
-                        <Input
-                            type="text"
-                            w='30%'
-                            placeholder="Enter channel name"
-                            onChange={e => setChannelName(e.target.value)}
-                        />
+                        <FormControl isInvalid={channelNameInvalid}>
+                            <Input
+                                type="text"
+                                w='30%'
+                                placeholder="Enter channel name"
+                                onChange={e => setChannelName(e.target.value)}
+                            />
+                            <FormErrorMessage>{channelNameError}</FormErrorMessage>
+                        </FormControl>
                         <Checkbox onChange={() => setPrivateStatus(!privateStatus)}>Private</Checkbox>
                     </>
                     : <>
@@ -119,7 +131,7 @@ export const TeamChannels = ({ teamData }: { teamData: DefaultTeamData }) => {
                             }}
                         >Add Channel</Button>
                     </>)}
-            <ChannelList channelArr={channels} />
+            <ChannelList channelArr={channels} teamId={teamData.teamId} />
         </Stack>
     )
 }
