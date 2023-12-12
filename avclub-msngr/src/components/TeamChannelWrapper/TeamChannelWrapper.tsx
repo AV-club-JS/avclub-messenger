@@ -17,7 +17,6 @@ export const TeamChannelWrapper = () => {
             } catch (error) {
                 console.error(error);
             }
-            console.log('HERE!');
             
         })()
     }, [urlChatId])
@@ -26,10 +25,6 @@ export const TeamChannelWrapper = () => {
     if (chatInfo) {
         return (
             <Box h={`calc(100vh - 60px)`}>
-
-                <Text>
-                    Success!
-                </Text>
                 <ChatContentContainer chat={chatInfo} />
             </Box>
         )
