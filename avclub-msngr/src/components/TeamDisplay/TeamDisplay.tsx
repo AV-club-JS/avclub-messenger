@@ -59,7 +59,8 @@ export const TeamDisplay = ({ team }: { team: DefaultTeamData }) => {
             <AccordionPanel pb={4}>
                 <VStack align='left' gap={1}>
                     {team.channelIds ? channels.map(channel => (
-                        (Object.prototype.hasOwnProperty.call(channel.participants, userData!.uid)) &&
+                        (!channel.personal ||
+                            (channel.personal && (Object.prototype.hasOwnProperty.call(channel.participants, userData!.uid)))) &&
                         <Link pl={2} key={channel.chatId}
                             as={NavLink}
                             to={`channel/${channel.chatId}`}
