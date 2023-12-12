@@ -14,7 +14,7 @@ import { db } from "../config/firebase-config";
 // types
 import { SetCount, SetTeamData } from "../types/types";
 // constants
-import { CHANNELS, TEAMS, USERS } from "../constants/servicesConstants";
+import { CHANNELS, PARTICIPANTS, TEAMS, USERS } from "../constants/servicesConstants";
 // services
 import { getChatInfo } from ".";
 
@@ -154,4 +154,8 @@ export const getTeamChannels = async (channelKeys: string[]) => {
     return result;
 }
 
-
+export const addUserToTeamChannel = async (userId: string, channelId: string) => {
+    const channelRef = ref(db, `${CHANNELS}/${channelId}/${PARTICIPANTS}`);
+    const dataForChannel = { [userId]: Date.now() };
+    await update(channelRef, dataForChannel);
+}
