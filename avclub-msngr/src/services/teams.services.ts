@@ -130,6 +130,8 @@ export const createTeamChannel = async (
         affiliatedTeam: teamId
     })
     await update(teamChannelIdRef, teamChannelUpdate);
+    
+    return channelId;
 }
 
 export const deleteTeamChannel = async (teamId: string, channelId: string) => {
