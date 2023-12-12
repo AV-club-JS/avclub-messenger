@@ -107,6 +107,7 @@ export type ChatInfo = {
   messages?: Chat;
   createdOn: number;
   affiliatedTeam?: string;
+  roomId?: string
 };
 
 export type ChatsCollection = ChatInfo[];
