@@ -287,8 +287,8 @@ export const getChatMessages = async (
   const messagesRef = ref(db, `${CHANNELS}/${chatId}/${MESSAGES}`);
   try {
     const req = await get(messagesRef);
-    const messages: MessageInfo[] = Object.values(req.val()).sort((m1, m2) =>
-      m1.createdOn < m2.createdOn ? -1 : 1
+    const messages: MessageInfo[] = (Object.values(req.val()) as MessageInfo[]).sort((m1, m2) =>
+      (m1 as MessageInfo).createdOn < (m2 as MessageInfo).createdOn ? -1 : 1
     );
     return { messages };
   } catch (error) {
@@ -316,7 +316,7 @@ export const setMessagesListener = (
 
 export const removeMessageFromChat = async (
   chatId: string,
-  messageId: stirng,
+  messageId: string,
 ): Promise<
   { success: boolean; chatId: string; messageId: string; error?: string }
 > => {
@@ -335,7 +335,6 @@ export const removeMessageFromChat = async (
       error: (error as Error).message,
     };
   }
-  return null;
 };
 
 export const addReactionToChat = async (
@@ -373,7 +372,7 @@ export const addReactionToChat = async (
 };
 
 export const removeReactionFromChat = async (
-  reaction: strng,
+  reaction: string,
   chatId: string,
   messageId: string,
   uid: string,
@@ -423,12 +422,12 @@ export const removeReactionFromChat = async (
 };
 
 export const getMessageReactions = async (
-  chatId,
-  messageId,
+  chatId: string,
+  messageId: string,
 ): Promise<
   {
     reactions: Map<string, number> | null;
-    success: bollean;
+    success: boolean;
     error?: string;
     chatId: string;
     messageId: string;
