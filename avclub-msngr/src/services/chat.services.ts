@@ -24,6 +24,7 @@ import {
   CHATIDS,
   MESSAGES,
   PARTICIPANTS,
+  REACTIONS,
   USERS,
 } from "../constants/servicesConstants.ts";
 
@@ -244,18 +245,23 @@ export const findChannelByParticipantIds = async (
   return { chatId: null };
 };
 
-export const getChannelsByUid = async (uid: string, type: 'chat' | 'channel' = 'chat') => {
+export const getChannelsByUid = async (
+  uid: string,
+  type: "chat" | "channel" = "chat",
+) => {
   const channelsRef = ref(db, `${CHANNELS}`);
   const snapshot = await get(channelsRef);
   const channels: ChatInfo[] = Object.values(snapshot.val());
-  const userChannels = channels.filter((channel) => channel.participants[uid] && channel.type === type);
+  const userChannels = channels.filter((channel) =>
+    channel.participants[uid] && channel.type === type
+  );
   return userChannels || [];
 };
 
 export const getChannelsByUID = (
   uid: string,
   setChats: SetChats,
-  type: 'chat' | 'channel' = 'chat'
+  type: "chat" | "channel" = "chat",
 ): Unsubscribe => {
   const chatsRef = ref(db, `${CHANNELS}`);
   return onValue(chatsRef, (snapshot) => {
@@ -265,7 +271,9 @@ export const getChannelsByUID = (
         // select only the chats which have as participants
         // the current uid
         const chats: ChatInfo[] = Object.values(result);
-        const userChats = chats.filter((chat) => chat.participants[uid] && chat.type === type);
+        const userChats = chats.filter((chat) =>
+          chat.participants[uid] && chat.type === type
+        );
         // get for each chat get the username, avatarUrl.
         setChats(userChats);
       }
@@ -279,7 +287,9 @@ export const getChatMessages = async (
   const messagesRef = ref(db, `${CHANNELS}/${chatId}/${MESSAGES}`);
   try {
     const req = await get(messagesRef);
-    const messages: MessageInfo[] = Object.values(req.val()).sort((m1, m2) => m1.createdOn < m2.createdOn ? -1 : 1);
+    const messages: MessageInfo[] = Object.values(req.val()).sort((m1, m2) =>
+      m1.createdOn < m2.createdOn ? -1 : 1
+    );
     return { messages };
   } catch (error) {
     return { messages: [], error: (error as Error).message };
@@ -294,10 +304,10 @@ export const setMessagesListener = (
   return onValue(messagesRef, (snapshot) => {
     if (snapshot.exists()) {
       if (snapshot.val()) {
-        console.log('was changed')
+        console.log("was changed");
         const messages: MessageInfo[] = Object.values(snapshot.val());
         setMessages(
-          [...messages.sort((m1, m2) => m1.createdOn < m2.createdOn ? -1 : 1)]
+          [...messages.sort((m1, m2) => m1.createdOn < m2.createdOn ? -1 : 1)],
         );
       } else setMessages([]);
     }
@@ -311,7 +321,10 @@ export const removeMessageFromChat = async (
   { success: boolean; chatId: string; messageId: string; error?: string }
 > => {
   try {
-    const messageRef = ref(db, `${CHANNELS}/${chatId}/${MESSAGES}/${messageId}`);
+    const messageRef = ref(
+      db,
+      `${CHANNELS}/${chatId}/${MESSAGES}/${messageId}`,
+    );
     await remove(messageRef);
     return { success: true, chatId, messageId };
   } catch (error) {
@@ -323,6 +336,133 @@ export const removeMessageFromChat = async (
     };
   }
   return null;
+};
+
+export const addReactionToChat = async (
+  reaction: string,
+  chatId: string,
+  messageId: string,
+  uid: string,
+): Promise<
+  {
+    success: boolean;
+    reaction: string;
+    chatId: string;
+    messageId: string;
+    uid: string;
+    error?: string;
+  }
+> => {
+  try {
+    const messageRef = ref(
+      db,
+      `${CHANNELS}/${chatId}/${MESSAGES}/${messageId}/${REACTIONS}`,
+    );
+    await update(messageRef, { [reaction]: { [uid]: Date.now() } });
+    return { success: true, reaction, chatId, messageId, uid };
+  } catch (error) {
+    return {
+      success: false,
+      reaction,
+      chatId,
+      messageId,
+      uid,
+      error: (error as Error).message,
+    };
+  }
+};
+
+export const removeReactionFromChat = async (
+  reaction: strng,
+  chatId: string,
+  messageId: string,
+  uid: string,
+): Promise<
+  {
+    success: boolean;
+    reaction: string;
+    chatId: string;
+    messageId: string;
+    uid: string;
+    error?: string;
+  }
+> => {
+  try {
+    const reactionRef = ref(
+      db,
+      `${CHANNELS}/${chatId}/${MESSAGES}/${messageId}/${REACTIONS}`,
+    );
+    const snapshot = await get(reactionRef);
+    const data = snapshot.val();
+    if (data[reaction]) {
+      const userReactionRef = ref(
+        db,
+        `${CHANNELS}/${chatId}/${MESSAGES}/${messageId}/${REACTIONS}/${reaction}/${uid}`
+      );
+      const req = await get(userReactionRef);
+      const reactionObject = req.val();
+      await remove(userReactionRef);
+    }
+    return {
+      success: true,
+      reaction,
+      chatId,
+      messageId,
+      uid
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error: (error as Error).message,
+      reaction,
+      chatId,
+      messageId,
+      uid,
+    };
+  }
+};
+
+export const getMessageReactions = async (
+  chatId,
+  messageId,
+): Promise<
+  {
+    reactions: Map<string, number> | null;
+    success: bollean;
+    error?: string;
+    chatId: string;
+    messageId: string;
+  }
+> => {
+  let key: string;
+  try {
+    const reactionsRef = ref(
+      db,
+      `${CHANNELS}/${chatId}/${MESSAGES}/${messageId}/${REACTIONS}`,
+    );
+    const req = await get(reactionsRef);
+    const reactionsObject = req.val();
+    const reactions = new Map();
+    if (reactionsObject) {
+      for (key in reactionsObject) {
+        reactions.set(key, Object.keys(reactionsObject[key]).length);
+      }
+    }
+    return {
+      success: true,
+      reactions,
+      messageId,
+      chatId,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: (error as Error).message,
+      reactions: null,
+      chatId,
+      messageId,
+    };
+  }
 };
 
 export const deleteChannel = async (

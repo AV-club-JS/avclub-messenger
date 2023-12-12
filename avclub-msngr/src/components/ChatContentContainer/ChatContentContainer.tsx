@@ -8,6 +8,7 @@ import {
   getUsersByUIDs,
   setMessagesListener,
 } from "../../services";
+import { NoMessages } from "../NoMessages";
 import { Unsubscribe } from "firebase/auth";
 import { UserContext } from "../../context/AuthContext";
 import { AdditionalSettingsBar } from "../AdditionalSettingsBar";
@@ -27,13 +28,12 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
 
   useEffect(() => {
     (async () => {
-      const users = await getUsersByUIDs(Object.keys(chat.participants));
-      setParticipants(users);
-      
-      const req = await getChatMessages(chat?.chatId as string);
-      const messages = req.messages;
-      if (messages) {
-        setMessages(messages);
+      if (chat.participants) {
+        const users = await getUsersByUIDs(Object.keys(chat.participants));
+        setParticipants(users);
+        const req = await getChatMessages(chat?.chatId as string);
+        const __messages: MessageInfo[] = req.messages as MessageInfo[];
+        setMessages(__messages);
       }
     })();
   }, [chat]);
@@ -45,14 +45,13 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
     } catch (error) {
       console.log((error as Error).message);
     }
-    return () =>{
-      console.log('The messages was disconnected')
-      return  disconnect();
-    } 
+    return () => {
+      return disconnect();
+    };
   }, []);
   const handleMessage = async () => {
     setInsertedMessage("");
-    const sentMessage = await addMessageToChat({
+    await addMessageToChat({
       chatId: chat.chatId as string,
       uid: userData?.uid as string,
       content: insertedMessage,
@@ -82,8 +81,19 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
       />
       <MessageContainer>
         <>
-          {messages.length !== 0 &&
-            <Messages user={userData as DefaultUserData} messages={messages} />}
+          {messages.length !== 0
+            ? (
+              <Messages
+                chatId={chat.chatId as string}
+                messages={messages}
+              />
+            )
+            : (
+              <NoMessages
+                senderName={userData?.username as string}
+                receiverName={name}
+              />
+            )}
         </>
       </MessageContainer>
       <Flex
