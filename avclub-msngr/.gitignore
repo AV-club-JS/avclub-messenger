@@ -131,3 +131,4 @@ dist
 
 # Firebase config
 src/config/firebase-config.ts
+src/constants/dyteConstants.ts
