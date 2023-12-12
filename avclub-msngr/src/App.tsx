@@ -30,7 +30,7 @@ const appRoutes = createBrowserRouter(
         <Route path='channel/:chatId' element={<TeamChannelWrapper />} />
       </Route>
       <Route path='/chats' element={<Chats />} />
-      <Route path=':roomId' element={<MeetingWrapper />} />
+      <Route path='/meeting/:roomId' element={<MeetingWrapper />} />
       <Route path='*' element={<NotFound />} />
     </Route>
   )

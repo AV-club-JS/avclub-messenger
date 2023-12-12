@@ -31,7 +31,7 @@ export const AdditionalSettingsBar = ({
     >
       <ChatBar name={name} participants={participants} />
       <ButtonGroup>
-        <Button as={Link} to={`/${roomId}`} >
+        <Button as={Link} to={`/meeting/${roomId}`} >
           <FaVideo />
         </Button>
         <Button>

@@ -16,7 +16,6 @@ export const MeetingWrapper = () => {
 
     useEffect(() => {
         if (roomId) {
-            console.log('10');
 
             const dyteReq = fetch(`${DYTE_URL}/meetings/${roomId}/participants`, {
                 method: 'POST',
