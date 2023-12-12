@@ -13,3 +13,5 @@ export const PARTICIPANTS = 'participants';
 export const CHATIDS = 'chatids';
 
 export const MESSAGES = 'messages';
+
+export const REACTIONS = 'reactions';

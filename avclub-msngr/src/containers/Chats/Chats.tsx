@@ -1,38 +1,27 @@
 import { HStack } from "@chakra-ui/react";
-import { ChatsCollection } from "../../types/types";
+import { ChatsCollection, DefaultUserData } from "../../types/types";
 import { UserContext } from "../../context/AuthContext";
 import { useContext, useEffect, useState } from "react";
 import { getChannelsByUID, getChannelsByUid } from "../../services";
 import { Unsubscribe } from "firebase/auth";
 import { ChatsComponent } from "../../components/ChatsComponent";
-
+import { NoMessages } from "../../components/NoMessages";
 export const Chats = () => {
   const { userData, setAuth } = useContext(UserContext);
   const [chats, setChats] = useState<ChatsCollection | []>([]);
-  useEffect(() => {
-    let disconnect: Unsubscribe;
-    try {
-      disconnect = getChannelsByUID(
-        userData?.uid as string,
-        setChats,
-      );
-    } catch (error) {
-      console.log((error as Error).message);
-    }
-    return () => {console.log('It was disconnected');return disconnect();}
-  }, []);
-
+  
   useEffect(() => {
     (async () => {
-      const channels = await getChannelsByUid(userData?.uid as string);
-      console.log(userData?.uid, Object.values(channels))
-      setChats(channels);
+      if (userData) {
+        const channels = await getChannelsByUid(userData?.uid as string);
+        setChats(channels);
+      }
     })();
   }, [userData]);
 
-    return (
+  return (
     <HStack h={`calc(100vh - 60px)`} overflowY={"hidden"}>
-      {chats.length && <ChatsComponent chats={chats}/>}
+      {chats.length !== 0 && <ChatsComponent userData={userData as DefaultUserData} setChats={setChats} chats={chats}/>}
     </HStack>
   );
 };
