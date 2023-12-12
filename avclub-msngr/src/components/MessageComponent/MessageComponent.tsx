@@ -40,6 +40,7 @@ import {
   formatTimestamp,
   formatTimestampWithTime,
 } from "../../utils/formatTimestamp";
+import { Link } from "react-router-dom";
 export const MessageComponent = (
   { message, chatId, showAvatar, showTimestamp }: {
     message: MessageInfo;
@@ -63,12 +64,14 @@ export const MessageComponent = (
     );
     if (reaction === "delete") {
       await removeMessageFromChat(chatId, message.messageId);
-    } else {addReactionToChat(
+    } else {
+      addReactionToChat(
         reaction,
         chatId,
         message.messageId,
         userData?.uid as string,
-      );}
+      );
+    }
   };
   return (
     <Popover trigger="hover">
@@ -87,7 +90,9 @@ export const MessageComponent = (
               <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
                 {showAvatar && (
                   <>
-                    <Avatar name={user?.username} src={user?.avatarUrl} />
+                    <Link to={`/${user?.uid}`}>
+                      <Avatar name={user?.username} src={user?.avatarUrl} />
+                    </Link>
 
                     <Box>
                       <Heading size="sm">{user?.username}</Heading>
@@ -97,7 +102,7 @@ export const MessageComponent = (
               </Flex>
             </Flex>
           </CardHeader>
-          <CardBody 
+          <CardBody
             py={1}
             my={0}
           >
