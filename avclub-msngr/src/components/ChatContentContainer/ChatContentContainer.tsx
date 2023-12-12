@@ -19,10 +19,11 @@ import "froala-editor/js/plugins.pkgd.min.js";
 import FroalaEditorComponent from "react-froala-wysiwyg";
 import { froalaMessageConfig } from "../../utils/profileUtils";
 import { Messages } from "../Messages";
+import { Loading } from "../Loading";
 
 export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
   const { userData } = useContext(UserContext);
-  const [messages, setMessages] = useState<MessageInfo[] | []>([]);
+  const [messages, setMessages] = useState<MessageInfo[] | null>(null);
   const [participants, setParticipants] = useState<DefaultUserData[]>([]);
   const [insertedMessage, setInsertedMessage] = useState<string>("");
 
@@ -77,8 +78,11 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
       <AdditionalSettingsBar
         participants={participants}
         name={name}
-        roomId={chat.roomId}
+        roomId={chat.roomId!}
       />
+      {messages == null ?
+      <Loading/>
+      :
       <MessageContainer>
         <>
           {messages.length !== 0
@@ -95,7 +99,7 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
               />
             )}
         </>
-      </MessageContainer>
+      </MessageContainer>}
       <Flex
         flex={"1 1 20%"}
       >
