@@ -1,10 +1,11 @@
-import { Button, Stack, Input, Heading, Checkbox, Text } from "@chakra-ui/react";
+import { Button, Stack, Input, Heading, Checkbox } from "@chakra-ui/react";
 import { DefaultTeamData, ChatsCollection } from "../../types/types";
 import { UserContext } from "../../context/AuthContext";
 import { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { createTeamChannel, getTeamChannels } from "../../services";
 import { ChannelList } from "../ChannelList";
+import { dyteRoomCreate, addRoomID } from "../../services";
 
 export const TeamChannels = ({ teamData }: { teamData: DefaultTeamData }) => {
     const { userData } = useContext(UserContext);
@@ -16,15 +17,25 @@ export const TeamChannels = ({ teamData }: { teamData: DefaultTeamData }) => {
 
     const handleSave = async () => {
         const ownerId = userData!.uid;
-        const participants = {...teamData.members};
+        const participants = { ...teamData.members };
 
-        await createTeamChannel(
-            teamData.teamId,
-            channelName,
-            privateStatus,
-            ownerId,
-            participants,
-        )
+        try {
+            const channelId = await createTeamChannel(
+                teamData.teamId,
+                channelName,
+                privateStatus,
+                ownerId,
+                participants,
+            )
+
+            const res = await dyteRoomCreate(channelId);
+            const dyteData = await res.json();
+            
+            await addRoomID(channelId, dyteData.data.id);
+        } catch (error) {
+            console.error(error);
+        }
+
         setPrivateStatus(false);
         setChannelName('');
         setCreatingChannel(false);
@@ -40,14 +51,14 @@ export const TeamChannels = ({ teamData }: { teamData: DefaultTeamData }) => {
         if (teamData && teamData.channelIds) {
             const teamChannels = Object.keys(teamData.channelIds);
             (async () => {
-                    try {
-                        const chats = await getTeamChannels(teamChannels);
-                        setChannels(chats);
-                        
-                    } catch (error) {
-                        console.error(error);
-                    }
-            })()            
+                try {
+                    const chats = await getTeamChannels(teamChannels);
+                    setChannels(chats);
+
+                } catch (error) {
+                    console.error(error);
+                }
+            })()
         } else if (!teamData.channelIds) {
             setChannels([]);
         }
