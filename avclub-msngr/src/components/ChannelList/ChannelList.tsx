@@ -28,7 +28,8 @@ export const ChannelList: FC<{ channelArr: ChatsCollection; teamId: string }> = 
         <VStack alignItems={'flex-start'} mt={3}
             minH='300px' w='auto' overflow={'auto'} direction='column'>
             {channelArr !== null && channelArr.map(channel => (
-                (Object.prototype.hasOwnProperty.call(channel.participants, userData!.uid)) &&
+                (!channel.personal ||
+                    (channel.personal && (Object.prototype.hasOwnProperty.call(channel.participants, userData!.uid)))) &&
                 <HStack key={channel.chatId}>
                     <Text
                         key={channel.chatId}
@@ -40,14 +41,14 @@ export const ChannelList: FC<{ channelArr: ChatsCollection; teamId: string }> = 
                             </MenuButton>
                             <MenuList>
                                 {channel.personal && <MenuItem
-                                onClick={handleAddOpen}>Add Members</MenuItem>}
-                                <MenuItem>Edit Name</MenuItem>
+                                    onClick={handleAddOpen}>Add Members</MenuItem>}
+                                {/* <MenuItem>Edit Name</MenuItem> */}
                                 <MenuItem
                                     onClick={() => handleDelete(channel.affiliatedTeam!, channel.chatId!)} color='red.500'
                                 >Delete</MenuItem>
                             </MenuList>
-                            <AddMemberModal isOpen={isAddOpen} onClose={onAddClose} 
-                            teamId={teamId} channelAdd={true} channelId={channel.chatId} />
+                            <AddMemberModal isOpen={isAddOpen} onClose={onAddClose}
+                                teamId={teamId} channelAdd={true} channelId={channel.chatId} />
                         </Menu>
                     }
                 </HStack>
