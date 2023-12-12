@@ -11,6 +11,7 @@ export const TeamOwnerMenu: FC<TeamButtonsProps> = ({ handleDelete, handleSearch
         <Stack direction="row" spacing={4} justify="center" p={4} borderBottom="1px solid" borderColor="gray.200">
             <Button
                 w={{ base: 'auto', md: '15%' }}
+                minW="fit-content" maxW="fit-content"
                 fontSize='sm'
                 color={'brand.primary'}
                 variant={'ghost'}
@@ -26,6 +27,7 @@ export const TeamOwnerMenu: FC<TeamButtonsProps> = ({ handleDelete, handleSearch
                 <>
                     <Button
                         w={{ base: 'auto', md: '15%' }}
+                        minW="fit-content" maxW="fit-content"
                         fontSize='sm'
                         color={'green'}
                         variant={'ghost'}
@@ -36,6 +38,7 @@ export const TeamOwnerMenu: FC<TeamButtonsProps> = ({ handleDelete, handleSearch
                         onClick={() => handleDelete()}><CheckIcon mr={1} />Confirm</Button>
                     <Button
                         w={{ base: 'auto', md: '15%' }}
+                        minW="fit-content" maxW="fit-content"
                         fontSize='sm'
                         color={'brand.primary'}
                         variant={'ghost'}
@@ -47,6 +50,7 @@ export const TeamOwnerMenu: FC<TeamButtonsProps> = ({ handleDelete, handleSearch
                 </>
                 : <Button
                     w={{ base: 'auto', md: '15%' }}
+                    minW="fit-content" maxW="fit-content"
                     fontSize='sm'
                     color={'red.500'}
                     variant={'ghost'}

@@ -1,1 +1,0 @@
-export { TeamsDisplay }from './TeamsDisplay';

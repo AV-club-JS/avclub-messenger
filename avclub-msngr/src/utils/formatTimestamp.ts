@@ -1,5 +1,5 @@
 export function formatTimestamp(timestampString: string): string {
-    const timestamp = parseInt(timestampString, 10); // Assuming the timestamp is an integer, use parseFloat for a floating-point timestamp
+    const timestamp = parseInt(timestampString, 10);
     if (isNaN(timestamp)) {
         return 'Invalid Date';
     }

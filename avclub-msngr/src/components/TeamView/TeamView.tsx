@@ -1,15 +1,6 @@
-import { 
-    Text, 
-    Stack, 
-    Heading, 
-    Divider, 
-    Button, 
-    FormControl, 
-    Center, 
-    Input, 
-    useDisclosure, 
-    FormErrorMessage 
-} from "@chakra-ui/react";
+import { Text, Stack,Heading, Divider, 
+    Button, FormControl, Center, Input, 
+    useDisclosure, FormErrorMessage } from "@chakra-ui/react";
 import { useEffect, useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserContext } from "../../context/AuthContext";
@@ -21,7 +12,7 @@ import {
 import { Unsubscribe } from "firebase/database";
 import { formatTimestamp } from "../../utils/formatTimestamp";
 import { TeamMembers } from "../TeamMembers";
-import { TeamOwnerMenu } from "../TeamOnwerMenu";
+import { TeamOwnerMenu } from "../TeamOwnerMenu";
 import 'froala-editor/css/froala_style.min.css';
 import 'froala-editor/css/froala_editor.pkgd.min.css';
 import 'froala-editor/js/plugins.pkgd.min.js';
@@ -46,6 +37,7 @@ export const TeamView = () => {
     const [teamNameError, setTeamNameError] = useState('');
     const { isOpen: isSearchOpen, onOpen: onSearchOpen, onClose: onSearchClose } = useDisclosure();
     const navigate = useNavigate();
+
 
     const handleSearchOpen = () => {
         onSearchOpen();
@@ -122,7 +114,7 @@ export const TeamView = () => {
                     if (!Object.keys(teamData.members).includes(userData!.uid)) {
                         navigate('/teams');
                     }
-                    
+
                     setMembers(membersData);
                     setTeamName(teamData.name);
                     setTeamInfo(teamData.info);
@@ -152,7 +144,8 @@ export const TeamView = () => {
 
     if (teamData && owner) {
         return (
-            <Stack direction="column" px={4} mt={4} mb={4} overflowY="auto" maxHeight="100vh">
+            <Stack direction="column" px={4} mt={4} mb={4} overflowY="auto" >
+                
                 <Stack direction='column' align='center'>
                     <Stack alignItems='center'>
                         <FormControl isInvalid={teamNameInvalid}>
@@ -169,8 +162,11 @@ export const TeamView = () => {
                             )}
                             <Center>
                                 {userData!.uid === teamData.owner && (isEditingTeamName ? (
-                                    <Button size="sm" color={'brand.primary'}
-                                        variant={'ghost'}
+                                    <Button size="sm"
+                                        color={'brand.primary'}
+                                        w={{ base: 'auto', md: '15%' }}
+                                        minW="fit-content" maxW="fit-content"
+                                        variant={'outline'}
                                         _hover={{
                                             bg: 'brand.primary',
                                             color: 'brand.accent',
@@ -180,8 +176,10 @@ export const TeamView = () => {
                                     </Button>
                                 ) : (
                                     <Button size="sm"
+                                        w={{ base: 'auto', md: '15%' }}
+                                        minW="fit-content" maxW="fit-content"
                                         color={'brand.primary'}
-                                        variant={'ghost'}
+                                        variant={'outline'}
                                         _hover={{
                                             bg: 'brand.primary',
                                             color: 'brand.accent',
@@ -197,6 +195,8 @@ export const TeamView = () => {
                         <Stack direction="row" spacing={4} position="absolute" top={'180px'} right={4}>
                             <Button
                                 size="sm"
+                                w={{ base: 'auto', md: '15%' }}
+                                minW="fit-content" maxW="fit-content"
                                 color={'brand.primary'}
                                 variant={'ghost'}
                                 _hover={{
@@ -212,14 +212,14 @@ export const TeamView = () => {
                     <Text fontSize='sm' color='gray.400'>ID: {teamData.teamId}</Text>
                     <Divider />
                 </Stack>
-                {(userData!.uid === teamData.owner) && 
-                <TeamOwnerMenu handleSearchOpen={handleSearchOpen} handleDelete={handleDelete} />}
+                {(userData!.uid === teamData.owner) &&
+                    <TeamOwnerMenu handleSearchOpen={handleSearchOpen} handleDelete={handleDelete} />}
                 <Stack direction={{ base: 'column', md: 'row' }} alignItems="left" m={6} spacing={4}>
                     <Stack direction="column">
                         <Text fontWeight={600}>Members:</Text>
-                        <TeamMembers users={members} 
-                        isOwner={userData!.uid === teamData.owner} 
-                        teamId={teamData.teamId} />
+                        <TeamMembers users={members}
+                            isOwner={userData!.uid === teamData.owner}
+                            teamId={teamData.teamId} />
                     </Stack>
                     <Stack direction="column" ml={{ base: 0, md: 3 }}>
                         <Stack direction="row" mb={2} align='center'>
@@ -227,7 +227,7 @@ export const TeamView = () => {
                             {(userData!.uid === teamData.owner) && (isEditingInfo ?
                                 <Button size='sm'
                                     color={'brand.primary'}
-                                    variant={'ghost'}
+                                    variant={'outline'}
                                     _hover={{
                                         bg: 'brand.primary',
                                         color: 'brand.accent',
@@ -235,7 +235,7 @@ export const TeamView = () => {
                                     onClick={handleInfoEdit}>Save</Button>
                                 : <Button size='sm'
                                     color={'brand.primary'}
-                                    variant={'ghost'}
+                                    variant={'outline'}
                                     _hover={{
                                         bg: 'brand.primary',
                                         color: 'brand.accent',
@@ -251,7 +251,7 @@ export const TeamView = () => {
                             : <FroalaEditorView model={teamInfo} />}
                     </Stack>
                 </Stack>
-                    < TeamChannels teamData={teamData}/>
+                < TeamChannels teamData={teamData} />
                 <AddMemberModal isOpen={isSearchOpen} onClose={onSearchClose} teamId={urlTeamId!} />
             </Stack >
         )

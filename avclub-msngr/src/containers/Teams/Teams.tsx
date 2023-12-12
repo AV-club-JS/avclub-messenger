@@ -1,11 +1,13 @@
-import { Stack, Heading, Divider, Button, useDisclosure } from "@chakra-ui/react";
+import { Stack, Heading, Divider, Button, 
+    useDisclosure, Box, Accordion } from "@chakra-ui/react";
 import { useEffect, useState, useContext } from "react";
 import { Outlet } from "react-router-dom";
 import { UserContext } from "../../context/AuthContext";
 import { DefaultTeamData } from "../../types/types";
-import { TeamsDisplay } from "../../components/TeamsDisplay";
+import { TeamDisplay } from "../../components/TeamDisplay";
 import { getTeamInfo, removeUserTeam } from "../../services";
 import { CreateTeam } from "../../components/CreateTeam";
+import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
 
 
 export const Teams = () => {
@@ -13,6 +15,7 @@ export const Teams = () => {
     const [teamsArr, setTeamsArr] = useState<DefaultTeamData[]>([]);
     const { isOpen: isCreateOpen, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure();
     const [loading, setLoading] = useState(true);
+    const [isLeftSectionOpen, setIsLeftSectionOpen] = useState(true);
 
     const handleCreateOpen = () => {
         onCreateOpen();
@@ -40,31 +43,63 @@ export const Teams = () => {
         }
     }, [userData]);
 
+    const toggleLeftSection = () => {
+        setIsLeftSectionOpen(!isLeftSectionOpen);
+    };
+
     if (userData && !loading) {
         return (
-            <Stack direction='row' gap={1} h={`calc(100vh - 60px)`} overflowY={'hidden'}>
-                <Stack direction='column'
+            <Stack direction={{ base: "column", md: "row" }} gap={1} h={`calc(100vh - 60px)`} overflowY={'hidden'}>
+                <Stack
+                    direction='column'
                     bgColor='white'
                     borderRight='1px solid'
                     borderColor='gray.100'
-                    w='23%'>
-                    <Button w='50%' m={2}
+                    w={isLeftSectionOpen ? { base: "100%", md: "25%" } : '0%'}
+                >
+                    <Button
+                        position='relative'
+                        mt={7}
+                        ml={3}
+                        minW="fit-content" maxW="fit-content"
+                        size='sm'
                         fontSize='20'
                         color={'brand.primary'}
-                        variant={'ghost'}
+                        variant={'outline'}
                         _hover={{
                             bg: 'brand.primary',
                             color: 'brand.accent',
                         }}
-                        onClick={handleCreateOpen}>Create Team</Button>
-                    <CreateTeam isOpen={isCreateOpen} onClose={onCreateClose} />
-                    <Heading m={3}>Teams</Heading>
-                    <Divider />
-                    <Stack direction={'column'} overflow={'auto'} ml={4}>
-                        {teamsArr.length > 0 && <TeamsDisplay teams={teamsArr} />}
-                    </Stack>
+                        onClick={toggleLeftSection}
+                    >
+                        {isLeftSectionOpen ? <ArrowLeftIcon /> : <ArrowRightIcon />}
+                    </Button>
+                    {isLeftSectionOpen &&
+                        <Box>
+                            <Button m={2}
+                                minW="fit-content" maxW="fit-content"
+                                fontSize='20'
+                                color={'brand.primary'}
+                                variant={'ghost'}
+                                _hover={{
+                                    bg: 'brand.primary',
+                                    color: 'brand.accent',
+                                }}
+                                onClick={handleCreateOpen}>Create Team</Button>
+                            <CreateTeam isOpen={isCreateOpen} onClose={onCreateClose} />
+                            <Heading m={3}>Teams</Heading>
+                            <Divider />
+                            <Stack direction={'column'} overflow={'auto'} ml={4}>
+                                {teamsArr.length > 0 && 
+                                <Accordion defaultIndex={[0]} allowMultiple>
+                                    {teamsArr.map((team: DefaultTeamData) => (
+                                        <TeamDisplay team={team} key={team.teamId}/>
+                                    ))}
+                                </Accordion>}
+                            </Stack>
+                        </Box>}
                 </Stack>
-                <Stack direction='column' w={'77%'}>
+                <Stack direction='column' w='100%'>
                     <Outlet />
                 </Stack>
             </Stack>
