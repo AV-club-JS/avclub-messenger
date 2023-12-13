@@ -15,3 +15,5 @@ export const CHATIDS = 'chatids';
 export const MESSAGES = 'messages';
 
 export const REACTIONS = 'reactions';
+
+export const DEFAULT_AVATAR = 'default-avatar.jpg';
