@@ -93,10 +93,7 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
               />
             )
             : (
-              <NoMessages
-                senderName={userData?.username as string}
-                receiverName={name}
-              />
+              <NoMessages/>
             )}
         </>
       </MessageContainer>}
