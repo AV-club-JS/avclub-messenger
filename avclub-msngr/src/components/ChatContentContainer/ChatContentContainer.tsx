@@ -1,5 +1,5 @@
 "use strict";
-import { Box, Button, Flex } from "@chakra-ui/react";
+import { Box, Button, Flex, IconButton } from "@chakra-ui/react";
 import { ChatInfo, DefaultUserData, MessageInfo } from "../../types/types";
 import { MessageContainer } from "../MessageContainer";
 import {
@@ -28,6 +28,8 @@ import { Messages } from "../Messages";
 import { Loading } from "../Loading";
 import { useParams } from "react-router-dom";
 import { getChatInfoListener } from "../../services";
+import { IoMdSend } from "react-icons/io";
+
 export const ChatContentContainer = () => {
   const { chatId: chatIdUrl } = useParams();
   const [chat, setChat] = useState<ChatInfo>({});
@@ -36,6 +38,7 @@ export const ChatContentContainer = () => {
   const [participants, setParticipants] = useState<DefaultUserData[]>([]);
   const [insertedMessage, setInsertedMessage] = useState<string>("");
   const [name, setName] = useState("");
+
   useEffect(() => {
     const onUnmount = getChatInfoListener(chatIdUrl, setChat);
     return () => {
@@ -50,10 +53,10 @@ export const ChatContentContainer = () => {
         setParticipants(users);
         setName(
           chat.name ||
-            participants
-              .filter((participant) => participant?.uid !== userData?.uid)
-              .map((participant) => participant.username)
-              .join(","),
+          participants
+            .filter((participant) => participant?.uid !== userData?.uid)
+            .map((participant) => participant.username)
+            .join(","),
         );
         const req = await getChatMessages(chat?.chatId as string);
         const __messages: MessageInfo[] = req.messages as MessageInfo[];
@@ -100,22 +103,22 @@ export const ChatContentContainer = () => {
         roomId={chat.roomId as string}
       />
       {messages == null ?
-      <Loading/>
-      :
-      <MessageContainer>
-        <>
-          {messages.length !== 0
-            ? (
-              <Messages
-                chatId={chat.chatId as string}
-                messages={messages}
-              />
-            )
-            : (
-              <NoMessages/>
-            )}
-        </>
-      </MessageContainer>}
+        <Loading />
+        :
+        <MessageContainer>
+          <>
+            {messages.length !== 0
+              ? (
+                <Messages
+                  chatId={chat.chatId as string}
+                  messages={messages}
+                />
+              )
+              : (
+                <NoMessages />
+              )}
+          </>
+        </MessageContainer>}
       <Flex
         flex={"1 1 20%"}
       >
@@ -126,19 +129,20 @@ export const ChatContentContainer = () => {
             config={froalaMessageConfig}
           />
         </Box>
-        <Button
+        <IconButton
+          aria-label='Send'
+          icon={<IoMdSend />}
           m={2}
-          size={"lg"}
-          color={"brand.primary"}
-          variant={"ghost"}
+          size='lg'
+          fontSize='30px'
+          color={"brand.accent"}
+          variant={"outline"}
           _hover={{
             bg: "brand.primary",
             color: "brand.accent",
           }}
           onClick={handleMessage}
-        >
-          Send
-        </Button>
+        />
       </Flex>
     </Flex>
   );
