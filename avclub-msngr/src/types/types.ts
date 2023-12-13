@@ -12,6 +12,7 @@ export type ChildrenProps = {
 };
 
 export type DefaultUserData = { 
+    chatids: {[chatId: string]: number},
     username: string,
     email: string,
     firstName: string,
@@ -114,6 +115,7 @@ export type ChatsCollection = ChatInfo[];
 export interface SearchResultsProps {
   users: DefaultUserData[];
   onClose: () => void;
+  chatId?: string; 
 }
 
 export type SetUserData = Dispatch<SetStateAction<DefaultUserData | null>>;

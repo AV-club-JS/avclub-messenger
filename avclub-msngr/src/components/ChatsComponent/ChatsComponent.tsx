@@ -6,12 +6,14 @@ import { ChatContentContainer } from "../ChatContentContainer";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { getLastChatMessage } from "../../utils/dataPreparation";
 import { getChannelsByUID } from "../../services";
-export const ChatsComponent = ({ chats, setChats, userData }: { 
-  chats: ChatInfo[] 
-  setChats: Dispatch<SetStateAction<ChatInfo[]>>
-  userData: DefaultUserData
+import { Outlet, useNavigate } from "react-router-dom";
+export const ChatsComponent = ({ chats, setChats, userData }: {
+  chats: ChatInfo[];
+  setChats: Dispatch<SetStateAction<ChatInfo[]>>;
+  userData: DefaultUserData;
 }) => {
-  const [selectedChat, setSelectedChat] = useState<ChatInfo | {}>({});
+  const [activeId, setActiveId] = useState(chats[0].chatId);
+  const navigate = useNavigate();
   useEffect(() => {
     let disconnect: Unsubscribe;
     try {
@@ -26,13 +28,6 @@ export const ChatsComponent = ({ chats, setChats, userData }: {
       return disconnect();
     };
   }, []);
-
-  useEffect(() => {
-    setSelectedChat((selectedChatProp: ChatInfo | null) => {
-      return chats && !Object.keys(selectedChatProp as object).length ? {...chats[0]} : {...selectedChatProp};
-    });
-  }, [chats]);
-
   return (
     <>
       <VStack
@@ -46,12 +41,13 @@ export const ChatsComponent = ({ chats, setChats, userData }: {
           ? chats.map((chat) => (
             <ChatCard
               key={chat.chatId}
-              isActive={(selectedChat as ChatInfo)?.chatId === chat.chatId}
+              isActive={chat.chatId === activeId}
               name={chat.name}
               participants={Object.keys(chat?.participants)}
               lastMessage={getLastChatMessage(chat) as string}
               onClick={() => {
-                setSelectedChat(chat);
+                setActiveId(chat.chatId);
+                navigate(`/chats/${chat.chatId}`)
               }}
             />
           ))
@@ -63,11 +59,7 @@ export const ChatsComponent = ({ chats, setChats, userData }: {
             </Box>
           )}
       </VStack>
-      {selectedChat && (
-        <ChatContentContainer
-          chat={selectedChat as ChatInfo}
-        />
-      )}
+      <Outlet/>
     </>
   );
 };

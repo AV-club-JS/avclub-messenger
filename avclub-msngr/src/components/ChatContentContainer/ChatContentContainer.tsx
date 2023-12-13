@@ -2,7 +2,13 @@
 import { Box, Button, Flex } from "@chakra-ui/react";
 import { ChatInfo, DefaultUserData, MessageInfo } from "../../types/types";
 import { MessageContainer } from "../MessageContainer";
-import { useContext, useEffect, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import {
   getChatMessages,
   getUsersByUIDs,
@@ -20,18 +26,35 @@ import FroalaEditorComponent from "react-froala-wysiwyg";
 import { froalaMessageConfig } from "../../utils/profileUtils";
 import { Messages } from "../Messages";
 import { Loading } from "../Loading";
-
-export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
+import { useParams } from "react-router-dom";
+import { getChatInfoListener } from "../../services";
+export const ChatContentContainer = () => {
+  const { chatId: chatIdUrl } = useParams();
+  const [chat, setChat] = useState<ChatInfo>({});
   const { userData } = useContext(UserContext);
   const [messages, setMessages] = useState<MessageInfo[] | null>(null);
   const [participants, setParticipants] = useState<DefaultUserData[]>([]);
   const [insertedMessage, setInsertedMessage] = useState<string>("");
-
+  const [name, setName] = useState("");
+  useEffect(() => {
+    const onUnmount = getChatInfoListener(chatIdUrl, setChat);
+    return () => {
+      console.log(2);
+      return onUnmount();
+    };
+  }, [chatIdUrl]);
   useEffect(() => {
     (async () => {
       if (chat.participants) {
         const users = await getUsersByUIDs(Object.keys(chat.participants));
         setParticipants(users);
+        setName(
+          chat.name ||
+            participants
+              .filter((participant) => participant?.uid !== userData?.uid)
+              .map((participant) => participant.username)
+              .join(","),
+        );
         const req = await getChatMessages(chat?.chatId as string);
         const __messages: MessageInfo[] = req.messages as MessageInfo[];
         setMessages(__messages);
@@ -47,6 +70,7 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
       console.log((error as Error).message);
     }
     return () => {
+      console.log(1);
       return disconnect();
     };
   }, []);
@@ -58,12 +82,6 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
       content: insertedMessage,
     });
   };
-
-  const name = chat.name ||
-    participants
-      .filter((participant) => participant?.uid !== userData?.uid)
-      .map((participant) => participant.username)
-      .join(",");
 
   return (
     <Flex
@@ -78,28 +96,28 @@ export const ChatContentContainer = ({ chat }: { chat: ChatInfo }) => {
       <AdditionalSettingsBar
         participants={participants}
         name={name}
-        roomId={chat.roomId!}
+        chatId={chat.chatId as string}
+        roomId={chat.roomId as string}
       />
-      {messages == null ?
-      <Loading/>
-      :
-      <MessageContainer>
-        <>
-          {messages.length !== 0
-            ? (
-              <Messages
-                chatId={chat.chatId as string}
-                messages={messages}
-              />
-            )
-            : (
-              <NoMessages
-                senderName={userData?.username as string}
-                receiverName={name}
-              />
-            )}
-        </>
-      </MessageContainer>}
+      {messages == null ? <Loading /> : (
+        <MessageContainer>
+          <>
+            {messages.length !== 0
+              ? (
+                <Messages
+                  chatId={chat.chatId as string}
+                  messages={messages}
+                />
+              )
+              : (
+                <NoMessages
+                  senderName={userData?.username as string}
+                  receiverName={name}
+                />
+              )}
+          </>
+        </MessageContainer>
+      )}
       <Flex
         flex={"1 1 20%"}
       >

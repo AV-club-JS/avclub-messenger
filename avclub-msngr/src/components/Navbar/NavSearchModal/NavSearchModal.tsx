@@ -18,7 +18,7 @@ import { getUsersByUsername } from "../../../services";
 import { DefaultUserData } from "../../../types/types";
 import { SearchResults } from "./SearchResults";
 
-export const NavSearchModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
+export const NavSearchModal = ({ isOpen, onClose, chatId }: { isOpen: boolean, onClose: () => void, chatId: string }) => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<DefaultUserData[]>([]);
 
@@ -67,7 +67,7 @@ export const NavSearchModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: 
                         </InputGroup>
                     </Flex>
                     <ModalBody>
-                        <SearchResults onClose={handleClose} users={results} />
+                        <SearchResults onClose={handleClose} users={results} chatId={chatId} />
                     </ModalBody>
 
                     <ModalFooter>

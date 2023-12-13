@@ -82,9 +82,6 @@ export const createChat = async (
 
     for (participant of participants) {
       participantsObject[participant] = createdOn;
-      await update(ref(db, `${USERS}/${participant}/${CHATIDS}`), {
-        [chatId]: createdOn,
-      });
     }
 
     await set(ref(db, `${CHANNELS}/${chatId}`), {
@@ -98,12 +95,24 @@ export const createChat = async (
       createdOn,
     });
 
+    for (participant of participants) {
+      await update(ref(db, `${USERS}/${participant}/${CHATIDS}`), {
+        [chatId]: createdOn,
+      });
+    }
     return { success: true, chatId: chatId };
   } catch (error) {
     return { chatId: null, success: false, error: (error as Error).message };
   }
 };
 
+export const getChatInfoListener = (chatId, setChat) => {
+  const chatRef = ref(db, `${CHANNELS}/${chatId}`);
+  return onValue(chatRef, (snapshot) => {
+    const chat = snapshot.val();
+    setChat(chat);
+  })
+}
 /**
  * @param chatId - the id of the chat
  * @returns {Promise<{chatInfo: ChatInfo, error?: string}>}
@@ -251,11 +260,15 @@ export const getChannelsByUid = async (
 ) => {
   const channelsRef = ref(db, `${CHANNELS}`);
   const snapshot = await get(channelsRef);
-  const channels: ChatInfo[] = Object.values(snapshot.val());
-  const userChannels = channels.filter((channel) =>
-    channel.participants[uid] && channel.type === type
-  );
-  return userChannels || [];
+  const channelsData = snapshot.val();
+  if (channelsData) {
+    const channels: ChatInfo[] = Object.values(snapshot.val());
+    const userChannels = channels.filter((channel) =>
+      channel.participants[uid] && channel.type === type
+    );
+    return userChannels;
+  }
+  return [];
 };
 
 export const getChannelsByUID = (
@@ -274,8 +287,9 @@ export const getChannelsByUID = (
         const userChats = chats.filter((chat) =>
           chat.participants[uid] && chat.type === type
         );
+        console.log('I was changed');
         // get for each chat get the username, avatarUrl.
-        setChats(userChats);
+        setChats([...userChats]);
       }
     }
   });
@@ -287,9 +301,10 @@ export const getChatMessages = async (
   const messagesRef = ref(db, `${CHANNELS}/${chatId}/${MESSAGES}`);
   try {
     const req = await get(messagesRef);
-    const messages: MessageInfo[] = (Object.values(req.val()) as MessageInfo[]).sort((m1, m2) =>
-      (m1 as MessageInfo).createdOn < (m2 as MessageInfo).createdOn ? -1 : 1
-    );
+    const messages: MessageInfo[] = (Object.values(req.val()) as MessageInfo[])
+      .sort((m1, m2) =>
+        (m1 as MessageInfo).createdOn < (m2 as MessageInfo).createdOn ? -1 : 1
+      );
     return { messages };
   } catch (error) {
     return { messages: [], error: (error as Error).message };
@@ -355,9 +370,9 @@ export const addReactionToChat = async (
   try {
     const messageRef = ref(
       db,
-      `${CHANNELS}/${chatId}/${MESSAGES}/${messageId}/${REACTIONS}`,
+      `${CHANNELS}/${chatId}/${MESSAGES}/${messageId}/${REACTIONS}/${reaction}`,
     );
-    await update(messageRef, { [reaction]: { [uid]: Date.now() } });
+    await update(messageRef, {[uid]: Date.now()});
     return { success: true, reaction, chatId, messageId, uid };
   } catch (error) {
     return {
@@ -396,7 +411,7 @@ export const removeReactionFromChat = async (
     if (data[reaction]) {
       const userReactionRef = ref(
         db,
-        `${CHANNELS}/${chatId}/${MESSAGES}/${messageId}/${REACTIONS}/${reaction}/${uid}`
+        `${CHANNELS}/${chatId}/${MESSAGES}/${messageId}/${REACTIONS}/${reaction}/${uid}`,
       );
       const req = await get(userReactionRef);
       const reactionObject = req.val();
@@ -407,8 +422,8 @@ export const removeReactionFromChat = async (
       reaction,
       chatId,
       messageId,
-      uid
-    }
+      uid,
+    };
   } catch (error) {
     return {
       success: false,
@@ -473,11 +488,18 @@ export const deleteChannel = async (
     const snapshot = await get(
       ref(db, `${CHANNELS}/${chatId}/${PARTICIPANTS}`),
     );
-    const uids: string[] = Object.values(snapshot.val());
+    const uids: string[] = Object.keys(snapshot.val());
     // delete the chatId from the chatids property of every user
-    for (uid of uids) await remove(ref(db, `${USERS}/${CHATIDS}/${uid}`));
-    // delete the Channel
     await remove(ref(db, `${CHANNELS}/${chatId}`));
+    for (uid of uids) {
+      const usernameSnapshot = await get(ref(db, `${USERS}/${uid}/username`));
+      const username = usernameSnapshot.val();
+      console.log(
+        `deleted chat id ${chatId} for user ${username} with uid: ${uid}`,
+      );
+      await remove(ref(db, `${USERS}/${uid}/${CHATIDS}/${chatId}`));
+    }
+    // delete the Channel
     return { chatId, success: true };
   } catch (error) {
     return { chatId, success: false, error: (error as Error).message };

@@ -7,10 +7,22 @@ export const ChatHeader = (
 ) => {
   return (
     <Flex>
-      <Flex flex={1} gap={4} alignItems={"center"} flexWrap={"wrap"}>
+      <Flex 
+        flex={1} 
+        gap={4} 
+        alignItems={"center"} 
+        flexWrap={"wrap"}
+      >
         <AvatarGroupComponent max={2} users={participants} />
         <Box>
-          <Heading size="sm">{name}</Heading>
+          <Heading 
+            maxW='150px'
+            fontSize={'12px'}
+            size={'xs'}
+            overflow="hidden" 
+            whiteSpace="nowrap" 
+            textOverflow="ellipsis"
+          >{name}</Heading>
         </Box>
       </Flex>
     </Flex>

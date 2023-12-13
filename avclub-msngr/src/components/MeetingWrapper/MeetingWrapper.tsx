@@ -35,7 +35,6 @@ export const MeetingWrapper = () => {
       (async () => {
         dyteRes = await dyteReq;
         authData = await dyteRes.json();
-        console.log(authData)
         setToken(authData.data.token);
       })();
 

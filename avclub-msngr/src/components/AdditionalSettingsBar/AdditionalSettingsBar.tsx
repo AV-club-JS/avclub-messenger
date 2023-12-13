@@ -1,43 +1,63 @@
-"use strict";
-import { Button, ButtonGroup, Flex } from "@chakra-ui/react";
+import { Button, ButtonGroup, Flex, useDisclosure } from "@chakra-ui/react";
 import { ChatBar } from "../ChatBar";
-import { DefaultUserData } from "../../types/types";
-import { useContext } from "react";
+import { ChatInfo, DefaultUserData } from "../../types/types";
+import { Dispatch, SetStateAction, useContext } from "react";
 import { UserContext } from "../../context/AuthContext";
 import { FaPhoneVolume } from "react-icons/fa6";
 import { FaVideo } from "react-icons/fa";
 import { IoPersonAdd } from "react-icons/io5";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import { NavSearchModal } from "../Navbar/NavSearchModal";
+import { DeleteIcon } from "@chakra-ui/icons";
+import { deleteChannel } from "../../services";
 export const AdditionalSettingsBar = ({
   name,
   participants,
-  roomId
+  chatId,
+  roomId,
 }: {
   name: string;
   participants: DefaultUserData[];
-  roomId: string
+  chatId: string;
+  roomId: string;
 }) => {
+  const navigate = useNavigate();
   const { userData } = useContext(UserContext);
-
+  const { isOpen: isSearchOpen, onOpen: onSearchOpen, onClose: onSearchClose } =
+    useDisclosure();
   participants = participants.filter((participant) =>
     participant.uid !== userData?.uid
   );
 
+  const handleSearchNavbar = () => onSearchOpen();
+  const handleDeleteChat = async () => {
+    // if the user is the owner of the chat delete it!
+    navigate('/chats')
+    const req = await deleteChannel(chatId);
+    if (!req.success) console.log(req.error);
+    
+  };
   return (
     <Flex
       px={4}
       alignItems={"center"}
     >
+      <NavSearchModal
+        isOpen={isSearchOpen}
+        onClose={onSearchClose}
+        chatId={chatId}
+      />
       <ChatBar name={name} participants={participants} />
       <ButtonGroup>
-        <Button as={Link} to={`/meeting/${roomId}`} >
+        <Button as={Link} to={`/meeting/${roomId}`}>
           <FaVideo />
         </Button>
         <Button>
-          <FaPhoneVolume />
+          <DeleteIcon onClick={handleDeleteChat} />
         </Button>
-        <Button>
+        <Button
+          onClick={handleSearchNavbar}
+        >
           <IoPersonAdd />
         </Button>
       </ButtonGroup>

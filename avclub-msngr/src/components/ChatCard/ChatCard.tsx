@@ -3,7 +3,13 @@ import { Card, CardBody, CardFooter, CardHeader, Text } from "@chakra-ui/react";
 import { DefaultUserData } from "../../types/types";
 import { ChatHeader } from "../ChatHeader";
 import { UserContext } from "../../context/AuthContext";
-import { useContext, useEffect, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { getUsersByUIDs } from "../../services";
 
 export const ChatCard = (
@@ -25,7 +31,7 @@ export const ChatCard = (
       const users: DefaultUserData[] = await getUsersByUIDs(participants);
       setParticipantsData(users);
     })();
-  }, []);
+  }, [participants]);
 
   const chatParticipants = participantsData.filter((
     participant: DefaultUserData,
@@ -33,15 +39,14 @@ export const ChatCard = (
 
   const chatName = chatParticipants
     .map((participant: DefaultUserData) => participant.username)
-    .join(" , ");
-
+    .join(", ");
   return (
     <Card
       w="100%"
       bgColor={isActive ? "brand.accent" : ""}
       maxH="100px"
       borderBottom={"1px solid"}
-      borderColor='brand.primary'
+      borderColor="brand.primary"
       _hover={{
         bg: "brand.primary",
         color: "brand.accent",
@@ -49,25 +54,30 @@ export const ChatCard = (
       }}
       onClick={onClick}
     >
-      <CardHeader>
-        <ChatHeader name={chatName} participants={chatParticipants} />
-        <CardBody
-          flexWrap={"wrap"}
-          m="0"
-          p="0"
-          textAlign={"center"}
-          overflow={"hidden"}
-        >
-          <Text
-            w={'100%'}
-            fontSize='sm'
-            color='gray.500'
-            h={18}
-            dangerouslySetInnerHTML={{ __html: lastMessage! }}
-          >
-          </Text>
-        </CardBody>
+      <CardHeader
+        p='2px 5px'
+      >
+        <ChatHeader
+          name={chatName}
+          participants={chatParticipants}
+        />
       </CardHeader>
+      <CardBody
+        p={'1px 2px'}
+        fontSize={'5px'}
+        flexWrap={"wrap"}
+        textAlign={"center"}
+        textOverflow={'ellipsis'}
+        overflow={'hidden'}
+      >
+        <Text
+          w={"100%"}
+          fontSize="sm"
+          color="gray.500"
+          dangerouslySetInnerHTML={{ __html: lastMessage! }}
+        >
+        </Text>
+      </CardBody>
       <CardFooter />
     </Card>
   );

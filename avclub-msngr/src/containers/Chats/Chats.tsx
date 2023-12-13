@@ -9,12 +9,11 @@ import { NoMessages } from "../../components/NoMessages";
 export const Chats = () => {
   const { userData, setAuth } = useContext(UserContext);
   const [chats, setChats] = useState<ChatsCollection | []>([]);
-  
   useEffect(() => {
     (async () => {
       if (userData) {
         const channels = await getChannelsByUid(userData?.uid as string);
-        setChats(channels);
+        setChats([...channels]);
       }
     })();
   }, [userData]);

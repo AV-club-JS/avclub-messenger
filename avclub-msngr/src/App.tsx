@@ -16,6 +16,7 @@ import { TeamView } from './components/TeamView';
 import { TeamChannelWrapper } from './components/TeamChannelWrapper';
 import { MeetingWrapper } from './components/MeetingWrapper';
 import { ProfileWrapper } from './containers/Profile';
+import { ChatContentContainer } from './components/ChatContentContainer';
 
 //Browser router
 const appRoutes = createBrowserRouter(
@@ -29,7 +30,9 @@ const appRoutes = createBrowserRouter(
         <Route path='team/:teamId' element={<TeamView />} />
         <Route path='channel/:chatId' element={<TeamChannelWrapper />} />
       </Route>
-      <Route path='/chats' element={<Chats />} />
+      <Route path='/chats' element={<Chats />} >
+        <Route path=':chatId' element={<ChatContentContainer/>}/> 
+      </Route>
       <Route path='/meeting/:roomId' element={<MeetingWrapper />} />
       <Route path='*' element={<NotFound />} />
     </Route>
