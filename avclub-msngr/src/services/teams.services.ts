@@ -41,6 +41,7 @@ export const createTeam = async (name: string, ownerId: string, info: string) =>
     });
 
     await addUserToTeam(ownerId, uid);
+    return uid;
 }
 
 export const getTeamInfo = async (teamId: string) => {
