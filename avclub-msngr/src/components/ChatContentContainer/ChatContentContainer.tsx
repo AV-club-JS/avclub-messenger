@@ -99,25 +99,23 @@ export const ChatContentContainer = () => {
         chatId={chat.chatId as string}
         roomId={chat.roomId as string}
       />
-      {messages == null ? <Loading /> : (
-        <MessageContainer>
-          <>
-            {messages.length !== 0
-              ? (
-                <Messages
-                  chatId={chat.chatId as string}
-                  messages={messages}
-                />
-              )
-              : (
-                <NoMessages
-                  senderName={userData?.username as string}
-                  receiverName={name}
-                />
-              )}
-          </>
-        </MessageContainer>
-      )}
+      {messages == null ?
+      <Loading/>
+      :
+      <MessageContainer>
+        <>
+          {messages.length !== 0
+            ? (
+              <Messages
+                chatId={chat.chatId as string}
+                messages={messages}
+              />
+            )
+            : (
+              <NoMessages/>
+            )}
+        </>
+      </MessageContainer>}
       <Flex
         flex={"1 1 20%"}
       >
