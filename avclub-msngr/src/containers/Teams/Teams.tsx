@@ -8,13 +8,13 @@ import { TeamDisplay } from "../../components/TeamDisplay";
 import { getTeamInfo, removeUserTeam } from "../../services";
 import { CreateTeam } from "../../components/CreateTeam";
 import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
+import { Loading } from "../../components/Loading";
 
 
 export const Teams = () => {
     const { userData } = useContext(UserContext);
     const [teamsArr, setTeamsArr] = useState<DefaultTeamData[]>([]);
     const { isOpen: isCreateOpen, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure();
-    const [loading, setLoading] = useState(true);
     const [isLeftSectionOpen, setIsLeftSectionOpen] = useState(true);
 
     const handleCreateOpen = () => {
@@ -38,7 +38,6 @@ export const Teams = () => {
                 }
 
                 setTeamsArr(teams);
-                setLoading(false);
             })()
         }
     }, [userData]);
@@ -47,7 +46,7 @@ export const Teams = () => {
         setIsLeftSectionOpen(!isLeftSectionOpen);
     };
 
-    if (userData && !loading) {
+    if (userData) {
         return (
             <Stack direction={{ base: "column", md: "row" }} gap={1} h={`calc(100vh - 60px)`} overflowY={'hidden'}>
                 <Stack
@@ -104,5 +103,7 @@ export const Teams = () => {
                 </Stack>
             </Stack>
         )
+    } else {
+        <Loading/>
     }
 }
