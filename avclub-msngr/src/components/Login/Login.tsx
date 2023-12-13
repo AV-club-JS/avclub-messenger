@@ -54,7 +54,7 @@ export const Login = (): JSX.Element => {
         userData: userInfo
       });
 
-      navigate("/profile");
+      navigate(`/${credential.user.uid}`);
     } catch (error) {
       switch ((error as FirebaseError).code) {
         case "auth/invalid-login-credentials":
