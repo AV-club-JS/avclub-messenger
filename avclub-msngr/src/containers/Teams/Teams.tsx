@@ -7,7 +7,7 @@ import { DefaultTeamData } from "../../types/types";
 import { TeamDisplay } from "../../components/TeamDisplay";
 import { getTeamInfo, removeUserTeam } from "../../services";
 import { CreateTeam } from "../../components/CreateTeam";
-import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { Loading } from "../../components/Loading";
 
 
@@ -71,7 +71,7 @@ export const Teams = () => {
                         }}
                         onClick={toggleLeftSection}
                     >
-                        {isLeftSectionOpen ? <ArrowLeftIcon /> : <ArrowRightIcon />}
+                        {isLeftSectionOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
                     </Button>
                     {isLeftSectionOpen &&
                         <Box>
