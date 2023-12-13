@@ -160,3 +160,9 @@ export const addUserToTeamChannel = async (userId: string, channelId: string) =>
     const dataForChannel = { [userId]: Date.now() };
     await update(channelRef, dataForChannel);
 }
+
+// this delete is used to cleanup a channel from a deleted team
+export const simpleTeamChannelDelete = async (channelId: string) => {
+    const channelRef = ref(db, `${CHANNELS}/${channelId}`);
+    remove(channelRef);
+}

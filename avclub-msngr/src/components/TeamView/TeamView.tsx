@@ -7,7 +7,7 @@ import { UserContext } from "../../context/AuthContext";
 import { DefaultTeamData, DefaultUserData } from "../../types/types";
 import {
     listenTeamData, getUserByUid, getUsersByTeam, updateTeamData,
-    doesTeamNameExist, deleteTeam, removeUserTeam, removeUserFromTeam
+    doesTeamNameExist, deleteTeam, removeUserTeam, removeUserFromTeam, simpleTeamChannelDelete
 } from "../../services";
 import { Unsubscribe } from "firebase/database";
 import { formatTimestamp } from "../../utils/formatTimestamp";
@@ -86,6 +86,9 @@ export const TeamView = () => {
             await removeUserTeam(userData!.uid, teamData.teamId);
             for (const user in teamData.members) {
                 await removeUserTeam(user, teamData.teamId);
+            }
+            for (const channel in teamData.channelIds) {
+                await simpleTeamChannelDelete(channel);
             }
             navigate('/teams');
         } catch (error) {
