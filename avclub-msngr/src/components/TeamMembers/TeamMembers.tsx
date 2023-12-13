@@ -3,8 +3,11 @@ import { UserDataProps } from "../../types/types";
 import { getStatusBadgeColor } from "../../utils/profileUtils";
 import { removeUserFromTeam } from "../../services";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../../context/AuthContext";
 
 export const TeamMembers = ({ users, isOwner, teamId }: UserDataProps & { isOwner: boolean; teamId: string }) => {
+    const { userData } = useContext(UserContext);
 
     const handleKick = async (userId: string) => {
         try {
@@ -28,7 +31,7 @@ export const TeamMembers = ({ users, isOwner, teamId }: UserDataProps & { isOwne
                         <Text fontSize='small'>{user.email}</Text>
                         <Divider />
                     </VStack>
-                    {isOwner &&
+                    {(isOwner && user.uid !== userData!.uid) &&
                         <Button
                             onClick={() => handleKick(user.uid)}
                             size={'sm'}
