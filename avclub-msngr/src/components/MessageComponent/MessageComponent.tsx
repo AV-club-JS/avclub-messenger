@@ -90,7 +90,7 @@ export const MessageComponent = (
               <Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
                 {showAvatar && (
                   <>
-                    <Link to={`/${user?.uid}`}>
+                    <Link to={`/profile/${user?.uid}`}>
                       <Avatar name={user?.username} src={user?.avatarUrl} />
                     </Link>
 
