@@ -1,5 +1,5 @@
 import { ChatsCollection } from "../../types/types";
-import { HStack, VStack, Button, Text, Menu, MenuButton, MenuList, MenuItem, IconButton, FormControl, useDisclosure } from "@chakra-ui/react";
+import { HStack, VStack, Button, Text, Menu, MenuButton, MenuList, MenuItem, IconButton, FormControl, useDisclosure, Spacer } from "@chakra-ui/react";
 import { FC, useContext, useState } from "react";
 import { deleteTeamChannel } from "../../services";
 import { UserContext } from "../../context/AuthContext";
@@ -30,14 +30,23 @@ export const ChannelList: FC<{ channelArr: ChatsCollection; teamId: string }> = 
             {channelArr !== null && channelArr.map(channel => (
                 (!channel.personal ||
                     (channel.personal && (Object.prototype.hasOwnProperty.call(channel.participants, userData!.uid)))) &&
-                <HStack key={channel.chatId}>
-                    <Text
-                        key={channel.chatId}
-                        fontSize={20}
-                        fontWeight={600}>{channel.name}</Text>
-                    {channel.uid === userData!.uid &&
+                <HStack key={channel.chatId} >
+                    <Text bgColor='gray.100' borderRadius='lg'pl={2}
+                        fontSize={20} fontWeight={600} minW="400px" maxW="400px" 
+                        overflow="hidden" whiteSpace="nowrap" textOverflow="ellipsis"
+                        >{channel.name}</Text>
+                    {(channel.uid === userData!.uid && channel.name !== 'General') &&
+                    <>
+                    <Spacer />
                         <Menu isLazy>
-                            <MenuButton as={IconButton} icon={<TbDotsVertical />}>
+                            <MenuButton as={IconButton} icon={<TbDotsVertical />}
+                            size='sm'
+                            color={'brand.primary'}
+                            variant={'outline'}
+                            _hover={{
+                                bg: 'brand.primary',
+                                color: 'brand.accent',
+                            }}>
                             </MenuButton>
                             <MenuList>
                                 {channel.personal && <MenuItem
@@ -50,6 +59,7 @@ export const ChannelList: FC<{ channelArr: ChatsCollection; teamId: string }> = 
                             <AddMemberModal isOpen={isAddOpen} onClose={onAddClose}
                                 teamId={teamId} channelAdd={true} channelId={channel.chatId} />
                         </Menu>
+                    </>
                     }
                 </HStack>
             ))}
