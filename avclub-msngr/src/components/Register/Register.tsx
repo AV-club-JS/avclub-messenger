@@ -23,7 +23,7 @@ import { useNavigate } from "react-router-dom";
 import { Credentials, DefaultUserData } from "../../types/types";
 // services
 import { registerUser } from "../../services";
-import { createUser, getUserByUid } from "../../services/users.services";
+import { createUser, defaultUserAvatar, getUserByUid } from "../../services/users.services";
 // context
 import { UserContext } from "../../context/AuthContext";
 import { UserCredential } from "firebase/auth";
@@ -69,14 +69,18 @@ export const Register = () => {
       try {
         const credential = await registerUser(user) as UserCredential;
         const uid = credential.user.uid;
+
         await createUser({ ...user, uid });
+
         const req = await getUserByUid(uid);
         const userInfo: DefaultUserData = req?.val();
+        await defaultUserAvatar(uid);
+        
         setAuth({
           user: credential!.user,
           userData: userInfo,
         });
-        navigate("/");
+        navigate(`/${credential.user.uid}`);
       } catch (error) {
         console.log((error as FirebaseError).code);
         const code: string = (error as FirebaseError).code;
