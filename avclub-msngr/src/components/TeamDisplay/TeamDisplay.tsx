@@ -7,16 +7,35 @@ import {
     Box,
     AccordionIcon,
     AccordionPanel,
-    VStack
+    VStack,
+    IconButton,
+    HStack,
 } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
-import { getTeamChannels } from "../../services";
+import { getTeamChannels, getTeamInfo } from "../../services";
 import { UserContext } from "../../context/AuthContext";
+import { RepeatIcon } from "@chakra-ui/icons";
 
 export const TeamDisplay = ({ team }: { team: DefaultTeamData }) => {
     const { userData } = useContext(UserContext);
     const [channels, setChannels] = useState<ChatsCollection | []>([]);
+
+    const onRefresh = async () => {
+        if (team && team.channelIds) {
+            const newTeamInfo = await getTeamInfo(team.teamId);
+            const teamChannels = Object.keys(newTeamInfo.channelIds);
+
+            try {
+                const chats = await getTeamChannels(teamChannels);                
+                setChannels(chats);
+            } catch (error) {
+                console.error(error);
+            }
+        } else if (!team.channelIds) {
+            setChannels([]);
+        }
+    }
 
     useEffect(() => {
         if (team && team.channelIds) {
@@ -38,7 +57,7 @@ export const TeamDisplay = ({ team }: { team: DefaultTeamData }) => {
 
     return (
         <AccordionItem>
-            <h2>
+            <HStack as='span'>
                 <AccordionButton>
                     <Box as="span" flex='1' textAlign='left'>
                         <Link minW="fit-content" maxW="fit-content"
@@ -55,7 +74,24 @@ export const TeamDisplay = ({ team }: { team: DefaultTeamData }) => {
                             color: 'brand.accent',
                         }} />
                 </AccordionButton>
-            </h2>
+                <Box as="span" flex="1" />
+                <IconButton
+                    aria-label='refresh channels'
+                    icon={<RepeatIcon />}
+                    isRound={true}
+                    variant='ghost'
+                    onClick={onRefresh}
+                    mr={1}
+                    _hover={{
+                        bg: 'brand.primary',
+                        color: 'brand.accent',
+                    }}
+                    _active={{
+                        bg: 'brand.accent',
+                        color: 'brand.primary',
+                    }}
+                />
+            </HStack>
             <AccordionPanel pb={4}>
                 <VStack align='left' gap={1}>
                     {team.channelIds ? channels.map(channel => (
