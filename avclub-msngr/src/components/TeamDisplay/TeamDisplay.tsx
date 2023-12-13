@@ -22,6 +22,7 @@ export const TeamDisplay = ({ team }: { team: DefaultTeamData }) => {
     const [channels, setChannels] = useState<ChatsCollection | []>([]);
 
     const onRefresh = async () => {
+        
         if (team && team.channelIds) {
             const newTeamInfo = await getTeamInfo(team.teamId);
             const teamChannels = Object.keys(newTeamInfo.channelIds);
@@ -40,11 +41,12 @@ export const TeamDisplay = ({ team }: { team: DefaultTeamData }) => {
     useEffect(() => {
         if (team && team.channelIds) {
             const teamChannels = Object.keys(team.channelIds);
+
             (async () => {
                 try {
                     const chats = await getTeamChannels(teamChannels);
-                    setChannels(chats);
 
+                    setChannels(chats);
                 } catch (error) {
                     console.error(error);
                 }
@@ -53,7 +55,7 @@ export const TeamDisplay = ({ team }: { team: DefaultTeamData }) => {
         } else if (!team.channelIds) {
             setChannels([]);
         }
-    }, [team])
+    }, [])
 
     return (
         <AccordionItem>
@@ -101,6 +103,7 @@ export const TeamDisplay = ({ team }: { team: DefaultTeamData }) => {
                             as={NavLink}
                             to={`channel/${channel.chatId}`}
                             bgColor='gray.100'
+                            borderRadius='lg'
                             fontWeight={600} fontSize='sm'
                             color='brand.primary'>
                             <Text fontWeight={600}>{channel.name}</Text>
