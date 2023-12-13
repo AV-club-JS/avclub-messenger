@@ -80,7 +80,7 @@ export const Register = () => {
           user: credential!.user,
           userData: userInfo,
         });
-        navigate(`/${credential.user.uid}`);
+        navigate(`/profile/${credential.user.uid}`);
       } catch (error) {
         console.log((error as FirebaseError).code);
         const code: string = (error as FirebaseError).code;

@@ -25,7 +25,7 @@ const appRoutes = createBrowserRouter(
       <Route index element={<Home />} />
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register />} />
-      <Route path=':userId' element={<ProfileWrapper />} />
+      <Route path='/profile/:userId' element={<ProfileWrapper />} />
       <Route path='/teams' element={<Teams />}>
         <Route path='team/:teamId' element={<TeamView />} />
         <Route path='channel/:chatId' element={<TeamChannelWrapper />} />

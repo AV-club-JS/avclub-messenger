@@ -16,7 +16,7 @@ export const DesktopNav = () => {
 
     const handleNavigate = (label: string, nav: string) => {
         if (label === 'Profile') {
-            navigate(`/${userData?.uid}`)
+            navigate(`/profile/${userData?.uid}`)
         } else {
             navigate(nav);
         }

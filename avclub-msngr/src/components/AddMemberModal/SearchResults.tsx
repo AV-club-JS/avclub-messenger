@@ -26,7 +26,7 @@ export const SearchResults = ({ users, currentTeamId, channelAdd = false, channe
             <VStack alignItems={'flex-start'} mt={3}>
                 {users.length && users.map(user => (
                     <HStack key={user.uid} p={1}>
-                        <Link to={`/${user.uid}`}>
+                        <Link to={`/profile/${user.uid}`}>
                             <Avatar size="md" src={user.avatarUrl} mr={2}>
                                 <AvatarBadge boxSize="1em" bg={getStatusBadgeColor(user.status)} />
                             </Avatar>
