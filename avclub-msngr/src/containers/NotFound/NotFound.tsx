@@ -29,9 +29,9 @@ export const NotFound = () => {
                 _hover={{
                     bg: 'brand.primary',
                 }}
-                onClick={() => navigate('/')}
+                onClick={() => navigate(-1)}
                 >
-                Go to Home
+                Go Back
             </Button>
         </Box>
     )
