@@ -149,7 +149,7 @@ export const Navbar = () => {
                             </Button>
                             <Avatar size="sm"
                                 src={downloadURL!}
-                                onClick={() => navigate('profile')}
+                                onClick={() => navigate(`/${userData?.uid}`)}
                                 _hover={{
                                     cursor: "pointer"
                                 }}>
