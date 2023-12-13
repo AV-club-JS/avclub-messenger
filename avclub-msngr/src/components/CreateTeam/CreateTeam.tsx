@@ -21,7 +21,7 @@ import 'froala-editor/css/froala_editor.pkgd.min.css';
 import 'froala-editor/js/plugins.pkgd.min.js';
 import FroalaEditorComponent from 'react-froala-wysiwyg';
 import { froalaBioConfig } from "../../utils/profileUtils";
-import { createTeam } from "../../services";
+import { createTeam, createTeamChannel } from "../../services";
 import { UserContext } from "../../context/AuthContext";
 
 export const CreateTeam = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
@@ -48,7 +48,9 @@ export const CreateTeam = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
         } else {
             setTeamNameError('');
             try {
-                await createTeam(formValues.teamName, userData!.uid, formValues.info);
+                const teamId = await createTeam(formValues.teamName, userData!.uid, formValues.info);
+                const channelMember = { [userData!.uid]: Date.now() };
+                await createTeamChannel(teamId, 'General', false, userData!.uid, channelMember);
                 handleClose();
             } catch (error) {
                 console.error(error);
