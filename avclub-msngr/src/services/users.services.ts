@@ -22,7 +22,7 @@ import { db, storage } from "../config/firebase-config";
 // types
 import { DefaultUserData, SetCount, SetUserDataContext } from "../types/types";
 // constants
-import { AVATARS, USERS, TEAMIDS } from "../constants/servicesConstants";
+import { AVATARS, USERS, TEAMIDS, DEFAULT_AVATAR } from "../constants/servicesConstants";
 import { Unsubscribe } from "firebase/auth";
 
 const usersRef = ref(db, `${USERS}/`);
@@ -222,4 +222,13 @@ export const getUsersByUIDs = async (uids: string[]) :Promise<DefaultUserData[]>
     console.log((error as Error).message);
     return [];
   }
+};
+
+export const defaultUserAvatar = async (userUid: string) => {
+  const storageUserRef = storageRef(storage, `/${AVATARS}/${DEFAULT_AVATAR}`);
+
+  const url = await getDownloadURL(storageUserRef);
+
+  await updateUserData(userUid, { avatarUrl: url });
+  return url;
 };
