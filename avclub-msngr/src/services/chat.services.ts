@@ -82,7 +82,11 @@ export const createChat = async (
     const chatId: string = crypto.randomUUID();
     const createdOn = Date.now();
     const participantsObject: {
-      [uid: string]: { unread: number; received: number; sent: number };
+      [uid: string]: {
+        unread: number;
+        received: number;
+        sent: number;
+      };
     } = {};
     let participant: string;
 
@@ -168,9 +172,9 @@ export const addMessageToChat = async ({
   try {
     const chat = await getChatInfo(chatId);
     if (chat.chatInfo) {
-      const req = await getUserDataByUid(uid);
-      if (req.error) return { success: false, error: req.error };
-      const user = req.data;
+      // const req = await getUserDataByUid(uid);
+      // if (req.error) return { success: false, error: req.error };
+
       if (chat.chatInfo.participants[uid]) {
         if (content) {
           let chatParticipant: string;
@@ -178,7 +182,7 @@ export const addMessageToChat = async ({
           for (chatParticipant of chatParticipants) {
             const participantRef = ref(
               db,
-              `${CHANNELS}/${chatId}/participants/${chatParticipant}`,
+              `${CHANNELS}/${chatId}/${PARTICIPANTS}/${chatParticipant}`,
             );
             const participantSnapshot = await get(participantRef);
             let data: { unread: number; sent: number; received: number } =
@@ -188,10 +192,8 @@ export const addMessageToChat = async ({
             }
             await set(participantRef, {
               unread: chatParticipant === uid ? data.unread : data.unread + 1,
-              received: chatParticipant === uid
-                ? data.unread
-                : data.received + 1,
-              sent: data.sent + 1,
+              received: chatParticipant === uid ? data.received : data.received + 1,
+              sent: chatParticipant === uid ? data.sent + 1 : data.sent,
             });
           }
           const createdOn: number = Date.now();
@@ -592,3 +594,75 @@ export const uploadChatImage = async (image: File) => {
   const url = await getDownloadURL(storageImageRef);
   return url;
 };
+
+export const addMessageToChatNew = async ({
+  chatId,
+  uid,
+  content = "",
+}: { chatId: string; uid: string; content: string }): Promise<
+  { success: boolean; error?: string }> => {
+  try {
+    if (content) {
+      const createdOn: number = Date.now();
+      const messageId: string = crypto.randomUUID();
+      await update(ref(db, `${CHANNELS}/${chatId}/${MESSAGES}`), {
+        [messageId]: {
+          messageId,
+          uid,
+          createdOn,
+          content,
+          reactions: {},
+        },
+      });
+    }
+    return { success: true };
+  } catch (error) {
+    console.log(error);
+    return { success: false, error: (error as Error).message };
+  }
+}
+
+export const updateChatInfo = async (chatId: string, uid: string) => {
+  try {
+    const chat = await getChatInfo(chatId);
+
+    if (chat.chatInfo) {
+      const req = await getUserDataByUid(uid);
+
+      if (req.error) {
+        return { success: false, error: req.error };
+      }
+
+      if (chat.chatInfo.participants[uid]) {
+        let chatParticipant: string;
+        const chatParticipants = Object.keys(chat.chatInfo.participants);
+
+        for (chatParticipant of chatParticipants) {
+          const participantRef = ref(
+            db, `${CHANNELS}/${chatId}/participants/${chatParticipant}`,
+          );
+          const participantSnapshot = await get(participantRef);
+          let data: { unread: number; sent: number; received: number } =
+            participantSnapshot.val();
+          if (typeof data !== "object") {
+            data = { unread: 0, sent: 0, received: 0 };
+          }
+          await set(participantRef, {
+            unread: chatParticipant === uid ? data.unread : data.unread + 1,
+            received: chatParticipant === uid ? data.received : data.received + 1,
+            sent: chatParticipant === uid ? data.sent + 1 : data.sent,
+          });
+        }
+
+        return { success: true };
+      } else {
+        return {
+          success: false,
+          error: "Chat with this id or name does not exist.",
+        };
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}

@@ -1,7 +1,7 @@
 import { DefaultUserData } from "../../types/types";
-import { VStack, HStack, Avatar, AvatarBadge, Text, Divider, Button, useConst } from "@chakra-ui/react";
+import { VStack, HStack, Avatar, AvatarBadge, Text, Divider, Button } from "@chakra-ui/react";
 import { getStatusBadgeColor } from "../../utils/profileUtils";
-import { addUserToTeam, addUserToTeamChannel } from "../../services";
+import { addUserToTeam, addUserToTeamChannel, getTeamInfo } from "../../services";
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../../context/AuthContext";
@@ -18,6 +18,11 @@ export const SearchResults = ({ users, currentTeamId, channelAdd = false, channe
                 await addUserToTeamChannel(userId, channelId!);
             } else {
                 await addUserToTeam(userId, teamId);
+                const team = await getTeamInfo(currentTeamId);
+                
+                for (const channel in team.channelIds) {
+                    await addUserToTeamChannel(userId, channel);
+                }
             }
         } catch (error) {
             console.error(error);

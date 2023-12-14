@@ -28,8 +28,8 @@ export const SearchResults = (
           type: "chat",
         });
         const chatIdentifier = reqInfo.chatId;
-
-        const res = await dyteRoomCreate(reqInfo.chatId!);
+        
+        const res = await dyteRoomCreate('Chat Meeting');
         const dyteData = await res.json();
 
         addRoomID(chatIdentifier!, dyteData.data.id);

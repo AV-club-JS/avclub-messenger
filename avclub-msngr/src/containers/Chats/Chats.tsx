@@ -2,14 +2,12 @@ import { HStack } from "@chakra-ui/react";
 import { ChatsCollection, DefaultUserData } from "../../types/types";
 import { UserContext } from "../../context/AuthContext";
 import { useContext, useEffect, useState } from "react";
-import { getChannelsByUID, getChannelsByUid } from "../../services";
-import { Unsubscribe } from "firebase/auth";
+import { getChannelsByUid } from "../../services";
 import { ChatsComponent } from "../../components/ChatsComponent";
-import { NoMessages } from "../../components/NoMessages";
 import { NoChats } from "../../components/NoChats";
 import { Loading } from "../../components/Loading";
 export const Chats = () => {
-  const { userData, setAuth } = useContext(UserContext);
+  const { userData } = useContext(UserContext);
   const [chats, setChats] = useState<ChatsCollection | null>(null);
   useEffect(() => {
     (async () => {
@@ -20,22 +18,23 @@ export const Chats = () => {
     })();
   }, [userData]);
 
-  if (userData?.chatids) {
-    if (chats){
-    return (
-      <HStack h={`calc(100vh - 60px)`} overflowY={"hidden"}>
-        <ChatsComponent userData={userData as DefaultUserData} setChats={setChats} chats={chats} />
-      </HStack>
-    );
+  if (userData) {
+    if (userData?.chatids) {
+      if (chats) {
+        return (
+          <HStack h={`calc(100vh - 60px)`} overflowY={"hidden"}>
+            <ChatsComponent userData={userData as DefaultUserData} setChats={setChats} chats={chats} />
+          </HStack>
+        );
+      } else {
+        return (
+          <Loading />
+        )
+      }
     } else {
       return (
-        <Loading/>
+        <NoChats />
       )
     }
-  } else {
-    return (
-      <NoChats/>
-    )
   }
-
 };

@@ -23,13 +23,14 @@ import {
   getChatMessages,
   getUsersByUIDs,
   setMessagesListener,
+  updateChatInfo,
+  addMessageToChatNew,
   uploadChatImage,
 } from "../../services";
 import { NoMessages } from "../NoMessages";
 import { Unsubscribe } from "firebase/auth";
 import { UserContext } from "../../context/AuthContext";
 import { AdditionalSettingsBar } from "../AdditionalSettingsBar";
-import { addMessageToChat } from "../../services";
 import "froala-editor/css/froala_style.min.css";
 import "froala-editor/css/froala_editor.pkgd.min.css";
 import "froala-editor/js/plugins.pkgd.min.js";
@@ -78,6 +79,7 @@ export const ChatContentContainer = () => {
       return onUnmount();
     };
   }, [chatIdUrl]);
+
   useEffect(() => {
     (async () => {
       if (chat.participants) {
@@ -108,13 +110,17 @@ export const ChatContentContainer = () => {
       return disconnect();
     };
   }, []);
+
   const handleMessage = async () => {
     setInsertedMessage("");
-    await addMessageToChat({
+
+    await addMessageToChatNew({
       chatId: chat.chatId as string,
-      uid: userData?.uid as string,
-      content: insertedMessage,
+      uid: userData!.uid as string,
+      content: insertedMessage
     });
+
+    await updateChatInfo(chat.chatId!, userData!.uid);
   };
 
   return (
