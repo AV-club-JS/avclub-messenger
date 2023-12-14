@@ -599,7 +599,12 @@ export const addMessageToChatNew = async ({
   chatId,
   uid,
   content = "",
-}: { chatId: string; uid: string; content: string }): Promise<
+  type = 'text'
+}: { 
+  chatId: string; 
+  uid: string; 
+  content: string 
+  type: "text" | "gif" | "image" | "file"}): Promise<
   { success: boolean; error?: string }> => {
   try {
     if (content) {
@@ -612,6 +617,7 @@ export const addMessageToChatNew = async ({
           createdOn,
           content,
           reactions: {},
+          type
         },
       });
     }
