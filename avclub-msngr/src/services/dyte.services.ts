@@ -3,7 +3,7 @@ import { DYTE_URL, ENCODED_STR } from "../constants/dyteConstants";
 import { CHANNELS } from "../constants/servicesConstants";
 import { db } from "../config/firebase-config";
 
-export const dyteRoomCreate = async (chatId: string) => {
+export const dyteRoomCreate = async (title: string) => {
     const response = await fetch(`${DYTE_URL}/meetings`, {
         method: 'POST',
         headers: {
@@ -12,7 +12,7 @@ export const dyteRoomCreate = async (chatId: string) => {
             'Access-Control-Allow-Origin': '*'
         },
         body: JSON.stringify({
-            title: chatId
+            title: `${title}`
         })
     });
 

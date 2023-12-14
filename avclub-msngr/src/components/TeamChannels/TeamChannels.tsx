@@ -36,7 +36,7 @@ export const TeamChannels = ({ teamData }: { teamData: DefaultTeamData }) => {
                 participants,
             )
 
-            const res = await dyteRoomCreate(channelId);
+            const res = await dyteRoomCreate(`${channelName} Meeting`);
             const dyteData = await res.json();
 
             await addRoomID(channelId, dyteData.data.id);

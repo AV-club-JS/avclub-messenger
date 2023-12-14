@@ -17,7 +17,12 @@ export const VideoMeeting = () => {
 
     return (
         <Box h={`calc(100vh - 60px)`}>
-            {meeting && <DyteMeeting mode="fill" meeting={meeting} />}
+            {meeting && 
+            <DyteMeeting 
+            mode="fill" 
+            meeting={meeting} 
+            showSetupScreen={false}
+            />}
             {!meeting && <Text>Loading....</Text>}
         </Box>
     );
