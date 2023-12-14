@@ -16,7 +16,7 @@ export const ChatCard = (
   { name, participants, data, lastMessage, isActive, onClick }: {
     name: string;
     participants: number[] | [];
-    data: { unread: number; received: number; sent: number }[];
+    data: { [uid: string]: { unread: number; received: number; sent: number }};
     lastMessage?: string;
     isActive?: boolean;
     onClick?: () => void;
@@ -58,6 +58,8 @@ export const ChatCard = (
     >
       <CardHeader p="2px 5px">
         <ChatHeader
+          isActive={isActive}
+          unreadMessages={data[userData?.uid].unread}
           name={chatName}
           participants={chatParticipants}
         />

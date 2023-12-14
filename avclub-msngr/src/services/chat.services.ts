@@ -165,8 +165,8 @@ export const addMessageToChat = async ({
               data = { unread: 0, sent: 0, received: 0 };
             }
             await set(participantRef, {
-              unread: data.unread + 1,
-              received: data.received + 1,
+              unread: chatParticipant === uid ? data.unread : data.unread + 1,
+              received: chatParticipant === uid? data.unread : data.received + 1,
               sent: data.sent + 1,
             });
           }
@@ -198,6 +198,24 @@ export const addMessageToChat = async ({
   } catch (error) {
     console.log(error);
     return { success: false, error: (error as Error).message };
+  }
+};
+
+export const clearReadMessages = async (
+  chatId: string,
+  uid: string,
+): Promise<
+  { success: boolean; error?: string; chatId: string; uid: string }
+> => {
+  try {
+    const participantRef = ref(
+      db,
+      `${CHANNELS}/${chatId}/${PARTICIPANTS}/${uid}/unread`,
+    );
+    await set(participantRef, 0);
+    return { success: true, chatId, uid };
+  } catch (error) {
+    return { success: false, error: (error as Error).message, chatId, uid };
   }
 };
 
@@ -531,8 +549,12 @@ export const deleteChannelForUser = async (
   }
 };
 
-export const updateMessage = async (messageId: string, chatId: string, content: string) => {
-  const messageRef = ref(db, `${CHANNELS}/${chatId}/messages/${messageId}`); 
+export const updateMessage = async (
+  messageId: string,
+  chatId: string,
+  content: string,
+) => {
+  const messageRef = ref(db, `${CHANNELS}/${chatId}/messages/${messageId}`);
   const messageUpdate = { content: `${content}` };
   await update(messageRef, messageUpdate);
-}
+};

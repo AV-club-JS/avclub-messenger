@@ -5,7 +5,7 @@ import { ChatCard } from "../ChatCard";
 import { ChatContentContainer } from "../ChatContentContainer";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { getLastChatMessage } from "../../utils/dataPreparation";
-import { getChannelsByUID } from "../../services";
+import { clearReadMessages, getChannelsByUID } from "../../services";
 import { Outlet, useNavigate } from "react-router-dom";
 export const ChatsComponent = ({ chats, setChats, userData }: {
   chats: ChatInfo[];
@@ -44,11 +44,12 @@ export const ChatsComponent = ({ chats, setChats, userData }: {
               isActive={chat.chatId === activeId}
               name={chat.name}
               participants={Object.keys(chat?.participants)}
-              data={Object.values(chat.participants)}
+              data={chat.participants}
               lastMessage={getLastChatMessage(chat) as string}
-              onClick={() => {
+              onClick={(async) => {
                 setActiveId(chat.chatId);
-                navigate(`/chats/${chat.chatId}`)
+                clearReadMessages(chat.chatId, userData.uid);
+                navigate(`/chats/${chat.chatId}`);
               }}
             />
           ))
@@ -60,7 +61,7 @@ export const ChatsComponent = ({ chats, setChats, userData }: {
             </Box>
           )}
       </VStack>
-      <Outlet/>
+      <Outlet />
     </>
   );
 };
