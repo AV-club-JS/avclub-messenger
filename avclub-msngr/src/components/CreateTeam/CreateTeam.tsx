@@ -49,7 +49,9 @@ export const CreateTeam = ({ isOpen, onClose }: { isOpen: boolean, onClose: () =
             setTeamNameError('');
             try {
                 const teamId = await createTeam(formValues.teamName, userData!.uid, formValues.info);
-                const channelMember = { [userData!.uid]: Date.now() };
+                const channelMember = { [userData!.uid]: {
+                    unread: 0, received: 0, sent: 0
+                } };
                 await createTeamChannel(teamId, 'General', false, userData!.uid, channelMember);
                 handleClose();
             } catch (error) {

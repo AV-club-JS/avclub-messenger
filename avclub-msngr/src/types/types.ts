@@ -101,7 +101,11 @@ export type ChatInfo = {
   chatId?: string;
   uid: string; // the creator (owner) of the channel
   participants: {
-    [uid: string]: number;
+    [uid: string]: {
+      unread: number;
+      sent: number;
+      received: number;
+    };
   };
   personal: boolean;
   type: "chat" | "channel";

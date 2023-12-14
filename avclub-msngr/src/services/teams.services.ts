@@ -7,12 +7,13 @@ import {
     remove,
     set,
     update,
-    onValue
+    onValue,
+    Unsubscribe
 } from "firebase/database";
 // database
 import { db } from "../config/firebase-config";
 // types
-import { SetCount, SetTeamData } from "../types/types";
+import { ChatInfo, SetCount, SetTeamData, SetChats } from "../types/types";
 // constants
 import { CHANNELS, PARTICIPANTS, TEAMS, USERS } from "../constants/servicesConstants";
 // services
@@ -113,7 +114,9 @@ export const createTeamChannel = async (
     let channelMembers;
 
     if (privateStatus) {
-        channelMembers = { [ownerId]: Date.now() };
+        channelMembers = { [ownerId]:{
+            unread: 0, received: 0, sent: 0
+        } };
     } else {
         channelMembers = participants;
     }
@@ -131,7 +134,7 @@ export const createTeamChannel = async (
         affiliatedTeam: teamId
     })
     await update(teamChannelIdRef, teamChannelUpdate);
-    
+
     return channelId;
 }
 
@@ -157,7 +160,9 @@ export const getTeamChannels = async (channelKeys: string[]) => {
 
 export const addUserToTeamChannel = async (userId: string, channelId: string) => {
     const channelRef = ref(db, `${CHANNELS}/${channelId}/${PARTICIPANTS}`);
-    const dataForChannel = { [userId]: Date.now() };
+    const dataForChannel = { [userId]: {
+        unread: 0, received: 0, sent: 0
+    } };
     await update(channelRef, dataForChannel);
 }
 
@@ -166,3 +171,26 @@ export const simpleTeamChannelDelete = async (channelId: string) => {
     const channelRef = ref(db, `${CHANNELS}/${channelId}`);
     remove(channelRef);
 }
+
+export const listenTeamChannels = (
+    teamId: string,
+    setChats: SetChats
+): Unsubscribe => {
+    const chatsRef = ref(db, `${CHANNELS}`);
+    return onValue(chatsRef, (snapshot) => {
+        if (snapshot.exists()) {
+            const result = snapshot.val();
+
+            if (result) {
+                const chats: ChatInfo[] = Object.values(result);
+
+                const teamChats = chats.filter((chat) =>{
+                    if (chat.affiliatedTeam && chat.affiliatedTeam === teamId) {
+                        return chat;
+                    }
+                });
+                setChats([...teamChats]);
+            }
+        }
+    });
+};
