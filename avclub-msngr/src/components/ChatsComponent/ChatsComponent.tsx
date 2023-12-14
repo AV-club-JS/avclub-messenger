@@ -12,7 +12,7 @@ export const ChatsComponent = ({ chats, setChats, userData }: {
   setChats: Dispatch<SetStateAction<ChatInfo[]>>;
   userData: DefaultUserData;
 }) => {
-  const [activeId, setActiveId] = useState(chats[0].chatId);
+  const [activeId, setActiveId] = useState(chats.length ? chats[0].chatId : '');
   const navigate = useNavigate();
   useEffect(() => {
     let disconnect: Unsubscribe;
