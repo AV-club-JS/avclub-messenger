@@ -122,7 +122,7 @@ export const ChatContentContainer = () => {
       <Flex
         flex={"1 1 20%"}
       >
-        <Box m={1}>
+        <Box m={1} w='85%'>
           <FroalaEditorComponent
             model={insertedMessage}
             onModelChange={(e: string) => setInsertedMessage(e)}
