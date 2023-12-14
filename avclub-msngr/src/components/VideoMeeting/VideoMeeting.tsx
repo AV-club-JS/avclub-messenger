@@ -10,7 +10,7 @@ export const VideoMeeting = () => {
 
     useEffect(() => {
         meeting.self.on('roomLeft', () => {
-            navigate('/chats');
+            navigate(-1);
         })        
     }, [meeting])
 
