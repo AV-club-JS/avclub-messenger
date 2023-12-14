@@ -80,6 +80,7 @@ export const froalaBioConfig = {
 export const froalaMessageConfig = {
     charCounterCount: false,
     heightMax: '15vh',
+    height: 300,
     attribution: false,
     quickInsertEnabled: false,
     "toolbarButtons": {
@@ -119,15 +120,50 @@ export const froalaMessageConfig = {
             "buttonsVisible": 2,
             "align": "left"
         },
-        "moreMisc": {
+    }
+}
+
+export const froalaEditMessageConfig = {
+    charCounterCount: false,
+    heightMax: '15vh',
+    attribution: false,
+    quickInsertEnabled: false,
+    "toolbarButtons": {
+        "moreText": {
             "buttons": [
-                "undo",
-                "redo",
-                "fullscreen",
-                "selectAll",
+                "bold",
+                "italic",
+                "underline",
+                "strikeThrough",
+                "subscript",
+                "superscript",
+                "fontFamily",
+                "fontSize",
+                "textColor",
+                "backgroundColor",
+                "inlineClass",
+                "inlineStyle",
+                "clearFormatting"
+            ],
+            "buttonsVisible": 3,
+            "align": "left"
+        },
+        "moreParagraph": {
+            "buttons": [
+                "emoticons",
+                "alignRight",
+                "alignJustify",
+                "formatOL",
+                "formatUL",
+                "paragraphFormat",
+                "paragraphStyle",
+                "lineHeight",
+                "outdent",
+                "indent",
+                "quote"
             ],
             "buttonsVisible": 2,
-            "align": "right"
-        }
+            "align": "left"
+        },
     }
 }

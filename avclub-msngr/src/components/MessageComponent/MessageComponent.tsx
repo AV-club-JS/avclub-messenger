@@ -13,7 +13,7 @@ import {
   IconButton,
   Text,
 } from "@chakra-ui/react";
-import { MdDelete, MdDns } from "react-icons/md";
+import { MdDelete, MdDns, MdEdit, MdSave } from "react-icons/md";
 import {
   Popover,
   PopoverArrow,
@@ -28,19 +28,22 @@ import {
   addReactionToChat,
   getUserByUid,
   removeMessageFromChat,
+  updateMessage
 } from "../../services";
 import { UserContext } from "../../context/AuthContext";
 import "froala-editor/css/froala_style.min.css";
 import "froala-editor/css/froala_editor.pkgd.min.css";
 import "froala-editor/js/plugins.pkgd.min.js";
 import FroalaEditorView from "react-froala-wysiwyg/FroalaEditorView";
-import { froalaBioConfig } from "../../utils/profileUtils";
+import FroalaEditorComponent from "react-froala-wysiwyg";
+import { froalaEditMessageConfig } from "../../utils/profileUtils";
 import { emojiList } from "../../constants/emojiList";
 import {
   formatTimestamp,
   formatTimestampWithTime,
 } from "../../utils/formatTimestamp";
 import { Link } from "react-router-dom";
+
 export const MessageComponent = (
   { message, chatId, showAvatar, showTimestamp }: {
     message: MessageInfo;
@@ -51,12 +54,16 @@ export const MessageComponent = (
 ): JSX.Element => {
   const [user, setUser] = useState<DefaultUserData | null>(null);
   const { userData } = useContext(UserContext);
+  const [isEditing, setIsEditing] = useState(false);
+  const [messageBody, setMessageBody] = useState('');
+
   useEffect(() => {
     (async () => {
       const data = await getUserByUid(message.uid);
       setUser(data.val());
     })();
   }, []);
+
   const handleReaction = async (reaction: string) => {
     console.log(
       message.uid,
@@ -73,6 +80,32 @@ export const MessageComponent = (
       );
     }
   };
+
+  const handleEdit = async () => {
+    console.log(messageBody);
+
+    if (!isEditing) {
+      setMessageBody(message.content);
+      setIsEditing(true);
+    } else if (isEditing) {
+      if (messageBody.length < 1) {
+        setMessageBody(message.content);
+        setIsEditing(false);
+        return;
+      }
+      if (messageBody === message.content) {
+        setIsEditing(false);
+        return;
+      }
+      try {
+        await updateMessage(message.messageId, chatId, messageBody);
+        setIsEditing(false);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
   return (
     <Popover trigger="hover">
       <PopoverTrigger>
@@ -99,14 +132,34 @@ export const MessageComponent = (
                     </Box>
                   </>
                 )}
+                {(user && userData!.uid === user!.uid) &&
+                  <IconButton
+                    size='sm'
+                    aria-label='Edit message'
+                    variant='ghost'
+                    color={'brand.primary'}
+                    _hover={{
+                      bg: 'brand.primary',
+                      color: 'brand.accent',
+                    }}
+                    onClick={handleEdit}
+                    icon={isEditing ? <MdSave /> : <MdEdit />}
+                  />
+                }
               </Flex>
             </Flex>
           </CardHeader>
           <CardBody
             py={1}
             my={0}
-          >
+          > {isEditing ?
+            <FroalaEditorComponent 
+            model={messageBody}
+            onModelChange={(e: string) => setMessageBody(e)}
+            config={froalaEditMessageConfig}
+            /> :
             <FroalaEditorView model={message.content} />
+            }
           </CardBody>
           <CardFooter
             py={1}
