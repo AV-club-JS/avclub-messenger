@@ -13,9 +13,10 @@ import {
 import { getUsersByUIDs } from "../../services";
 
 export const ChatCard = (
-  { name, participants, lastMessage, isActive, onClick }: {
+  { name, participants, data, lastMessage, isActive, onClick }: {
     name: string;
     participants: number[] | [];
+    data: { unread: number; received: number; sent: number }[];
     lastMessage?: string;
     isActive?: boolean;
     onClick?: () => void;
@@ -40,6 +41,7 @@ export const ChatCard = (
   const chatName = chatParticipants
     .map((participant: DefaultUserData) => participant.username)
     .join(", ");
+  console.log(data);
   return (
     <Card
       w="100%"
@@ -54,21 +56,19 @@ export const ChatCard = (
       }}
       onClick={onClick}
     >
-      <CardHeader
-        p='2px 5px'
-      >
+      <CardHeader p="2px 5px">
         <ChatHeader
           name={chatName}
           participants={chatParticipants}
         />
       </CardHeader>
       <CardBody
-        p={'1px 2px'}
-        fontSize={'5px'}
+        p={"1px 2px"}
+        fontSize={"5px"}
         flexWrap={"wrap"}
         textAlign={"center"}
-        textOverflow={'ellipsis'}
-        overflow={'hidden'}
+        textOverflow={"ellipsis"}
+        overflow={"hidden"}
       >
         <Text
           w={"100%"}

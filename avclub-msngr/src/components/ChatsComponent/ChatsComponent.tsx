@@ -44,6 +44,7 @@ export const ChatsComponent = ({ chats, setChats, userData }: {
               isActive={chat.chatId === activeId}
               name={chat.name}
               participants={Object.keys(chat?.participants)}
+              data={Object.values(chat.participants)}
               lastMessage={getLastChatMessage(chat) as string}
               onClick={() => {
                 setActiveId(chat.chatId);

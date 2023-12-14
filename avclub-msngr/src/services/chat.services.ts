@@ -81,7 +81,7 @@ export const createChat = async (
     let participant: string;
 
     for (participant of participants) {
-      participantsObject[participant] = createdOn;
+      participantsObject[participant] = { unread: 0, received: 0, sent: 0 };
     }
 
     await set(ref(db, `${CHANNELS}/${chatId}`), {
@@ -95,11 +95,6 @@ export const createChat = async (
       createdOn,
     });
 
-    for (participant of participants) {
-      await update(ref(db, `${USERS}/${participant}/${CHATIDS}`), {
-        [chatId]: createdOn,
-      });
-    }
     return { success: true, chatId: chatId };
   } catch (error) {
     return { chatId: null, success: false, error: (error as Error).message };
@@ -111,8 +106,8 @@ export const getChatInfoListener = (chatId, setChat) => {
   return onValue(chatRef, (snapshot) => {
     const chat = snapshot.val();
     setChat(chat);
-  })
-}
+  });
+};
 /**
  * @param chatId - the id of the chat
  * @returns {Promise<{chatInfo: ChatInfo, error?: string}>}
@@ -156,6 +151,25 @@ export const addMessageToChat = async ({
       const user = req.data;
       if (chat.chatInfo.participants[uid]) {
         if (content) {
+          let chatParticipant: string;
+          const chatParticipants = Object.keys(chat.chatInfo.participants);
+          for (chatParticipant of chatParticipants) {
+            const participantRef = ref(
+              db,
+              `${CHANNELS}/${chatId}/participants/${chatParticipant}`,
+            );
+            const participantSnapshot = await get(participantRef);
+            let data: { unread: number; sent: number; received: number } =
+              participantSnapshot.val();
+            if (typeof data !== "object") {
+              data = { unread: 0, sent: 0, received: 0 };
+            }
+            await set(participantRef, {
+              unread: data.unread + 1,
+              received: data.received + 1,
+              sent: data.sent + 1,
+            });
+          }
           const createdOn: number = Date.now();
           const messageId: string = crypto.randomUUID();
           await update(ref(db, `${CHANNELS}/${chatId}/${MESSAGES}`), {
@@ -200,7 +214,7 @@ export const addChatParticipants = async ({ chatId, participants }: {
   const createdOn = Date.now();
   let participant: string;
   for (participant of participants) {
-    participantsObject[participant] = createdOn;
+    participantsObject[participant] = { unread: 0, received: 0, sent: 0 };
     await update(ref(db, `${USERS}/${participant}/${CHATIDS}`), {
       [chatId]: createdOn,
     });
@@ -287,7 +301,7 @@ export const getChannelsByUID = (
         const userChats = chats.filter((chat) =>
           chat.participants[uid] && chat.type === type
         );
-        console.log('I was changed');
+        console.log("I was changed");
         // get for each chat get the username, avatarUrl.
         setChats([...userChats]);
       }
@@ -372,7 +386,7 @@ export const addReactionToChat = async (
       db,
       `${CHANNELS}/${chatId}/${MESSAGES}/${messageId}/${REACTIONS}/${reaction}`,
     );
-    await update(messageRef, {[uid]: Date.now()});
+    await update(messageRef, { [uid]: Date.now() });
     return { success: true, reaction, chatId, messageId, uid };
   } catch (error) {
     return {
