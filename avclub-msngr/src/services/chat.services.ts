@@ -95,6 +95,12 @@ export const createChat = async (
       createdOn,
     });
 
+    for (participant of participants) {
+      await update(ref(db, `${USERS}/${participant}/${CHATIDS}`), {
+        [chatId]: createdOn,
+      });
+    }
+
     return { success: true, chatId: chatId };
   } catch (error) {
     return { chatId: null, success: false, error: (error as Error).message };
@@ -126,7 +132,7 @@ export const getChatInfo = async (
 
 /**
  * Sends message to the messages database
- * field, stores the messageId in the chanenls
+ * field, stores the messageId in the channels
  * database.
  * @param chatId - the id of the chat
  * @param uid - the user id
@@ -166,7 +172,7 @@ export const addMessageToChat = async ({
             }
             await set(participantRef, {
               unread: chatParticipant === uid ? data.unread : data.unread + 1,
-              received: chatParticipant === uid? data.unread : data.received + 1,
+              received: chatParticipant === uid ? data.unread : data.received + 1,
               sent: data.sent + 1,
             });
           }
@@ -550,7 +556,7 @@ export const deleteChannelForUser = async (
 };
 
 export const updateMessage = async (messageId: string, chatId: string, content: string) => {
-  const messageRef = ref(db, `${CHANNELS}/${chatId}/messages/${messageId}`); 
+  const messageRef = ref(db, `${CHANNELS}/${chatId}/messages/${messageId}`);
   const messageUpdate = { content: `${content}`, edited: true };
   await update(messageRef, messageUpdate);
 };
