@@ -9,14 +9,18 @@ import {
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
-
 import { ChildrenProps } from "../../types/types";
+import { useEffect, useState } from "react";
+import { getAvatar } from "../../services/home.services";
+import { VELISLAV_AVATAR, ANDREY_AVATAR } from "../../constants/servicesConstants";
 
 const Testimonial = (props: ChildrenProps) => {
   const { children } = props;
 
   return <Box>{children}</Box>;
 };
+
+
 
 const TestimonialContent = (props: CheckboxProps) => {
   const { children } = props;
@@ -48,16 +52,6 @@ const TestimonialContent = (props: CheckboxProps) => {
     >
       {children}
     </Stack>
-  );
-};
-
-const TestimonialHeading = (props: ChildrenProps) => {
-  const { children } = props;
-
-  return (
-    <Heading as={"h3"} fontSize={"xl"}>
-      {children}
-    </Heading>
   );
 };
 
@@ -98,6 +92,20 @@ const TestimonialAvatar = ({
 };
 
 const WithSpeechBubbles = () => {
+  const [avatarOne, setAvatarOne] = useState('');
+  const [avatarTwo, setAvatarTwo] = useState('');
+
+  useEffect(() => {
+    (async () => {
+      const urlOne = await getAvatar(ANDREY_AVATAR);
+      const urlTwo = await getAvatar(VELISLAV_AVATAR);
+      console.log(`${urlOne}/${urlTwo}`);
+
+      setAvatarOne(urlOne);
+      setAvatarTwo(urlTwo);
+    })()
+  }, [])
+
   return (
     <Box bg={useColorModeValue("gray.100", "gray.700")}>
       <Container maxW={"7xl"} py={16} as={Stack} spacing={12}>
@@ -111,28 +119,24 @@ const WithSpeechBubbles = () => {
         >
           <Testimonial>
             <TestimonialContent>
-              <TestimonialHeading>Intuitive Design</TestimonialHeading>
               <TestimonialText>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Auctor
-                neque sed imperdiet nibh lectus feugiat nunc sem.
+              We have two ears and one mouth so that we can listen twice as much as we speak.
               </TestimonialText>
             </TestimonialContent>
             <TestimonialAvatar
-              src={"https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80"}
+              src={avatarOne}
               name={"Andrey Kunev"}
-              title={"JavaScript developer, Aspiring web developer, Future Game developer"}
+              title={"Aspiring web developer, JavaScript enjoyer"}
             />
           </Testimonial>
           <Testimonial>
             <TestimonialContent>
-              <TestimonialHeading>Mindblowing Service</TestimonialHeading>
               <TestimonialText>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Auctor
-                neque sed imperdiet nibh lectus feugiat nunc sem.
+                Employ your time in improving yourself by other men's writings so that you shall come easily by what others have labored hard for.
               </TestimonialText>
             </TestimonialContent>
             <TestimonialAvatar
-              src={"https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=100&q=80"}
+              src={avatarTwo}
               name={"Velislav Karastoychev"}
               title={"Econometrician, JavaScript developer"}
             />
@@ -159,18 +163,7 @@ export const Footer = () => {
         justify={{ base: "center", md: "space-between" }}
         align={{ base: "center", md: "center" }}
       >
-        <Stack direction={"row"} spacing={6}>
-          <Box as="a" href={"#"}>
-            Home
-          </Box>
-          <Box as="a" href={"#"}>
-            About
-          </Box>
-          <Box as="a" href={"#"}>
-            Contact us
-          </Box>
-        </Stack>
-        <Text>© 2023 AVL club</Text>
+        <Text mx='auto' fontWeight={600}>© 2023 AVL club</Text>
       </Container>
     </Box>
   );

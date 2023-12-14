@@ -22,7 +22,7 @@ export const CTA = () => {
                         fontSize={{ base: '2xl', sm: '4xl', md: '6xl' }}
                         lineHeight={'110%'}>
                         Instant, Intuitive, Irreplaceable<br />
-                        <Text as={'span'} color={'blue.400'}>
+                        <Text as={'span'} color={'brand.accent'}>
                             Unlock the Future of Team Collaboration with AV Messenger
                         </Text>
                     </Heading>
@@ -35,7 +35,7 @@ export const CTA = () => {
                         <Button
                             onClick={() => navigate('/register')}
                             colorScheme={'green'}
-                            bg={'blue.400'}
+                            bg={'brand.accent'}
                             rounded={'full'}
                             px={6}
                             _hover={{

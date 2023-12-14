@@ -16,7 +16,7 @@ export const ActivityBar: FC<ActivityBarProps> = ({ users, teams }) => {
                             h={16}
                             align={"center"}
                             justify={"center"}
-                            color={"white"}
+                            color={"brand.primary"}
                             rounded={"full"}
                             bg={"gray.100"}
                             mb={1}
@@ -32,7 +32,7 @@ export const ActivityBar: FC<ActivityBarProps> = ({ users, teams }) => {
                             h={16}
                             align={"center"}
                             justify={"center"}
-                            color={"white"}
+                            color={"brand.primary"}
                             rounded={"full"}
                             bg={"gray.100"}
                             mb={1}
