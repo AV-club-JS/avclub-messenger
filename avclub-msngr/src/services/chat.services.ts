@@ -1,3 +1,9 @@
+import { storage } from "../config/firebase-config";
+import {
+  getDownloadURL,
+  ref as storageRef,
+  uploadBytes,
+} from "firebase/storage";
 import {
   equalTo,
   get,
@@ -76,12 +82,16 @@ export const createChat = async (
     const chatId: string = crypto.randomUUID();
     const createdOn = Date.now();
     const participantsObject: {
-      [uid: string]: number;
+      [uid: string]: { unread: number; received: number; sent: number };
     } = {};
     let participant: string;
 
     for (participant of participants) {
-      participantsObject[participant] = { unread: 0, received: 0, sent: 0 };
+      participantsObject[participant] = {
+        unread: 0,
+        received: 0,
+        sent: participant === uid ? 1 : 0,
+      };
     }
 
     await set(ref(db, `${CHANNELS}/${chatId}`), {
@@ -146,7 +156,13 @@ export const addMessageToChat = async ({
   chatId,
   uid,
   content = "",
-}: { chatId: string; uid: string; content: string }): Promise<
+  type = "text",
+}: {
+  chatId: string;
+  uid: string;
+  content: string;
+  type: "text" | "gif" | "image" | "file";
+}): Promise<
   { success: boolean; error?: string }
 > => {
   try {
@@ -172,7 +188,9 @@ export const addMessageToChat = async ({
             }
             await set(participantRef, {
               unread: chatParticipant === uid ? data.unread : data.unread + 1,
-              received: chatParticipant === uid ? data.unread : data.received + 1,
+              received: chatParticipant === uid
+                ? data.unread
+                : data.received + 1,
               sent: data.sent + 1,
             });
           }
@@ -185,6 +203,7 @@ export const addMessageToChat = async ({
               createdOn,
               content,
               reactions: {},
+              type,
             },
           });
         }
@@ -555,8 +574,21 @@ export const deleteChannelForUser = async (
   }
 };
 
-export const updateMessage = async (messageId: string, chatId: string, content: string) => {
+export const updateMessage = async (
+  messageId: string,
+  chatId: string,
+  content: string,
+) => {
   const messageRef = ref(db, `${CHANNELS}/${chatId}/messages/${messageId}`);
   const messageUpdate = { content: `${content}`, edited: true };
   await update(messageRef, messageUpdate);
+};
+
+export const uploadChatImage = async (image: File) => {
+  const imageId = crypto.randomUUID();
+  const storageImageRef = storageRef(storage, `/chat_images/${imageId}`);
+  await uploadBytes(storageImageRef, image);
+
+  const url = await getDownloadURL(storageImageRef);
+  return url;
 };

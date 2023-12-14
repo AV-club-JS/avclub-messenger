@@ -41,7 +41,6 @@ export const ChatCard = (
   const chatName = chatParticipants
     .map((participant: DefaultUserData) => participant.username)
     .join(", ");
-  console.log(data);
   return (
     <Card
       w="100%"

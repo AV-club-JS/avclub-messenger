@@ -11,29 +11,29 @@ export type ChildrenProps = {
   children: JSX.Element;
 };
 
-export type DefaultUserData = { 
-    chatids: {[chatId: string]: number},
-    username: string,
-    email: string,
-    firstName: string,
-    lastName: string,
-    phone: string,
-    uid: string,
-    avatarUrl: string,
-    bio: string,
-    status: string,
-    createdOn: string,
-    teamIds?: object
+export type DefaultUserData = {
+  chatids: { [chatId: string]: number };
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  uid: string;
+  avatarUrl: string;
+  bio: string;
+  status: string;
+  createdOn: string;
+  teamIds?: object;
 };
 
 export type DefaultTeamData = {
-    name: string,
-    owner: string,
-    teamId: string,
-    members: object,
-    info: string,
-    createdOn: string
-    channelIds: object
+  name: string;
+  owner: string;
+  teamId: string;
+  members: object;
+  info: string;
+  createdOn: string;
+  channelIds: object;
 };
 
 export type Credentials = {
@@ -63,25 +63,25 @@ export interface NavItem {
 }
 
 export interface UserDataProps {
-    users: DefaultUserData[];
+  users: DefaultUserData[];
 }
 
 export type SetUserDataContext = Dispatch<SetStateAction<AppState>>;
 
 export type UserTeams = {
-    name: string
-    teamId: string
-}
+  name: string;
+  teamId: string;
+};
 
 export type SetTeamData = Dispatch<SetStateAction<DefaultTeamData>>;
 
 export interface TeamsDisplayProps {
-    teams: DefaultTeamData[];
+  teams: DefaultTeamData[];
 }
 
 export interface CreateTeamValues {
-    teamName: string;
-    info: string;
+  teamName: string;
+  info: string;
 }
 
 export type HandleDeleteFunction = () => Promise<void>;
@@ -89,11 +89,11 @@ export type HandleDeleteFunction = () => Promise<void>;
 export type HandleSearchOpenFunction = () => void;
 
 export interface TeamButtonsProps {
-    handleDelete: HandleDeleteFunction;
-    handleSearchOpen: HandleSearchOpenFunction;
+  handleDelete: HandleDeleteFunction;
+  handleSearchOpen: HandleSearchOpenFunction;
 }
 export type Chat = {
-  [messageId: string]: MessageInfo
+  [messageId: string]: MessageInfo;
 };
 
 export type ChatInfo = {
@@ -108,18 +108,18 @@ export type ChatInfo = {
   messages?: Chat;
   createdOn: number;
   affiliatedTeam?: string;
-  roomId?: string
+  roomId?: string;
 };
 
 export type ChatsCollection = ChatInfo[];
 export interface SearchResultsProps {
   users: DefaultUserData[];
   onClose: () => void;
-  chatId?: string; 
+  chatId?: string;
 }
 
 export type SetUserData = Dispatch<SetStateAction<DefaultUserData | null>>;
-export type SetUsersData = Dispatch<SetStateAction<DefaultUserData []| []>>;
+export type SetUsersData = Dispatch<SetStateAction<DefaultUserData[] | []>>;
 
 export type SetChats = Dispatch<SetStateAction<ChatInfo[] | null>>;
 
@@ -130,9 +130,10 @@ export type MessageInfo = {
   content: string;
   reactions?: {
     [symbol: string]: {
-      [uid: string]: number; 
-    }
-  }
+      [uid: string]: number;
+    };
+  };
+  type: 'text' | 'gif' | 'file' | 'image';
   edited?: boolean;
 };
 
@@ -152,3 +153,19 @@ export interface FetchDataResponse {
   error?: string;
 }
 
+export type GIFsInfo = {
+  id: string;
+  images: {
+    downsized: {
+      url: string;
+    };
+  };
+}[] | [];
+
+export interface GIFsComponentProps {
+  src: string;
+  alt: string;
+  chatId: string;
+  uid: string;
+  setSearchTerm: Dispatch<SetStateAction<string>>
+}

@@ -1,5 +1,14 @@
 "use strict";
-import { Box, Button, Flex, IconButton } from "@chakra-ui/react";
+import { FaImages } from "react-icons/fa";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  Flex,
+  IconButton,
+  Input,
+  useDisclosure,
+} from "@chakra-ui/react";
 import { ChatInfo, DefaultUserData, MessageInfo } from "../../types/types";
 import { MessageContainer } from "../MessageContainer";
 import {
@@ -7,12 +16,14 @@ import {
   SetStateAction,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import {
   getChatMessages,
   getUsersByUIDs,
   setMessagesListener,
+  uploadChatImage,
 } from "../../services";
 import { NoMessages } from "../NoMessages";
 import { Unsubscribe } from "firebase/auth";
@@ -29,7 +40,7 @@ import { Loading } from "../Loading";
 import { useParams } from "react-router-dom";
 import { getChatInfoListener } from "../../services";
 import { IoMdSend } from "react-icons/io";
-
+import { LoadGIFs } from "../LoadGIFs";
 export const ChatContentContainer = () => {
   const { chatId: chatIdUrl } = useParams();
   const [chat, setChat] = useState<ChatInfo>({});
@@ -38,11 +49,32 @@ export const ChatContentContainer = () => {
   const [participants, setParticipants] = useState<DefaultUserData[]>([]);
   const [insertedMessage, setInsertedMessage] = useState<string>("");
   const [name, setName] = useState("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleInputClick = () => {
+    inputRef?.current.click();
+  };
+
+  const handleImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const file = event.target.files?.[0];
+      const url = await uploadChatImage(file);
+      const req = await addMessageToChat({
+        chatId: chatIdUrl,
+        uid: userData.uid,
+        content: `<div class='image-container'><img src=${url}/></div>`,
+        type: "image",
+      });
+      if (!req.success) console.log(req.error);
+    } catch (error) {
+      console.log((error as Error).message);
+    }
+  };
 
   useEffect(() => {
     const onUnmount = getChatInfoListener(chatIdUrl, setChat);
     return () => {
-      console.log(2);
       return onUnmount();
     };
   }, [chatIdUrl]);
@@ -53,10 +85,10 @@ export const ChatContentContainer = () => {
         setParticipants(users);
         setName(
           chat.name ||
-          participants
-            .filter((participant) => participant?.uid !== userData?.uid)
-            .map((participant) => participant.username)
-            .join(","),
+            participants
+              .filter((participant) => participant?.uid !== userData?.uid)
+              .map((participant) => participant.username)
+              .join(","),
         );
         const req = await getChatMessages(chat?.chatId as string);
         const __messages: MessageInfo[] = req.messages as MessageInfo[];
@@ -73,7 +105,6 @@ export const ChatContentContainer = () => {
       console.log((error as Error).message);
     }
     return () => {
-      console.log(1);
       return disconnect();
     };
   }, []);
@@ -102,9 +133,7 @@ export const ChatContentContainer = () => {
         chatId={chat.chatId as string}
         roomId={chat.roomId as string}
       />
-      {messages == null ?
-        <Loading />
-        :
+      {messages == null ? <Loading /> : (
         <MessageContainer>
           <>
             {messages.length !== 0
@@ -114,34 +143,80 @@ export const ChatContentContainer = () => {
                   messages={messages}
                 />
               )
-              : (
-                <NoMessages />
-              )}
+              : <NoMessages />}
           </>
-        </MessageContainer>}
+        </MessageContainer>
+      )}
       <Flex
         flex={"1 1 20%"}
       >
-        <Box m={1} w='85%'>
+        <Box m={1} w="85%">
           <FroalaEditorComponent
             model={insertedMessage}
             onModelChange={(e: string) => setInsertedMessage(e)}
             config={froalaMessageConfig}
           />
         </Box>
-        <IconButton
-          aria-label='Send'
-          icon={<IoMdSend />}
-          m={2}
-          size='lg'
-          fontSize='30px'
-          color={"brand.accent"}
-          variant={"outline"}
-          _hover={{
-            bg: "brand.primary",
-            color: "brand.accent",
-          }}
-          onClick={handleMessage}
+        <ButtonGroup
+          display={"flex"}
+          flexDir={"column"}
+        >
+          <IconButton
+            aria-label="Send"
+            icon={<IoMdSend />}
+            m={2}
+            size="lg"
+            w={"50px"}
+            fontSize="30px"
+            color={"brand.accent"}
+            variant={"outline"}
+            _hover={{
+              bg: "brand.primary",
+              color: "brand.accent",
+            }}
+            onClick={handleMessage}
+          />
+          <Button
+            fontSize={"15px"}
+            size={"lg"}
+            width={"50px"}
+            bgColor={"brand.accent"}
+            _hover={{
+              bgColor: "brand.primary",
+              color: "white",
+            }}
+            onClick={onOpen}
+          >
+            GIF
+          </Button>
+          <IconButton
+            aria-label="Icon"
+            icon={<FaImages />}
+            m={2}
+            size="lg"
+            w={"50px"}
+            fontSize="30px"
+            color={"brand.accent"}
+            variant={"outline"}
+            _hover={{
+              bg: "brand.primary",
+              color: "brand.accent",
+            }}
+            onClick={handleInputClick}
+          />
+        </ButtonGroup>
+        <LoadGIFs
+          isOpen={isOpen}
+          onClose={onClose}
+          chatId={chat.chatId}
+          uid={userData.uid}
+        />
+        <Input
+          ref={inputRef}
+          type="file"
+          accept=".jpeg,.jpg,.png"
+          onChange={handleImage}
+          display="none"
         />
       </Flex>
     </Flex>
