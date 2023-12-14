@@ -49,6 +49,7 @@ export const SearchResults = (
       <VStack alignItems={"flex-start"} mt={3}>
         {users.length &&
           users.map((user) => (
+            user.uid !== userData!.uid && 
             <HStack key={user.uid} p={1} w="100%" h="10vh">
               <HStack
                 w="100%"
