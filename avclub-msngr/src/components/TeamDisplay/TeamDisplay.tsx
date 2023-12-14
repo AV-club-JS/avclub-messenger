@@ -29,8 +29,6 @@ export const TeamDisplay = ({ team }: { team: DefaultTeamData }) => {
             setChannels([]);
         }
         return () => {
-            console.log('wow!');
-
             if (team && team.channelIds) disconnect();
         }
     }, [])
@@ -71,8 +69,8 @@ export const TeamDisplay = ({ team }: { team: DefaultTeamData }) => {
                                 color='brand.primary'>
                                 <HStack>
                                     <Text fontWeight={600}>{channel.name}</Text>
-                                    {channel.participants[userData!.uid].unread}
-                                    <Text>100</Text>
+                                    {channel.participants[userData!.uid].unread !== 0 &&
+                                    <Text>{channel.participants[userData!.uid].unread}</Text>}
                                 </HStack>
                             </Link>
                         )) : <Text ml={.5} fontWeight={600} fontSize='md' color='gray.600'>No channels to display</Text>}
