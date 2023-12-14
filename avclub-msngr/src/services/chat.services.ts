@@ -95,6 +95,12 @@ export const createChat = async (
       createdOn,
     });
 
+    for (participant of participants) {
+      await update(ref(db, `${USERS}/${participant}/${CHATIDS}`), {
+        [chatId]: createdOn,
+      });
+    }
+
     return { success: true, chatId: chatId };
   } catch (error) {
     return { chatId: null, success: false, error: (error as Error).message };
