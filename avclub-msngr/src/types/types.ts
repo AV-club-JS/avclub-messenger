@@ -133,6 +133,7 @@ export type MessageInfo = {
       [uid: string]: number; 
     }
   }
+  edited?: boolean;
 };
 
 export type SetMessages = Dispatch<SetStateAction<MessageInfo[]>>;

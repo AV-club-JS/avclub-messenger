@@ -56,7 +56,6 @@ export const MessageComponent = (
   const { userData } = useContext(UserContext);
   const [isEditing, setIsEditing] = useState(false);
   const [messageBody, setMessageBody] = useState('');
-  const [hasBeenEdited, setHasBeenEdited] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -101,7 +100,6 @@ export const MessageComponent = (
       try {
         await updateMessage(message.messageId, chatId, messageBody);
         setIsEditing(false);
-        setHasBeenEdited(true);
       } catch (error) {
         console.error(error);
       }
@@ -192,7 +190,7 @@ export const MessageComponent = (
                 </Text>
               </Box>
             )}
-            {hasBeenEdited &&
+            {message.edited &&
               <Text
               fontStyle={"italic"}
               color={"grey"}

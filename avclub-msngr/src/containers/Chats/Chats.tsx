@@ -7,9 +7,10 @@ import { Unsubscribe } from "firebase/auth";
 import { ChatsComponent } from "../../components/ChatsComponent";
 import { NoMessages } from "../../components/NoMessages";
 import { NoChats } from "../../components/NoChats";
+import { Loading } from "../../components/Loading";
 export const Chats = () => {
   const { userData, setAuth } = useContext(UserContext);
-  const [chats, setChats] = useState<ChatsCollection | []>([]);
+  const [chats, setChats] = useState<ChatsCollection | null>(null);
   useEffect(() => {
     (async () => {
       if (userData) {
@@ -19,12 +20,18 @@ export const Chats = () => {
     })();
   }, [userData]);
 
-  if (chats.length !== 0) {
+  if (userData?.chatids) {
+    if (chats){
     return (
       <HStack h={`calc(100vh - 60px)`} overflowY={"hidden"}>
         <ChatsComponent userData={userData as DefaultUserData} setChats={setChats} chats={chats} />
       </HStack>
     );
+    } else {
+      return (
+        <Loading/>
+      )
+    }
   } else {
     return (
       <NoChats/>
