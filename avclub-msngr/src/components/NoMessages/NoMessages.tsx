@@ -1,4 +1,3 @@
-'use strict';
 import { Heading, Text, VStack, Icon } from "@chakra-ui/react";
 import { FaComments } from "react-icons/fa";
 

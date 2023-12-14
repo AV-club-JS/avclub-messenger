@@ -1,4 +1,3 @@
-"use strict";
 import {
   Avatar,
   Box,
@@ -13,7 +12,7 @@ import {
   IconButton,
   Text,
 } from "@chakra-ui/react";
-import { MdDelete, MdDns, MdEdit, MdSave } from "react-icons/md";
+import { MdDelete, MdEdit, MdSave } from "react-icons/md";
 import {
   Popover,
   PopoverArrow,
@@ -39,7 +38,6 @@ import FroalaEditorComponent from "react-froala-wysiwyg";
 import { froalaEditMessageConfig } from "../../utils/profileUtils";
 import { emojiList } from "../../constants/emojiList";
 import {
-  formatTimestamp,
   formatTimestampWithTime,
 } from "../../utils/formatTimestamp";
 import { Link } from "react-router-dom";
@@ -186,7 +184,7 @@ export const MessageComponent = (
                   color={"grey"}
                   fontSize={"smaller"}
                 >
-                  {formatTimestampWithTime(message.createdOn)}
+                  {formatTimestampWithTime(`${message.createdOn}`)}
                 </Text>
               </Box>
             )}

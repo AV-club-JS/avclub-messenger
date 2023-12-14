@@ -1,5 +1,4 @@
-import { UserContext } from "../../context/AuthContext";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 // components
 import { Features } from "../../components/Features";
 import { CTA } from "../../components/CTA";

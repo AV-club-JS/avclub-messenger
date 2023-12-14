@@ -1,4 +1,3 @@
-"use strict";
 import { DefaultUserData } from "../../types/types";
 import { Avatar, AvatarBadge, AvatarGroup } from "@chakra-ui/react";
 import { getStatusBadgeColor } from "../../utils/profileUtils";

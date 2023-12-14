@@ -1,7 +1,7 @@
-"use strict";
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 import { AvatarGroupComponent } from "../AvatarGroupComponent";
 import { DefaultUserData } from "../../types/types";
+
 export const ChatHeader = (
   { name, participants, isActive, unreadMessages }: {
     name: string;
@@ -10,6 +10,7 @@ export const ChatHeader = (
     unreadMessages: number;
   },
 ) => {
+
   return (
     <Flex>
       <Flex

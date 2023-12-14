@@ -1,11 +1,8 @@
-"use strict";
 import { Card, CardBody, CardFooter, CardHeader, Text } from "@chakra-ui/react";
 import { DefaultUserData } from "../../types/types";
 import { ChatHeader } from "../ChatHeader";
 import { UserContext } from "../../context/AuthContext";
 import {
-  Dispatch,
-  SetStateAction,
   useContext,
   useEffect,
   useState,
@@ -41,6 +38,7 @@ export const ChatCard = (
   const chatName = chatParticipants
     .map((participant: DefaultUserData) => participant.username)
     .join(", ");
+
   return (
     <Card
       w="100%"
@@ -57,8 +55,8 @@ export const ChatCard = (
     >
       <CardHeader p="2px 5px">
         <ChatHeader
-          isActive={isActive}
-          unreadMessages={data[userData?.uid].unread}
+          isActive={isActive!}
+          unreadMessages={data[userData!.uid].unread}
           name={chatName}
           participants={chatParticipants}
         />

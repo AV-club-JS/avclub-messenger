@@ -1,5 +1,3 @@
-"use strict";
-
 import { Chat, ChatInfo, ChatsCollection } from "../types/types";
 
 export const getLastChatMessage = (chat: ChatInfo): string | null => {

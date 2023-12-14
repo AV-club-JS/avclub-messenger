@@ -1,4 +1,3 @@
-"use strict";
 import { FaImages } from "react-icons/fa";
 import {
   Box,
@@ -12,8 +11,6 @@ import {
 import { ChatInfo, DefaultUserData, MessageInfo } from "../../types/types";
 import { MessageContainer } from "../MessageContainer";
 import {
-  Dispatch,
-  SetStateAction,
   useContext,
   useEffect,
   useRef,
@@ -65,7 +62,7 @@ export const ChatContentContainer = (isChannel?: boolean) => {
       const file = event.target.files?.[0];
       const url = await uploadChatImage(file!);
       const req = await addMessageToChat({
-        chatId: chatIdUrl,
+        chatId: chatIdUrl!,
         uid: userData!.uid,
         content: `<div class='image-container'><img src=${url}/></div>`,
         type: "image",

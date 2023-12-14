@@ -1,4 +1,3 @@
-"use strict";
 import { Modal, ModalContent, ModalOverlay } from "@chakra-ui/react";
 import { ChildrenProps } from "../../types/types";
 

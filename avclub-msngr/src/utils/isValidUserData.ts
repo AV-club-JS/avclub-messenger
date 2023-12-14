@@ -1,4 +1,3 @@
-"use strict";
 import validator from "@euriklis/validator";
 import { DefaultUserData } from "../types/types";
 
@@ -30,7 +29,7 @@ export const isValidUserData = (user: DefaultUserData) => {
           .on(false, () => {
             isValidUserData.error = true;
             isValidUserData.message =
-              "The username must be between 5 and 35 charakters in length";
+              "The username must be between 5 and 35 characters in length";
             isValidUserData.field = "username";
           }),
       phone: (phone) =>
@@ -52,7 +51,7 @@ export const isValidUserData = (user: DefaultUserData) => {
           .on(false, () => {
             isValidUserData.error = true;
             isValidUserData.message =
-              "The password must be at least 8 charakters";
+              "The password must be at least 8 characters";
             isValidUserData.field = "password";
           }),
     });
