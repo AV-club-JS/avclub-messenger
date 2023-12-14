@@ -56,6 +56,7 @@ export const MessageComponent = (
   const { userData } = useContext(UserContext);
   const [isEditing, setIsEditing] = useState(false);
   const [messageBody, setMessageBody] = useState('');
+  const [hasBeenEdited, setHasBeenEdited] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -100,6 +101,7 @@ export const MessageComponent = (
       try {
         await updateMessage(message.messageId, chatId, messageBody);
         setIsEditing(false);
+        setHasBeenEdited(true);
       } catch (error) {
         console.error(error);
       }
@@ -153,10 +155,10 @@ export const MessageComponent = (
             py={1}
             my={0}
           > {isEditing ?
-            <FroalaEditorComponent 
-            model={messageBody}
-            onModelChange={(e: string) => setMessageBody(e)}
-            config={froalaEditMessageConfig}
+            <FroalaEditorComponent
+              model={messageBody}
+              onModelChange={(e: string) => setMessageBody(e)}
+              config={froalaEditMessageConfig}
             /> :
             <FroalaEditorView model={message.content} />
             }
@@ -190,6 +192,13 @@ export const MessageComponent = (
                 </Text>
               </Box>
             )}
+            {hasBeenEdited &&
+              <Text
+              fontStyle={"italic"}
+              color={"grey"}
+              fontSize={11}>
+                Edited
+              </Text>}
           </CardFooter>
         </Card>
       </PopoverTrigger>
