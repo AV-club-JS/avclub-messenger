@@ -69,8 +69,19 @@ export const TeamDisplay = ({ team }: { team: DefaultTeamData }) => {
                                 color='brand.primary'>
                                 <HStack>
                                     <Text fontWeight={600}>{channel.name}</Text>
-                                    {channel.participants[userData!.uid].unread !== 0 &&
-                                    <Text>{channel.participants[userData!.uid].unread}</Text>}
+                                    {(channel.participants[userData!.uid].unread !== 0) &&
+                                        <Box 
+                                        bgColor={'orange'}
+                                        w='15px'
+                                        maxH='fit-content'
+                                        textAlign='center'
+                                        border='1px solid'
+                                        borderColor={'brand.accent'}
+                                        borderRadius={5}>
+                                            <Text>
+                                                {channel.participants[userData!.uid].unread}
+                                            </Text>
+                                        </Box>}
                                 </HStack>
                             </Link>
                         )) : <Text ml={.5} fontWeight={600} fontSize='md' color='gray.600'>No channels to display</Text>}

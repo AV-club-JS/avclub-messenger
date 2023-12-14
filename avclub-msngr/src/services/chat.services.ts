@@ -604,7 +604,7 @@ export const addMessageToChatNew = async ({
   chatId: string; 
   uid: string; 
   content: string 
-  type: "text" | "gif" | "image" | "file"}): Promise<
+  type?: "text" | "gif" | "image" | "file"}): Promise<
   { success: boolean; error?: string }> => {
   try {
     if (content) {

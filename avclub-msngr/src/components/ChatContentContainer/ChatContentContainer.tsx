@@ -26,6 +26,8 @@ import {
   updateChatInfo,
   addMessageToChatNew,
   uploadChatImage,
+  clearReadMessages,
+  addMessageToChat,
 } from "../../services";
 import { NoMessages } from "../NoMessages";
 import { Unsubscribe } from "firebase/auth";
@@ -42,7 +44,8 @@ import { useParams } from "react-router-dom";
 import { getChatInfoListener } from "../../services";
 import { IoMdSend } from "react-icons/io";
 import { LoadGIFs } from "../LoadGIFs";
-export const ChatContentContainer = () => {
+
+export const ChatContentContainer = (isChannel?: boolean) => {
   const { chatId: chatIdUrl } = useParams();
   const [chat, setChat] = useState<ChatInfo>({});
   const { userData } = useContext(UserContext);
@@ -60,10 +63,10 @@ export const ChatContentContainer = () => {
   const handleImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       const file = event.target.files?.[0];
-      const url = await uploadChatImage(file);
+      const url = await uploadChatImage(file!);
       const req = await addMessageToChat({
         chatId: chatIdUrl,
-        uid: userData.uid,
+        uid: userData!.uid,
         content: `<div class='image-container'><img src=${url}/></div>`,
         type: "image",
       });
@@ -84,6 +87,9 @@ export const ChatContentContainer = () => {
     (async () => {
       if (chat.participants) {
         const users = await getUsersByUIDs(Object.keys(chat.participants));
+        if (isChannel) {
+          await clearReadMessages(chat.chatId!, userData!.uid);
+        }
         setParticipants(users);
         setName(
           chat.name ||
