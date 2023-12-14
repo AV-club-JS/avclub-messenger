@@ -516,3 +516,9 @@ export const deleteChannelForUser = async (
     return { success: false, error: (error as Error).message };
   }
 };
+
+export const updateMessage = async (messageId: string, chatId: string, content: string) => {
+  const messageRef = ref(db, `${CHANNELS}/${chatId}/messages/${messageId}`); 
+  const messageUpdate = { content: `${content}` };
+  await update(messageRef, messageUpdate);
+}
