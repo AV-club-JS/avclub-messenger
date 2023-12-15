@@ -1,4 +1,4 @@
-import { FaImages } from "react-icons/fa";
+import { GoPaperclip } from "react-icons/go";
 import {
   Box,
   Button,
@@ -52,7 +52,7 @@ export const ChatContentContainer = (isChannel?: boolean) => {
   const [name, setName] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const inputRef = useRef<HTMLInputElement | null>(null);
-
+  
   const handleInputClick = () => {
     inputRef?.current.click();
   };
@@ -60,14 +60,26 @@ export const ChatContentContainer = (isChannel?: boolean) => {
   const handleImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
     try {
       const file = event.target.files?.[0];
-      const url = await uploadChatImage(file!);
-      const req = await addMessageToChat({
-        chatId: chatIdUrl!,
-        uid: userData!.uid,
-        content: `<div class='image-container'><img src=${url}/></div>`,
-        type: "image",
-      });
-      if (!req.success) console.log(req.error);
+      const fileSplit = file?.name.split('.');
+      const fileType = (fileSplit as [])[(fileSplit as []).length - 1];
+      const url = await uploadChatImage(file as File);
+      if (['png', 'jpg', 'jpeg'].some(fileExtension => fileExtension === fileType)) {
+        const req = await addMessageToChat({
+          chatId: chatIdUrl!,
+          uid: userData!.uid,
+          content: `<div class='image-container'><img src=${url}/></div>`,
+          type: "image",
+        });
+        if (!req.success) console.log(req.error);
+      } else {
+        const req = await addMessageToChat({
+          chatId: chatIdUrl!,
+          uid: userData!.uid,
+          content: `<div class='file-container'><u><a href='${url}' download=${url}>${file?.name} 📎</a></u></div>`,
+          type: "file",
+        });
+        if (!req.success) console.log(req.error);
+      }
     } catch (error) {
       console.log((error as Error).message);
     }
@@ -200,7 +212,7 @@ export const ChatContentContainer = (isChannel?: boolean) => {
           </Button>
           <IconButton
             aria-label="Icon"
-            icon={<FaImages />}
+            icon={<GoPaperclip />}
             m={2}
             size="lg"
             w={"50px"}
@@ -223,7 +235,6 @@ export const ChatContentContainer = (isChannel?: boolean) => {
         <Input
           ref={inputRef}
           type="file"
-          accept=".jpeg,.jpg,.png"
           onChange={handleImage}
           display="none"
         />
