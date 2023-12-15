@@ -54,7 +54,7 @@ export const SearchResults = (
               <HStack
                 w="100%"
                 h="100%"
-                _hover={{ backgroundColor: "rgb(160, 160, 220)" }}
+                _hover={{ bgColor: "brand.accent" }}
                 onClick={() => updateChatInstance(user, chatId)}
               >
                 <Avatar size="md" src={user.avatarUrl} mr={2}>
